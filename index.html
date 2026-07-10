@@ -23,7 +23,7 @@
   }
   @keyframes glow{0%{background-position:0%}100%{background-position:200%}}
 
-  #rules{font-size:11px;background:var(--glass);padding:10px;border-radius:10px;margin-bottom:10px;max-width:700px}
+  #rules{font-size:11px;background:var(--glass);padding:10px;border-radius:10px;margin-bottom:10px;max-width:700px;text-align:center}
   #lobby{
     background:var(--glass);backdrop-filter:blur(var(--blur));
     border:1px solid rgba(255,255,255,.2);padding:25px;border-radius:20px;
@@ -40,13 +40,13 @@
     box-shadow:0 0 50px rgba(0,209,102,.3)
   }
 .tile{
-    background:rgba(245,235,200,1);color:#000;font-size:6.5px;text-align:center;
+    background:rgba(245,235,200,1);color:#000;font-size:6px;text-align:center;
     padding:3px;display:flex;flex-direction:column;justify-content:space-between;
     position:relative;border-radius:5px;border:1px solid #000;
     transition:.2s;cursor:pointer;overflow:hidden
   }
 .tile:hover{transform:scale(1.08);z-index:10;box-shadow:0 0 12px #fff}
-.tile.corner{font-size:8px;font-weight:900;background:linear-gradient(135deg,#004d26,#007A4D);color:#fff}
+.tile.corner{font-size:7.5px;font-weight:900;background:linear-gradient(135deg,#004d26,#007A4D);color:#fff}
 .tile.property{background:rgba(232,228,211,1)}
 .tile.name{font-weight:bold;line-height:1.1}
 .tile.price{color:#004d26;font-weight:bold;font-size:7px}
@@ -80,33 +80,34 @@
 .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;z-index:100}
 .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));color:#fff;padding:25px;border-radius:20px;width:90%;max-width:480px;border:2px solid var(--gold)}
   #freeParkingPot{background:var(--sa);padding:5px;border-radius:8px;text-align:center;font-weight:bold}
+ .offline-msg{color:#ff6b6b;font-size:10px;margin-top:5px}
 </style>
 </head>
 <body>
 <h1>FORTRESS MONOPOLY SA 🇿🇦</h1>
 <div id="rules">
-<b>FULL RULES:</b> R200 for GO | 3 Doubles = Jail | Free Parking = Pot | Auctions | Mortgage 50% | Houses: 32 max | Hotels: 12 max | Bankruptcy
+<b>FULL SA RULES:</b> R200 for GO | 3 Doubles = Jail | Free Parking = Pot | Auctions | Mortgage 50% | Houses: 32 max
 </div>
 
 <div id="lobby">
   <h2>Join Fortress</h2>
   <input id="playerName" placeholder="Your Name">
-  <button onclick="createRoom()">CREATE ROOM</button><br>
-  <input id="roomCode" placeholder="Enter Room Code">
-  <button onclick="joinRoom()">JOIN ROOM</button>
+  <button onclick="startOffline()">PLAY OFFLINE</button><br>
+  <input id="roomCode" placeholder="Room Code - Optional">
+  <button onclick="joinRoom()">JOIN ONLINE</button>
+  <div class="offline-msg">Leave room code empty to play offline / hotseat</div>
   <div id="roomLink"></div>
 </div>
 
 <div id="game">
   <div id="board"></div>
   <div id="panel">
-    <div><b>Room:</b> <span id="currentRoom"></span> | <div id="freeParkingPot">Free Parking: R0</div></div>
+    <div><b>Room:</b> <span id="currentRoom">OFFLINE</span> | <div id="freeParkingPot">Free Parking: R0</div></div>
     <div id="diceWrap"><span class="die" id="d1">⚀</span><span class="die" id="d2">⚀</span></div>
     <button id="rollBtn" onclick="rollDice()">ROLL DICE</button>
     <button onclick="endTurn()">END TURN</button>
     <button onclick="buyHouse()">BUY HOUSE/HOTEL</button>
     <button onclick="mortgageMenu()">MORTGAGE/UNMORTGAGE</button>
-    <button onclick="openTrade()">TRADE</button>
     <button onclick="payJail()">PAY R50 TO GET OUT</button>
     <button onclick="godMode()">FORTRESS MODE +R1000</button>
     <div id="info"><b>Game Log:</b></div>
@@ -117,52 +118,50 @@
 
 <div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, update, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<script>
+// OFFLINE MODE BY DEFAULT - NO FIREBASE NEEDED
+let useFirebase = false;
+let db;
 
-const firebaseConfig = { /* PASTE YOUR FIREBASE CONFIG HERE */ };
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
+// SA BOARD - RENAMED
 const COLORS = {brown:'#8b4513',lightblue:'#add8e6',pink:'#ffc0cb',orange:'#ffa500',red:'#ff0000',yellow:'#ffff00',green:'#008000',blue:'#0000ff'};
 const BOARD = [
-{name:"GO",type:"go"},{name:"Mediterranean Ave",type:"property",price:60,rent:[2,10,30,90,160,250],color:"brown",group:0},
-{name:"Community Chest",type:"chest"},{name:"Baltic Ave",type:"property",price:60,rent:[4,20,60,180,320,450],color:"brown",group:0},
-{name:"Income Tax",type:"tax",amount:200},{name:"Reading Railroad",type:"rail",price:200},
-{name:"Oriental Ave",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
-{name:"Chance",type:"chance"},{name:"Vermont Ave",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
-{name:"Connecticut Ave",type:"property",price:120,rent:[8,40,100,300,450,600],color:"lightblue",group:1},
+{name:"GO",type:"go"},{name:"Soweto",type:"property",price:60,rent:[2,10,30,90,160,250],color:"brown",group:0},
+{name:"Community Chest",type:"chest"},{name:"Alexandra",type:"property",price:60,rent:[4,20,60,180,320,450],color:"brown",group:0},
+{name:"Income Tax",type:"tax",amount:200},{name:"Metrorail",type:"rail",price:200},
+{name:"Pretoria CBD",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
+{name:"Chance",type:"chance"},{name:"Hatfield",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
+{name:"Brooklyn Mall",type:"property",price:120,rent:[8,40,100,300,450,600],color:"lightblue",group:1},
 {name:"Jail / Just Visiting",type:"jail"},
-{name:"St. Charles Place",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
-{name:"Electric Company",type:"utility",price:150},{name:"States Ave",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
-{name:"Virginia Ave",type:"property",price:160,rent:[12,60,180,500,700,900],color:"pink",group:2},
-{name:"Pennsylvania Railroad",type:"rail",price:200},
-{name:"St. James Place",type:"property",price:180,rent:[14,70,200,550,750,950],color:"orange",group:3},
-{name:"Community Chest",type:"chest"},{name:"Tennessee Ave",type:"property",price:180,rent:[14,70,200,550,750,950],color:"orange",group:3},
-{name:"New York Ave",type:"property",price:200,rent:[16,80,220,600,800,1000],color:"orange",group:3},
+{name:"Rosebank",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
+{name:"Eskom",type:"utility",price:150},{name:"Melrose Arch",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
+{name:"Sandton City",type:"property",price:160,rent:[12,60,180,500,700,900],color:"pink",group:2},
+{name:"Gautrain",type:"rail",price:200},
+{name:"Durban CBD",type:"property",price:180,rent:[14,70,200,550,750,950],color:"orange",group:3},
+{name:"Community Chest",type:"chest"},{name:"Umhlanga",type:"property",price:180,rent:[14,70,200,550,750,950],color:"orange",group:3},
+{name:"Gateway Theatre",type:"property",price:200,rent:[16,80,220,600,800,1000],color:"orange",group:3},
 {name:"Free Parking",type:"free"},
-{name:"Kentucky Ave",type:"property",price:220,rent:[18,90,250,700,875,1050],color:"red",group:4},
-{name:"Chance",type:"chance"},{name:"Indiana Ave",type:"property",price:220,rent:[18,90,250,700,875,1050],color:"red",group:4},
-{name:"Illinois Ave",type:"property",price:240,rent:[20,100,300,750,925,1100],color:"red",group:4},
-{name:"B&O Railroad",type:"rail",price:200},
-{name:"Atlantic Ave",type:"property",price:260,rent:[22,110,330,800,975,1150],color:"yellow",group:5},
-{name:"Ventnor Ave",type:"property",price:260,rent:[22,110,330,800,975,1150],color:"yellow",group:5},
-{name:"Water Works",type:"utility",price:150},
-{name:"Marvin Gardens",type:"property",price:280,rent:[24,120,360,850,1025,1200],color:"yellow",group:5},
+{name:"Cape Town CBD",type:"property",price:220,rent:[18,90,250,700,875,1050],color:"red",group:4},
+{name:"Chance",type:"chance"},{name:"Sea Point",type:"property",price:220,rent:[18,90,250,700,875,1050],color:"red",group:4},
+{name:"V&A Waterfront",type:"property",price:240,rent:[20,100,300,750,925,1100],color:"red",group:4},
+{name:"PRASA Rail",type:"rail",price:200},
+{name:"Bloemfontein",type:"property",price:260,rent:[22,110,330,800,975,1150],color:"yellow",group:5},
+{name:"Kimberley",type:"property",price:260,rent:[22,110,330,800,975,1150],color:"yellow",group:5},
+{name:"Telkom",type:"utility",price:150},
+{name:"Port Elizabeth",type:"property",price:280,rent:[24,120,360,850,1025,1200],color:"yellow",group:5},
 {name:"Go To Jail",type:"gotojail"},
-{name:"Pacific Ave",type:"property",price:300,rent:[26,130,390,900,1100,1275],color:"green",group:6},
-{name:"North Carolina Ave",type:"property",price:300,rent:[26,130,390,900,1100,1275],color:"green",group:6},
+{name:"Polokwane",type:"property",price:300,rent:[26,130,390,900,1100,1275],color:"green",group:6},
+{name:"Nelspruit",type:"property",price:300,rent:[26,130,390,900,1100,1275],color:"green",group:6},
 {name:"Community Chest",type:"chest"},
-{name:"Pennsylvania Ave",type:"property",price:320,rent:[28,150,450,1000,1200,1400],color:"green",group:6},
-{name:"Short Line",type:"rail",price:200},
+{name:"Rustenburg",type:"property",price:320,rent:[28,150,450,1000,1200,1400],color:"green",group:6},
+{name:"Shosholoza Meyl",type:"rail",price:200},
 {name:"Chance",type:"chance"},
-{name:"Park Place",type:"property",price:350,rent:[35,175,500,1100,1300,1500],color:"blue",group:7},
+{name:"Stellenbosch",type:"property",price:350,rent:[35,175,500,1100,1300,1500],color:"blue",group:7},
 {name:"Luxury Tax",type:"tax",amount:100},
-{name:"Boardwalk",type:"property",price:400,rent:[50,200,600,1400,1700,2000],color:"blue",group:7}
+{name:"Clifton Beach",type:"property",price:400,rent:[50,200,600,1400,1700,2000],color:"blue",group:7}
 ];
 
-let game, myPlayerId, roomId, myName;
+let game, myPlayerId=0, roomId="OFFLINE", myName="Player1";
 const playerColors = ["p1","p2","p3","p4"];
 
 // INIT BOARD
@@ -185,51 +184,26 @@ function initBoard(){
   });
 }
 
-window.createRoom = () => {
+window.startOffline = () => {
   myName = document.getElementById('playerName').value || "Player1";
-  roomId = Math.random().toString(36).substring(2,6).toUpperCase();
-  myPlayerId = 0;
-  game = {players:[{name:myName,money:1500,pos:0,props:[],inJail:0,doubles:0,color:playerColors[0]}],current:0,houses:32,hotels:12,freeParkingPot:0};
-  set(ref(db,'rooms/'+roomId),game);
+  game = {players:[{name:myName,money:1500,pos:0,props:[],inJail:0,doubles:0,color:playerColors[0]},{name:"Player2",money:1500,pos:0,props:[],inJail:0,doubles:0,color:playerColors[1]}],current:0,houses:32,hotels:12,freeParkingPot:0};
   startGame();
-  document.getElementById('roomLink').innerHTML = `Share: <b>${location.origin+location.pathname}?room=${roomId}</b>`;
 }
 
 window.joinRoom = () => {
-  myName = document.getElementById('playerName').value || "Player2";
-  roomId = document.getElementById('roomCode').value.toUpperCase();
-  onValue(ref(db,'rooms/'+roomId),(snap)=>{
-    if(snap.exists()){
-      game = snap.val();
-      myPlayerId = game.players.length;
-      if(myPlayerId<4){
-        game.players.push({name:myName,money:1500,pos:0,props:[],inJail:0,doubles:0,color:playerColors[myPlayerId]});
-        update(ref(db,'rooms/'+roomId),game);
-      }
-      startGame();
-    }
-  },{onlyOnce:true});
+  alert("Online mode needs Firebase setup. Starting offline for now.");
+  startOffline();
 }
-
-const urlParams = new URLSearchParams(window.location.search);
-if(urlParams.get('room')){ document.getElementById('roomCode').value = urlParams.get('room'); }
 
 function startGame(){
   document.getElementById('lobby').style.display='none';
   document.getElementById('game').style.display='flex';
-  document.getElementById('currentRoom').innerText=roomId;
   initBoard();
-  onValue(ref(db,'rooms/'+roomId),(snap)=>{
-    if(snap.exists()){
-      game=snap.val();
-      updatePlayers();
-      updatePlayerInfo();
-      document.getElementById('freeParkingPot').innerText=`Free Parking: R${game.freeParkingPot}`;
-    }
-  });
+  updatePlayers();
+  updatePlayerInfo();
 }
 
-function saveToFirebase(){ set(ref(db,'rooms/'+roomId),game); }
+function saveGame(){ /* localStorage for offline */ localStorage.setItem('fortressSA',JSON.stringify(game)); }
 
 function updatePlayers(){
   for(let i=0;i<40;i++){
@@ -261,7 +235,7 @@ function log(msg){ document.getElementById('info').innerHTML+=`<br>${msg}`; docu
 window.rollDice = () => {
   if(myPlayerId!== game.current){ log("Not your turn"); return; }
   const p = game.players[myPlayerId];
-  if(p.inJail>0){ log("You must pay or roll doubles to get out"); return; }
+  if(p.inJail>0){ log("You must pay R50 or roll doubles to get out"); return; }
 
   const d1 = Math.floor(Math.random()*6)+1;
   const d2 = Math.floor(Math.random()*6)+1;
@@ -271,11 +245,11 @@ window.rollDice = () => {
   log(`${p.name} rolled ${d1}+${d2}`);
 
   if(d1==d2) p.doubles++; else p.doubles=0;
-  if(p.doubles==3){ p.pos=10; p.inJail=3; p.doubles=0; log("3 DOUBLES! GO TO JAIL"); saveToFirebase(); return; }
+  if(p.doubles==3){ p.pos=10; p.inJail=3; p.doubles=0; log("3 DOUBLES! GO TO JAIL"); saveGame(); return; }
 
   movePlayer(d1+d2, d1==d2);
   document.getElementById('rollBtn').disabled=true;
-  saveToFirebase();
+  saveGame();
 }
 
 function movePlayer(steps, isDouble){
@@ -300,7 +274,7 @@ function landOn(pos){
   if(t.type=='free'){ p.money+=game.freeParkingPot; log(`${p.name} collected R${game.freeParkingPot} from Free Parking!`); game.freeParkingPot=0; }
   if(t.type=='chance'||t.type=='chest') drawCard();
   checkBankruptcy(p);
-  saveToFirebase();
+  saveGame();
 }
 
 function showBuy(pos){
@@ -311,7 +285,7 @@ function showBuy(pos){
 window.buyProperty = (pos) => {
   const p=game.players[game.current]; const t=BOARD[pos];
   if(p.money>=t.price){ p.money-=t.price; p.props.push(pos); log(`${p.name} bought ${t.name} for R${t.price}`); }
-  closeModal(); saveToFirebase();
+  closeModal(); saveGame();
 }
 
 function payRent(payer,owner,t){
@@ -338,7 +312,7 @@ window.addHouse = (pos) => {
     if(t.houses==5){game.houses+=4; game.hotels--;} else {game.houses--;}
     log(`Bought on ${t.name} for R${cost}`);
   }
-  closeModal(); saveToFirebase();
+  closeModal(); saveGame();
 }
 
 window.mortgageMenu = () => {
@@ -346,7 +320,7 @@ window.mortgageMenu = () => {
   let html='Mortgage for 50%:<br>';
   p.props.forEach(i=>{
     if(!BOARD[i].mortgaged) html+=`<button onclick="doMortgage(${i})">${BOARD[i].name} +R${BOARD[i].price/2}</button><br>`;
-    else html+=`<button onclick="unMortgage(${i})">${BOARD[i].name} -R${BOARD[i].price*0.55}</button><br>`;
+    else html+=`<button onclick="unMortgage(${i})">${BOARD[i].name} -R${Math.round(BOARD[i].price*0.55)}</button><br>`;
   });
   showModal(html);
 }
@@ -354,21 +328,21 @@ window.doMortgage = (pos) => {
   game.players[myPlayerId].money += BOARD[pos].price/2;
   BOARD[pos].mortgaged=true;
   log(`Mortgaged ${BOARD[pos].name} +R${BOARD[pos].price/2}`);
-  closeModal(); saveToFirebase();
+  closeModal(); saveGame();
 }
 window.unMortgage = (pos) => {
-  const cost = BOARD[pos].price*0.55;
+  const cost = Math.round(BOARD[pos].price*0.55);
   if(game.players[myPlayerId].money>=cost){
     game.players[myPlayerId].money -= cost;
     BOARD[pos].mortgaged=false;
     log(`Unmortgaged ${BOARD[pos].name} -R${cost}`);
   }
-  closeModal(); saveToFirebase();
+  closeModal(); saveGame();
 }
 
 window.payJail = () => {
   const p=game.players[myPlayerId];
-  if(p.inJail>0 && p.money>=50){ p.money-=50; p.inJail=0; log(`${p.name} paid R50 to get out of jail`); saveToFirebase(); }
+  if(p.inJail>0 && p.money>=50){ p.money-=50; p.inJail=0; log(`${p.name} paid R50 to get out of jail`); saveGame(); }
 }
 
 function drawCard(){
@@ -383,15 +357,6 @@ function drawCard(){
   if(card.includes("Collect")||card.includes("Bank")) p.money+=200;
 }
 
-window.openTrade = () => {
-  let html="Trade with:<br>";
-  game.players.forEach((pl,i)=>{ if(i!=game.current) html+=`<button onclick="tradeWith(${i})">${pl.name}</button>` });
-  showModal(html);
-}
-window.tradeWith = (otherId) => {
-  showModal(`Trading with ${game.players[otherId].name} <br><button onclick='closeModal()'>Close</button>`);
-}
-
 window.startAuction = (pos) => {
   log(`Auction started for ${BOARD[pos].name}`);
   closeModal();
@@ -400,10 +365,11 @@ window.startAuction = (pos) => {
 window.endTurn = () => {
   game.current=(game.current+1)%game.players.length;
   document.getElementById('rollBtn').disabled=false;
-  saveToFirebase();
+  updatePlayerInfo();
+  saveGame();
 }
 
-window.godMode = () => { game.players[myPlayerId].money+=1000; log("FORTRESS MODE: +R1000"); saveToFirebase(); }
+window.godMode = () => { game.players[myPlayerId].money+=1000; log("FORTRESS MODE: +R1000"); saveGame(); }
 
 function checkBankruptcy(p){
   if(p.money<0){ log(`${p.name} IS BANKRUPT!`); p.props=[]; }
@@ -416,6 +382,7 @@ function updatePlayerInfo(){
   let props='';
   p.props.forEach(i=>{ props+=`<div class="prop-item">${BOARD[i].name} ${BOARD[i].houses?'H:'+BOARD[i].houses:''} ${BOARD[i].mortgaged?'[M]':''}</div>` });
   document.getElementById('propList').innerHTML=props;
+  document.getElementById('freeParkingPot').innerText=`Free Parking: R${game.freeParkingPot}`;
 }
 
 function showModal(c){ document.getElementById('modalContent').innerHTML=c; document.getElementById('modal').style.display='flex'; }
