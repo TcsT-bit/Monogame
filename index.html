@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOD MODE MONOPOLY 2026</title>
+<style>
+  :root{
+    --bg1:#0f2027;--bg2:#203a43;--bg3:#2c5364;
+    --glass:rgba(255,255,255,0.08);--blur:20px;
+    --gold:#ffd700;--green:#00ff88;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+  body{
+    background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:10px;
+    backdrop-filter:blur(2px);
+  }
+  h1{
+    margin:10px 0;font-size:clamp(20px,4vw,36px);
+    background:linear-gradient(90deg,#ffd700,#ff8c00,#ffd700);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    text-shadow:0 0 20px rgba(255,215,0,.4);animation:glow 2s ease-in-out infinite;
+  }
+  @keyframes glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)}}
+
+  #lobby{
+    background:var(--glass);backdrop-filter:blur(var(--blur));
+    border:1px solid rgba(255,255,255,.2);padding:20px;border-radius:20px;
+    text-align:center;margin-bottom:15px;box-shadow:0 8px 32px rgba(0,0,0,.4)
+  }
+  #lobby input{padding:10px;border-radius:10px;border:none;width:200px;margin:5px}
+
+  #game{display:none;gap:15px;flex-wrap:wrap;justify-content:center}
+  #board{
+    display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);
+    width:90vmin;height:90vmin;max-width:650px;max-height:650px;
+    background:var(--glass);backdrop-filter:blur(var(--blur));
+    border:2px solid rgba(255,255,255,.3);border-radius:15px;gap:2px;padding:5px;
+    box-shadow:0 0 40px rgba(0,255,136,.2)
+  }
+ .tile{
+    background:rgba(240,217,181,.9);color:#000;font-size:8px;text-align:center;
+    padding:2px;display:flex;flex-direction:column;justify-content:space-between;
+    position:relative;border-radius:4px;border:1px solid rgba(0,0,0,.3);
+    transition:transform.2s;cursor:pointer
+  }
+ .tile:hover{transform:scale(1.05);z-index:10}
+ .tile.corner{font-size:10px;font-weight:bold;background:linear-gradient(135deg,#8b4513,#a0522d);color:#fff}
+ .tile.property{background:rgba(232,228,211,.95)}
+ .tile.colorbar{height:6px;width:100%;position:absolute;top:0;left:0;border-radius:4px 4px 0 0}
+ .players{position:absolute;bottom:2px;left:2px;display:flex;gap:2px;flex-wrap:wrap}
+ .p{width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 5px #000}
+ .p1{background:#ff3366}.p2{background:#3399ff}.p3{background:#33ff66}.p4{background:#ffdd33}
+
+  #panel{
+    background:var(--glass);backdrop-filter:blur(var(--blur));
+    border:1px solid rgba(255,255,255,.2);padding:15px;border-radius:20px;width:320px;
+    display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4)
+  }
+  #info{background:rgba(0,0,0,.5);padding:10px;border-radius:10px;min-height:120px;max-height:200px;overflow-y:auto;font-size:12px}
+  button{
+    background:linear-gradient(90deg,var(--gold),#ff8c00);color:#000;border:none;
+    padding:12px;border-radius:12px;font-weight:bold;cursor:pointer;transition:.2s;
+    box-shadow:0 4px 15px rgba(255,215,0,.3)
+  }
+  button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,215,0,.5)}
+  button:disabled{background:#555;color:#999;transform:none}
+  #dice{font-size:50px;text-align:center;animation:roll.5s}
+  @keyframes roll{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+ .prop-list{display:flex;flex-direction:column;gap:5px;max-height:150px;overflow-y:auto}
+ .prop-item{background:rgba(42,77,58,.8);padding:6px;border-radius:6px;font-size:11px;border-left:3px solid var(--green)}
+ .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:100}
+ .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));color:#fff;padding:20px;border-radius:20px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,.3)}
+  #roomLink{background:rgba(0,0,0,.5);padding:8px;border-radius:8px;word-break:break-all;font-size:12px}
+</style>
+</head>
+<body>
+<h1>GOD MODE MONOPOLY 2026</h1>
+
+<div id="lobby">
+  <h2>Join or Create Room</h2>
+  <button onclick="createRoom()">CREATE ROOM</button><br>
+  <input id="roomCode" placeholder="Enter Room Code">
+  <button onclick="joinRoom()">JOIN ROOM</button>
+  <div id="roomLink"></div>
+</div>
+
+<div id="game">
+  <div id="board"></div>
+  <div id="panel">
+    <div><b>Room:</b> <span id="currentRoom"></span></div>
+    <div id="dice">🎲</div>
+    <button id="rollBtn" onclick="rollDice()">ROLL DICE</button>
+    <button onclick="endTurn()">END TURN</button>
+    <button onclick="buyHouse()">BUY HOUSE/HOTEL</button>
+    <button onclick="trade()">TRADE</button>
+    <button onclick="godMode()">GOD MODE +$1000</button>
+    <div id="info"><b>Game Log:</b><br>Welcome to 2026</div>
+    <div id="playerInfo"></div>
+    <div class="prop-list" id="propList"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
+
+<!-- FIREBASE FOR LINKS -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// REPLACE THIS WITH YOUR FIREBASE CONFIG - FREE TO MAKE
+const firebaseConfig = {
+  apiKey: "PASTE_YOURS",
+  authDomain: "PASTE_YOURS",
+  databaseURL: "https://your-project.firebaseio.com",
+  projectId: "your-project"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const COLORS = {brown:'#8b4513',lightblue:'#add8e6',pink:'#ffc0cb',orange:'#ffa500',red:'#ff0000',yellow:'#ffff00',green:'#008000',blue:'#0000ff'};
+const BOARD = [/* SAME 40 TILES AS YOU SENT ME */
+{name:"GO",type:"go"},{name:"Mediterranean Ave",type:"property",price:60,rent:[2,10,30,90,160,250],color:"brown",group:0},
+{name:"Community Chest",type:"chest"},{name:"Baltic Ave",type:"property",price:60,rent:[4,20,60,180,320,450],color:"brown",group:0},
+{name:"Income Tax",type:"tax",amount:200},{name:"Reading Railroad",type:"rail",price:200},
+{name:"Oriental Ave",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
+{name:"Chance",type:"chance"},{name:"Vermont Ave",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
+{name:"Connecticut Ave",type:"property",price:120,rent:[8,40,100,300,450,600],color:"lightblue",group:1},
+{name:"Jail",type:"jail"},
+{name:"St. Charles Place",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
+{name:"Electric Company",type:"utility",price:150},{name:"States Ave",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
+{name:"Virginia Ave",type:"property",price:160,rent:[12,60,180,500,700,900],color:"pink",group:2},
+{name:"Pennsylvania Railroad",type:"rail",price:200},
+{name:"St. James Place",type:"property",price:180,rent:[14,70,200,550,750,950],color:"orange",group:3},
+{name:"Community Chest",type:"chest"},{name:"Tennessee Ave",type:"property",price:180,rent:[14,70,200,550,750,950],color:"orange",group:3},
+{name:"New York Ave",type:"property",price:200,rent:[16,80,220,600,800,1000],color:"orange",group:3},
+{name:"Free Parking",type:"free"},
+{name:"Kentucky Ave",type:"property",price:220,rent:[18,90,250,700,875,1050],color:"red",group:4},
+{name:"Chance",type:"chance"},{name:"Indiana Ave",type:"property",price:220,rent:[18,90,250,700,875,1050],color:"red",group:4},
+{name:"Illinois Ave",type:"property",price:240,rent:[20,100,300,750,925,1100],color:"red",group:4},
+{name:"B&O Railroad",type:"rail",price:200},
+{name:"Atlantic Ave",type:"property",price:260,rent:[22,110,330,800,975,1150],color:"yellow",group:5},
+{name:"Ventnor Ave",type:"property",price:260,rent:[22,110,330,800,975,1150],color:"yellow",group:5},
+{name:"Water Works",type:"utility",price:150},
+{name:"Marvin Gardens",type:"property",price:280,rent:[24,120,360,850,1025,1200],color:"yellow",group:5},
+{name:"Go To Jail",type:"gotojail"},
+{name:"Pacific Ave",type:"property",price:300,rent:[26,130,390,900,1100,1275],color:"green",group:6},
+{name:"North Carolina Ave",type:"property",price:300,rent:[26,130,390,900,1100,1275],color:"green",group:6},
+{name:"Community Chest",type:"chest"},
+{name:"Pennsylvania Ave",type:"property",price:320,rent:[28,150,450,1000,1200,1400],color:"green",group:6},
+{name:"Short Line",type:"rail",price:200},
+{name:"Chance",type:"chance"},
+{name:"Park Place",type:"property",price:350,rent:[35,175,500,1100,1300,1500],color:"blue",group:7},
+{name:"Luxury Tax",type:"tax",amount:100},
+{name:"Boardwalk",type:"property",price:400,rent:[50,200,600,1400,1700,2000],color:"blue",group:7}
+];
+
+let game, myPlayerId, roomId;
+const playerColors = ["p1","p2","p3","p4"];
+
+// LINK FUNCTIONS
+window.createRoom = () => {
+  roomId = Math.random().toString(36).substring(2,8).toUpperCase();
+  myPlayerId = 0;
+  game = {
+    players:[{name:"P1",money:1500,pos:0,props:[],inJail:0,color:playerColors[0]}],
+    current:0, houses:32, hotels:12, turn:1
+  };
+  set(ref(db,'rooms/'+roomId),game);
+  startGame();
+  document.getElementById('roomLink').innerHTML = `Share this link: <br><b>${location.origin+location.pathname}?room=${roomId}</b>`;
+}
+
+window.joinRoom = () => {
+  roomId = document.getElementById('roomCode').value.toUpperCase();
+  onValue(ref(db,'rooms/'+roomId),(snap)=>{
+    if(snap.exists()){
+      game = snap.val();
+      myPlayerId = game.players.length;
+      if(myPlayerId<4){
+        game.players.push({name:"P"+(myPlayerId+1),money:1500,pos:0,props:[],inJail:0,color:playerColors[myPlayerId]});
+        update(ref(db,'rooms/'+roomId),game);
+      }
+      startGame();
+    }
+  });
+}
+
+// Check URL for room
+const urlParams = new URLSearchParams(window.location.search);
+if(urlParams.get('room')){ document.getElementById('roomCode').value = urlParams.get('room'); joinRoom(); }
+
+function startGame(){
+  document.getElementById('lobby').style.display='none';
+  document.getElementById('game').style.display='flex';
+  document.getElementById('currentRoom').innerText=roomId;
+  initBoard();
+  onValue(ref(db,'rooms/'+roomId),(snap)=>{ if(snap.exists()){ game=snap.val(); updatePlayers(); updatePlayerInfo(); }});
+}
+
+function saveToFirebase(){ set(ref(db,'rooms/'+roomId),game); }
+
+// ALL YOUR OLD GAME LOGIC HERE, BUT CALL saveToFirebase() AFTER EVERY MOVE
+function initBoard(){/* SAME AS YOURS */}
+function updatePlayers(){/* SAME AS YOURS */}
+function log(msg){ document.getElementById('info').innerHTML+=`<br>${msg}`; document.getElementById('info').scrollTop=9999; }
+
+window.rollDice = () => {
+  if(game.players[myPlayerId].inJail>0){ jailTurn(); return; }
+  const d1 = Math.floor(Math.random()*6)+1;
+  const d2 = Math.floor(Math.random()*6)+1;
+  document.getElementById('dice').innerText=`🎲 ${d1} + ${d2}`;
+  log(`${game.players[myPlayerId].name} rolled ${d1}+${d2}`);
+  movePlayer(d1+d2);
+  document.getElementById('rollBtn').disabled=true;
+  saveToFirebase();
+}
+
+function movePlayer(steps){/* SAME AS YOURS, END WITH saveToFirebase() */}
+function landOn(pos){/* SAME AS YOURS, END WITH saveToFirebase() */}
+function buyProperty(pos){/* SAME AS YOURS, END WITH saveToFirebase() */}
+function endTurn(){ game.current=(game.current+1)%game.players.length; document.getElementById('rollBtn').disabled=false; saveToFirebase(); }
+window.godMode = () => { game.players[myPlayerId].money+=1000; log("GOD MODE: +$1000"); saveToFirebase(); }
+function showModal(c){ document.getElementById('modalContent').innerHTML=c; document.getElementById('modal').style.display='flex'; }
+window.closeModal = () => { document.getElementById('modal').style.display='none'; }
+</script>
+</body>
+</html>
