@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOD TIER MONOPOLY 2026</title>
+<title>FORTRESS MONOPOLY SA 2026</title>
 <style>
   :root{
-    --bg1:#0f2027;--bg2:#203a43;--bg3:#2c5364;
-    --glass:rgba(255,255,255,0.1);--blur:20px;
-    --gold:#ffd700;--green:#00ff88;
+    --bg1:#0a1a2a;--bg2:#1a3a5a;--bg3:#2a5a8a;
+    --glass:rgba(255,255,255,0.08);--blur:20px;
+    --gold:#ffb700;--green:#00d166;--sa:#007A4D;
   }
   *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
   body{
@@ -16,72 +16,81 @@
     color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:10px;
   }
   h1{
-    margin:10px 0;font-size:clamp(22px,5vw,40px);
-    background:linear-gradient(90deg,#ffd700,#ff6b00,#ffd700);background-size:200%;
+    margin:10px 0;font-size:clamp(20px,5vw,38px);
+    background:linear-gradient(90deg,#ffb700,#00d166,#ffb700);background-size:200%;
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
     animation:glow 3s linear infinite;
   }
   @keyframes glow{0%{background-position:0%}100%{background-position:200%}}
 
+  #rules{font-size:11px;background:var(--glass);padding:10px;border-radius:10px;margin-bottom:10px;max-width:700px}
   #lobby{
     background:var(--glass);backdrop-filter:blur(var(--blur));
     border:1px solid rgba(255,255,255,.2);padding:25px;border-radius:20px;
-    text-align:center;margin:20px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:90%;max-width:400px
+    text-align:center;margin:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:90%;max-width:420px
   }
-  #lobby input{padding:12px;border-radius:10px;border:none;width:180px;margin:5px;background:#222;color:#fff}
+  #lobby input{padding:12px;border-radius:10px;border:none;width:180px;margin:5px;background:#111;color:#fff}
 
   #game{display:none;gap:15px;flex-wrap:wrap;justify-content:center;width:100%}
   #board{
     display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);
-    width:95vmin;height:95vmin;max-width:700px;max-height:700px;
+    width:95vmin;height:95vmin;max-width:720px;max-height:720px;
     background:var(--glass);backdrop-filter:blur(var(--blur));
-    border:3px solid rgba(255,255,255,.3);border-radius:20px;gap:2px;padding:6px;
-    box-shadow:0 0 50px rgba(0,255,136,.3)
+    border:3px solid var(--sa);border-radius:20px;gap:2px;padding:6px;
+    box-shadow:0 0 50px rgba(0,209,102,.3)
   }
 .tile{
-    background:rgba(240,217,181,1);color:#000;font-size:7px;text-align:center;
+    background:rgba(245,235,200,1);color:#000;font-size:6.5px;text-align:center;
     padding:3px;display:flex;flex-direction:column;justify-content:space-between;
     position:relative;border-radius:5px;border:1px solid #000;
     transition:.2s;cursor:pointer;overflow:hidden
   }
-.tile:hover{transform:scale(1.08);z-index:10;box-shadow:0 0 10px #fff}
-.tile.corner{font-size:9px;font-weight:900;background:linear-gradient(135deg,#8b4513,#a0522d);color:#fff}
+.tile:hover{transform:scale(1.08);z-index:10;box-shadow:0 0 12px #fff}
+.tile.corner{font-size:8px;font-weight:900;background:linear-gradient(135deg,#004d26,#007A4D);color:#fff}
 .tile.property{background:rgba(232,228,211,1)}
 .tile.name{font-weight:bold;line-height:1.1}
-.tile.price{color:#0a5c36;font-weight:bold;font-size:8px}
-.tile.colorbar{height:8px;width:100%;position:absolute;top:0;left:0;border-radius:5px 5px 0 0}
+.tile.price{color:#004d26;font-weight:bold;font-size:7px}
+.tile.colorbar{height:7px;width:100%;position:absolute;top:0;left:0;border-radius:5px 5px 0 0}
+.tile.mortgaged{opacity:0.4;text-decoration:line-through}
+.houses{position:absolute;top:1px;right:1px;display:flex;gap:1px;flex-wrap:wrap;max-width:20px}
+.house{width:4px;height:4px;background:var(--green);border-radius:1px;border:1px solid #000}
+.hotel{background:red;width:6px;height:6px}
 .players{position:absolute;bottom:1px;left:1px;display:flex;gap:1px;flex-wrap:wrap}
-.p{width:9px;height:9px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 4px #000}
-.p1{background:#ff3366}.p2{background:#3399ff}.p3{background:#33ff66}.p4{background:#ffdd33}
+.p{width:8px;height:8px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 4px #000}
+.p1{background:#E03C31}.p2{background:#005EB8}.p3{background:#00A651}.p4{background:#FFD100}
 
   #panel{
     background:var(--glass);backdrop-filter:blur(var(--blur));
-    border:1px solid rgba(255,255,255,.2);padding:15px;border-radius:20px;width:340px;
-    display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4)
+    border:1px solid rgba(255,255,255,.2);padding:15px;border-radius:20px;width:350px;
+    display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.4)
   }
-  #info{background:rgba(0,0,0,.6);padding:10px;border-radius:10px;min-height:140px;max-height:220px;overflow-y:auto;font-size:12px}
+  #info{background:rgba(0,0,0,.6);padding:10px;border-radius:10px;min-height:150px;max-height:240px;overflow-y:auto;font-size:12px}
   button{
     background:linear-gradient(90deg,var(--gold),#ff8c00);color:#000;border:none;
-    padding:12px;border-radius:12px;font-weight:900;cursor:pointer;transition:.2s;
-    box-shadow:0 4px 15px rgba(255,215,0,.4)
+    padding:11px;border-radius:12px;font-weight:900;cursor:pointer;transition:.2s;
+    box-shadow:0 4px 15px rgba(255,183,0,.4);font-size:12px
   }
-  button:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 6px 25px rgba(255,215,0,.6)}
+  button:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(255,183,0,.6)}
   button:disabled{background:#444;color:#888;transform:none}
-  #diceWrap{display:flex;justify-content:center;gap:10px;font-size:55px}
- .die{animation:roll.6s cubic-bezier(.34,1.56,.64,1)}
-  @keyframes roll{0%{transform:rotate(0) scale(1)}50%{transform:rotate(360deg) scale(1.3)}100%{transform:rotate(720deg) scale(1)}}
-.prop-list{display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto}
-.prop-item{background:rgba(42,77,58,.9);padding:7px;border-radius:8px;font-size:11px;border-left:4px solid var(--green)}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center;z-index:100}
-.modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));color:#fff;padding:25px;border-radius:20px;width:90%;max-width:450px;border:2px solid var(--gold)}
-  #roomLink{background:rgba(0,0,0,.6);padding:10px;border-radius:10px;word-break:break-all;font-size:13px}
+  #diceWrap{display:flex;justify-content:center;gap:12px;font-size:60px}
+.die{animation:roll.6s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes roll{0%{transform:rotate(0)}100%{transform:rotate(720deg)}}
+.prop-list{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto}
+.prop-item{background:rgba(0,122,77,.8);padding:6px;border-radius:8px;font-size:10px;border-left:3px solid var(--gold)}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;z-index:100}
+.modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));color:#fff;padding:25px;border-radius:20px;width:90%;max-width:480px;border:2px solid var(--gold)}
+  #freeParkingPot{background:var(--sa);padding:5px;border-radius:8px;text-align:center;font-weight:bold}
 </style>
 </head>
 <body>
-<h1>GOD TIER MONOPOLY 2026</h1>
+<h1>FORTRESS MONOPOLY SA 🇿🇦</h1>
+<div id="rules">
+<b>FULL RULES:</b> R200 for GO | 3 Doubles = Jail | Free Parking = Pot | Auctions | Mortgage 50% | Houses: 32 max | Hotels: 12 max | Bankruptcy
+</div>
 
 <div id="lobby">
-  <h2>Join or Create Room</h2>
+  <h2>Join Fortress</h2>
+  <input id="playerName" placeholder="Your Name">
   <button onclick="createRoom()">CREATE ROOM</button><br>
   <input id="roomCode" placeholder="Enter Room Code">
   <button onclick="joinRoom()">JOIN ROOM</button>
@@ -91,15 +100,16 @@
 <div id="game">
   <div id="board"></div>
   <div id="panel">
-    <div><b>Room:</b> <span id="currentRoom"></span></div>
-    <div id="diceWrap"><span class="die" id="d1">🎲</span><span class="die" id="d2">🎲</span></div>
+    <div><b>Room:</b> <span id="currentRoom"></span> | <div id="freeParkingPot">Free Parking: R0</div></div>
+    <div id="diceWrap"><span class="die" id="d1">⚀</span><span class="die" id="d2">⚀</span></div>
     <button id="rollBtn" onclick="rollDice()">ROLL DICE</button>
     <button onclick="endTurn()">END TURN</button>
     <button onclick="buyHouse()">BUY HOUSE/HOTEL</button>
+    <button onclick="mortgageMenu()">MORTGAGE/UNMORTGAGE</button>
     <button onclick="openTrade()">TRADE</button>
-    <button onclick="godMode()">GOD MODE +$1000</button>
-    <button onclick="declareBankruptcy()">DECLARE BANKRUPTCY</button>
-    <div id="info"><b>Game Log:</b><br>Welcome to GOD TIER</div>
+    <button onclick="payJail()">PAY R50 TO GET OUT</button>
+    <button onclick="godMode()">FORTRESS MODE +R1000</button>
+    <div id="info"><b>Game Log:</b></div>
     <div id="playerInfo"></div>
     <div class="prop-list" id="propList"></div>
   </div>
@@ -109,14 +119,9 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, update, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "PASTE_YOURS",
-  authDomain: "PASTE_YOURS",
-  databaseURL: "https://your-project.firebaseio.com",
-  projectId: "your-project"
-};
+const firebaseConfig = { /* PASTE YOUR FIREBASE CONFIG HERE */ };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -128,7 +133,7 @@ const BOARD = [
 {name:"Oriental Ave",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
 {name:"Chance",type:"chance"},{name:"Vermont Ave",type:"property",price:100,rent:[6,30,90,270,400,550],color:"lightblue",group:1},
 {name:"Connecticut Ave",type:"property",price:120,rent:[8,40,100,300,450,600],color:"lightblue",group:1},
-{name:"Jail",type:"jail"},
+{name:"Jail / Just Visiting",type:"jail"},
 {name:"St. Charles Place",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
 {name:"Electric Company",type:"utility",price:150},{name:"States Ave",type:"property",price:140,rent:[10,50,150,450,625,750],color:"pink",group:2},
 {name:"Virginia Ave",type:"property",price:160,rent:[12,60,180,500,700,900],color:"pink",group:2},
@@ -157,10 +162,10 @@ const BOARD = [
 {name:"Boardwalk",type:"property",price:400,rent:[50,200,600,1400,1700,2000],color:"blue",group:7}
 ];
 
-let game, myPlayerId, roomId;
+let game, myPlayerId, roomId, myName;
 const playerColors = ["p1","p2","p3","p4"];
 
-// FIXED: BOARD RENDER
+// INIT BOARD
 function initBoard(){
   const board = document.getElementById('board');
   board.innerHTML='';
@@ -173,74 +178,101 @@ function initBoard(){
     div.id='tile'+i;
     if(t.color) div.innerHTML=`<div class="colorbar" style="background:${COLORS[t.color]}"></div>`;
     div.innerHTML+=`<div class="name">${t.name}</div>`;
-    if(t.price) div.innerHTML+=`<div class="price">$${t.price}</div>`;
+    if(t.price) div.innerHTML+=`<div class="price">R${t.price}</div>`;
+    div.innerHTML+=`<div class="houses" id="houses${i}"></div>`;
     div.innerHTML+=`<div class="players" id="players${i}"></div>`;
     board.appendChild(div);
   });
 }
 
 window.createRoom = () => {
-  roomId = Math.random().toString(36).substring(2,8).toUpperCase();
+  myName = document.getElementById('playerName').value || "Player1";
+  roomId = Math.random().toString(36).substring(2,6).toUpperCase();
   myPlayerId = 0;
-  game = {players:[{name:"P1",money:1500,pos:0,props:[],inJail:0,color:playerColors[0]}],current:0,houses:32,hotels:12,turn:1};
+  game = {players:[{name:myName,money:1500,pos:0,props:[],inJail:0,doubles:0,color:playerColors[0]}],current:0,houses:32,hotels:12,freeParkingPot:0};
   set(ref(db,'rooms/'+roomId),game);
   startGame();
-  document.getElementById('roomLink').innerHTML = `Share this link: <br><b>${location.origin+location.pathname}?room=${roomId}</b>`;
+  document.getElementById('roomLink').innerHTML = `Share: <b>${location.origin+location.pathname}?room=${roomId}</b>`;
 }
 
 window.joinRoom = () => {
+  myName = document.getElementById('playerName').value || "Player2";
   roomId = document.getElementById('roomCode').value.toUpperCase();
   onValue(ref(db,'rooms/'+roomId),(snap)=>{
     if(snap.exists()){
       game = snap.val();
-      myPlayerId = game.players.findIndex(p=>!p)?? game.players.length;
-      if(myPlayerId>=game.players.length && game.players.length<4){
-        game.players.push({name:"P"+(game.players.length+1),money:1500,pos:0,props:[],inJail:0,color:playerColors[game.players.length]});
+      myPlayerId = game.players.length;
+      if(myPlayerId<4){
+        game.players.push({name:myName,money:1500,pos:0,props:[],inJail:0,doubles:0,color:playerColors[myPlayerId]});
         update(ref(db,'rooms/'+roomId),game);
       }
       startGame();
-    }else log("Room not found")
+    }
   },{onlyOnce:true});
 }
 
 const urlParams = new URLSearchParams(window.location.search);
-if(urlParams.get('room')){ document.getElementById('roomCode').value = urlParams.get('room'); joinRoom(); }
+if(urlParams.get('room')){ document.getElementById('roomCode').value = urlParams.get('room'); }
 
 function startGame(){
   document.getElementById('lobby').style.display='none';
   document.getElementById('game').style.display='flex';
   document.getElementById('currentRoom').innerText=roomId;
   initBoard();
-  onValue(ref(db,'rooms/'+roomId),(snap)=>{ if(snap.exists()){ game=snap.val(); updatePlayers(); updatePlayerInfo(); }});
+  onValue(ref(db,'rooms/'+roomId),(snap)=>{
+    if(snap.exists()){
+      game=snap.val();
+      updatePlayers();
+      updatePlayerInfo();
+      document.getElementById('freeParkingPot').innerText=`Free Parking: R${game.freeParkingPot}`;
+    }
+  });
 }
 
 function saveToFirebase(){ set(ref(db,'rooms/'+roomId),game); }
 
 function updatePlayers(){
-  for(let i=0;i<40;i++) document.getElementById('players'+i).innerHTML='';
+  for(let i=0;i<40;i++){
+    document.getElementById('players'+i).innerHTML='';
+    document.getElementById('houses'+i).innerHTML='';
+    document.getElementById('tile'+i).classList.remove('mortgaged');
+  }
   game.players.forEach((p)=>{
-    if(p.money>0){
+    if(p.money>=0){
       const el = document.createElement('div');
       el.className='p '+p.color;
+      el.title=p.name;
       document.getElementById('players'+p.pos).appendChild(el);
     }
+    p.props.forEach(propId=>{
+      if(BOARD[propId].mortgaged) document.getElementById('tile'+propId).classList.add('mortgaged');
+      const h = BOARD[propId].houses||0;
+      let houseHTML='';
+      for(let j=0;j<Math.min(h,4);j++) houseHTML+=`<div class="house"></div>`;
+      if(h==5) houseHTML=`<div class="hotel"></div>`;
+      document.getElementById('houses'+propId).innerHTML=houseHTML;
+    })
   });
 }
 
 function log(msg){ document.getElementById('info').innerHTML+=`<br>${msg}`; document.getElementById('info').scrollTop=9999; }
 
-// FIXED: 2 DICE
+// FULL RULES ROLL
 window.rollDice = () => {
   if(myPlayerId!== game.current){ log("Not your turn"); return; }
   const p = game.players[myPlayerId];
-  if(p.inJail>0){ jailTurn(); return; }
+  if(p.inJail>0){ log("You must pay or roll doubles to get out"); return; }
+
   const d1 = Math.floor(Math.random()*6)+1;
   const d2 = Math.floor(Math.random()*6)+1;
   document.getElementById('d1').innerText=['⚀','⚁','⚂','⚃','⚄','⚅'][d1-1];
   document.getElementById('d2').innerText=['⚀','⚁','⚂','⚃','⚄','⚅'][d2-1];
-  document.getElementById('d1').classList.add('die');document.getElementById('d2').classList.add('die');
-  setTimeout(()=>{document.getElementById('d1').classList.remove('die');document.getElementById('d2').classList.remove('die');},600);
+
   log(`${p.name} rolled ${d1}+${d2}`);
+
+  if(d1==d2) p.doubles++; else p.doubles=0;
+  if(p.doubles==3){ p.pos=10; p.inJail=3; p.doubles=0; log("3 DOUBLES! GO TO JAIL"); saveToFirebase(); return; }
+
   movePlayer(d1+d2, d1==d2);
   document.getElementById('rollBtn').disabled=true;
   saveToFirebase();
@@ -249,7 +281,7 @@ window.rollDice = () => {
 function movePlayer(steps, isDouble){
   const p = game.players[game.current];
   p.pos = (p.pos+steps)%40;
-  if(p.pos<steps) { p.money+=200; log(`${p.name} passed GO +$200`); }
+  if(p.pos<steps) { p.money+=200; log(`${p.name} passed GO +R200`); }
   updatePlayers();
   landOn(p.pos);
   if(isDouble) { document.getElementById('rollBtn').disabled=false; log("DOUBLES! Roll again"); }
@@ -260,11 +292,12 @@ function landOn(pos){
   log(`Landed on ${t.name}`);
   if(t.type=='property'){
     const ownerIdx = game.players.findIndex(pl=>pl.props.includes(pos));
-    if(ownerIdx==-1) showBuy(pos);
-    else if(ownerIdx!=game.current) payRent(p,game.players[ownerIdx],t);
+    if(ownerIdx==-1 &&!t.mortgaged) showBuy(pos);
+    else if(ownerIdx!=game.current &&!t.mortgaged) payRent(p,game.players[ownerIdx],t);
   }
-  if(t.type=='tax'){ p.money-=t.amount; log(`Paid $${t.amount} tax`); }
-  if(t.type=='gotojail'){ p.pos=10; p.inJail=3; log(`Go to Jail!`); }
+  if(t.type=='tax'){ p.money-=t.amount; game.freeParkingPot+=t.amount; log(`Paid R${t.amount} tax to Free Parking`); }
+  if(t.type=='gotojail'){ p.pos=10; p.inJail=3; log(`Go To Jail!`); }
+  if(t.type=='free'){ p.money+=game.freeParkingPot; log(`${p.name} collected R${game.freeParkingPot} from Free Parking!`); game.freeParkingPot=0; }
   if(t.type=='chance'||t.type=='chest') drawCard();
   checkBankruptcy(p);
   saveToFirebase();
@@ -272,12 +305,12 @@ function landOn(pos){
 
 function showBuy(pos){
   const t=BOARD[pos];
-  showModal(`${t.name}<br>Price: $${t.price}<br><button onclick="buyProperty(${pos})">BUY</button> <button onclick="startAuction(${pos})">AUCTION</button> <button onclick="closeModal()">SKIP</button>`);
+  showModal(`${t.name}<br>Price: R${t.price}<br><button onclick="buyProperty(${pos})">BUY</button> <button onclick="startAuction(${pos})">AUCTION</button> <button onclick="closeModal()">SKIP</button>`);
 }
 
 window.buyProperty = (pos) => {
   const p=game.players[game.current]; const t=BOARD[pos];
-  if(p.money>=t.price){ p.money-=t.price; p.props.push(pos); log(`${p.name} bought ${t.name}`); }
+  if(p.money>=t.price){ p.money-=t.price; p.props.push(pos); log(`${p.name} bought ${t.name} for R${t.price}`); }
   closeModal(); saveToFirebase();
 }
 
@@ -285,51 +318,78 @@ function payRent(payer,owner,t){
   const houses = t.houses||0;
   const rent = t.rent[houses];
   payer.money-=rent; owner.money+=rent;
-  log(`${payer.name} paid $${rent} rent to ${owner.name}`);
+  log(`${payer.name} paid R${rent} rent to ${owner.name}`);
 }
 
 window.buyHouse = () => {
   const p=game.players[game.current];
-  const props = p.props.filter(i=>BOARD[i].type=='property');
-  let html='Select property:<br>';
-  props.forEach(i=>{ html+=`<button onclick="addHouse(${i})">${BOARD[i].name} - $${BOARD[i].price/2}</button><br>`; });
+  const props = p.props.filter(i=>BOARD[i].type=='property' &&!BOARD[i].mortgaged);
+  let html='Buy House/Hotel R'+(BOARD[props[0]]?.price/2 || 0)+':<br>';
+  props.forEach(i=>{ html+=`<button onclick="addHouse(${i})">${BOARD[i].name}</button><br>`; });
   showModal(html);
 }
 
 window.addHouse = (pos) => {
   const p=game.players[game.current]; const t=BOARD[pos];
   const cost = t.price/2;
-  if(p.money>=cost && game.houses>0){ p.money-=cost; t.houses=(t.houses||0)+1; game.houses--; log(`Bought house on ${t.name}`); }
+  if(p.money>=cost && game.houses>0){
+    p.money-=cost;
+    t.houses=(t.houses||0)+1;
+    if(t.houses==5){game.houses+=4; game.hotels--;} else {game.houses--;}
+    log(`Bought on ${t.name} for R${cost}`);
+  }
   closeModal(); saveToFirebase();
 }
 
-function jailTurn(){
-  const p=game.players[game.current];
-  p.inJail--;
-  if(p.money>=50){ p.money-=50; p.inJail=0; log(`${p.name} paid $50 to get out`); }
-  else log(`${p.name} still in jail ${p.inJail} turns left`);
-  saveToFirebase();
+window.mortgageMenu = () => {
+  const p=game.players[myPlayerId];
+  let html='Mortgage for 50%:<br>';
+  p.props.forEach(i=>{
+    if(!BOARD[i].mortgaged) html+=`<button onclick="doMortgage(${i})">${BOARD[i].name} +R${BOARD[i].price/2}</button><br>`;
+    else html+=`<button onclick="unMortgage(${i})">${BOARD[i].name} -R${BOARD[i].price*0.55}</button><br>`;
+  });
+  showModal(html);
+}
+window.doMortgage = (pos) => {
+  game.players[myPlayerId].money += BOARD[pos].price/2;
+  BOARD[pos].mortgaged=true;
+  log(`Mortgaged ${BOARD[pos].name} +R${BOARD[pos].price/2}`);
+  closeModal(); saveToFirebase();
+}
+window.unMortgage = (pos) => {
+  const cost = BOARD[pos].price*0.55;
+  if(game.players[myPlayerId].money>=cost){
+    game.players[myPlayerId].money -= cost;
+    BOARD[pos].mortgaged=false;
+    log(`Unmortgaged ${BOARD[pos].name} -R${cost}`);
+  }
+  closeModal(); saveToFirebase();
+}
+
+window.payJail = () => {
+  const p=game.players[myPlayerId];
+  if(p.inJail>0 && p.money>=50){ p.money-=50; p.inJail=0; log(`${p.name} paid R50 to get out of jail`); saveToFirebase(); }
 }
 
 function drawCard(){
-  const cards=["Advance to GO +$200","Go to Jail","Pay $50","Collect $100","Bank error +$200"];
+  const cards=["Advance to GO +R200","Go to Jail","Pay R50","Collect R100","Bank error +R200","Pay R50 to Free Parking"];
   const card=cards[Math.floor(Math.random()*cards.length)];
   log(`Card: ${card}`);
   const p=game.players[game.current];
   if(card.includes("GO")){ p.pos=0; p.money+=200; }
   if(card.includes("Jail")){ p.pos=10; p.inJail=3; }
+  if(card.includes("Pay R50 to Free")) game.freeParkingPot+=50;
   if(card.includes("Pay")) p.money-=50;
   if(card.includes("Collect")||card.includes("Bank")) p.money+=200;
 }
 
 window.openTrade = () => {
-  let html="Select player to trade with:<br>";
+  let html="Trade with:<br>";
   game.players.forEach((pl,i)=>{ if(i!=game.current) html+=`<button onclick="tradeWith(${i})">${pl.name}</button>` });
   showModal(html);
 }
-
 window.tradeWith = (otherId) => {
-  showModal(`Trading with ${game.players[otherId].name} <br><i>Full trade UI: offer money/props</i><br><button onclick='closeModal()'>Close</button>`);
+  showModal(`Trading with ${game.players[otherId].name} <br><button onclick='closeModal()'>Close</button>`);
 }
 
 window.startAuction = (pos) => {
@@ -343,7 +403,7 @@ window.endTurn = () => {
   saveToFirebase();
 }
 
-window.godMode = () => { game.players[myPlayerId].money+=1000; log("GOD MODE: +$1000"); saveToFirebase(); }
+window.godMode = () => { game.players[myPlayerId].money+=1000; log("FORTRESS MODE: +R1000"); saveToFirebase(); }
 
 function checkBankruptcy(p){
   if(p.money<0){ log(`${p.name} IS BANKRUPT!`); p.props=[]; }
@@ -351,16 +411,15 @@ function checkBankruptcy(p){
 
 function updatePlayerInfo(){
   const p=game.players[game.current];
-  let html=`<b>Turn: ${p.name}</b><br>Money: $${p.money}`;
+  let html=`<b>Turn: ${p.name}</b><br>Money: R${p.money} ${p.inJail>0? '| IN JAIL':''}`;
   document.getElementById('playerInfo').innerHTML=html;
   let props='';
-  p.props.forEach(i=>{ props+=`<div class="prop-item">${BOARD[i].name} ${BOARD[i].houses?'H:'+BOARD[i].houses:''}</div>` });
+  p.props.forEach(i=>{ props+=`<div class="prop-item">${BOARD[i].name} ${BOARD[i].houses?'H:'+BOARD[i].houses:''} ${BOARD[i].mortgaged?'[M]':''}</div>` });
   document.getElementById('propList').innerHTML=props;
 }
 
 function showModal(c){ document.getElementById('modalContent').innerHTML=c; document.getElementById('modal').style.display='flex'; }
 window.closeModal = () => { document.getElementById('modal').style.display='none'; }
-window.declareBankruptcy = () => { game.players[myPlayerId].money=0; log("You quit"); saveToFirebase(); }
 </script>
 </body>
 </html>
