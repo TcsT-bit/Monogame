@@ -2,137 +2,240 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FORTRESS MONOPOLY SA - LINK MULTIPLAYER</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SHANA PRINCESS - GOD TIER 2026</title>
 <style>
-  /* ... KEEP ALL YOUR CSS FROM ABOVE ... */
-  .code-box{background:#000;padding:10px;border-radius:8px;font-family:monospace;word-break:break-all;font-size:11px;max-height:100px;overflow-y:auto}
+  :root{
+    --bg1:#1a0033;--bg2:#4a0080;--bg3:#ff00ff;
+    --gold:#ffd700;--pink:#ff69b4;--cyan:#00ffff;
+    --glass:rgba(255,255,255,0.1);--blur:25px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;user-select:none}
+  body{
+    background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    color:#fff;overflow:hidden;height:100vh;
+    background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.3"/></svg>');
+  }
+  @keyframes glow{0%,100%{filter:drop-shadow(0 0 10px var(--pink))}50%{filter:drop-shadow(0 0 20px var(--cyan))}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+  #loading{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;z-index:999}
+  .title{font-size:clamp(30px,8vw,80px);font-weight:900;background:linear-gradient(90deg,#ffd700,#ff69b4,#00ffff,#ffd700);background-size:300%;
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glow 2s infinite, float 3s infinite}
+
+  #menu{display:none;text-align:center;padding:20px}
+  .btn{
+    background:linear-gradient(90deg,var(--gold),var(--pink));color:#000;border:none;
+    padding:15px 30px;margin:10px;border-radius:20px;font-weight:900;font-size:16px;cursor:pointer;
+    box-shadow:0 0 20px rgba(255,105,180,.5);transition:.3s
+  }
+  .btn:hover{transform:scale(1.1) rotate(-2deg);box-shadow:0 0 40px var(--cyan)}
+
+  #game{display:none;width:100%;height:100%;position:relative}
+  #topbar{display:flex;justify-content:space-between;padding:10px;background:var(--glass);backdrop-filter:blur(var(--blur))}
+  .stat{background:var(--glass);padding:8px 15px;border-radius:15px;border:2px solid var(--gold)}
+
+  #mainCanvas{width:100%;height:calc(100% - 60px);background:#000}
+  #ui{position:absolute;bottom:0;left:0;width:100%;display:flex;gap:10px;padding:10px;justify-content:center}
+
+  .wardrobe{position:absolute;right:0;top:60px;width:300px;height:calc(100% - 120px);background:var(--glass);backdrop-filter:blur(var(--blur));overflow-y:auto;padding:10px;border-left:3px solid var(--pink)}
+  .item{width:80px;height:80px;background:rgba(255,255,255,.2);margin:5px;display:inline-block;border-radius:10px;cursor:pointer;border:2px solid transparent}
+  .item:hover{border-color:var(--gold);transform:scale(1.1)}
+
+  #dragon{position:absolute;left:20px;bottom:100px;width:120px;height:120px;animation:float 2s infinite;cursor:grab}
+  #questLog{position:absolute;left:10px;top:70px;width:250px;background:var(--glass);padding:10px;border-radius:15px;font-size:12px;max-height:200px;overflow-y:auto}
 </style>
 </head>
 <body>
-<h1>FORTRESS MONOPOLY SA 🇿🇦 - LINK MODE</h1>
-<div id="rules">
-<b>HOW TO PLAY:</b> Play turn → "Generate Code" → Send code to friend → They "Load Code" → Play → Send back
-</div>
 
-<div id="lobby">
-  <h2>Start Game</h2>
-  <input id="playerName" placeholder="Your Name">
-  <button onclick="startOffline()">NEW GAME 2-4 PLAYERS</button>
+<div id="loading"><div class="title">SHANA PRINCESS<br><span style="font-size:20px">GOD TIER 2026</span></div></div>
+
+<div id="menu">
+  <h1 class="title">SHANA PRINCESS</h1>
+  <p style="margin:20px">Fashion + Magic + Dragons + Rhythm</p>
+  <button class="btn" onclick="startGame('adventure')">ADVENTURE MODE</button>
+  <button class="btn" onclick="startGame('academy')">COVEN ACADEMY</button>
+  <button class="btn" onclick="startGame('battle')">DRAGON ARENA</button>
+  <button class="btn" onclick="loadGame()">LOAD GAME</button>
 </div>
 
 <div id="game">
-  <div id="board"></div>
-  <div id="panel">
-    <div><b>Turn:</b> <span id="currentPlayer"></span></div>
-    <div id="diceWrap"><span class="die" id="d1">⚀</span><span class="die" id="d2">⚀</span></div>
-    <button id="rollBtn" onclick="rollDice()">ROLL DICE</button>
-    <button onclick="endTurn()">END TURN</button>
-    <button onclick="buyHouse()">BUY HOUSE/HOTEL</button>
-    <button onclick="mortgageMenu()">MORTGAGE</button>
-    <button onclick="generateCode()">1. GENERATE TURN CODE</button>
-    <button onclick="loadCodePrompt()">2. LOAD CODE FROM FRIEND</button>
-    <button onclick="godMode()">FORTRESS MODE +R1000</button>
-    <div id="info"><b>Game Log:</b></div>
-    <div id="playerInfo"></div>
-    <div class="prop-list" id="propList"></div>
+  <div id="topbar">
+    <div class="stat">💎 Gems: <span id="gems">1000</span></div>
+    <div class="stat">👑 Level: <span id="level">1</span></div>
+    <div class="stat">❤️ Energy: <span id="energy">100</span></div>
+    <div class="stat">🐉 Dragon: <span id="dragonLevel">1</span></div>
+  </div>
+  
+  <canvas id="mainCanvas"></canvas>
+  
+  <div id="questLog"><b>QUESTS:</b><br>1. Collect 3 Crystal Outfits<br>2. Win Dragon Battle<br>3. Attend Royal Ball</div>
+  
+  <div id="dragon" onclick="feedDragon()">🐉</div>
+  
+  <div class="wardrobe" id="wardrobe">
+    <h3>DRESS UP</h3>
+    <div class="item" onclick="equip(0)" style="background:linear-gradient(red,orange)">🔥 Fire Dress</div>
+    <div class="item" onclick="equip(1)" style="background:linear-gradient(cyan,blue)">❄️ Ice Gown</div>
+    <div class="item" onclick="equip(2)" style="background:linear-gradient(pink,purple)">✨ Royal Robe</div>
+    <div class="item" onclick="equip(3)" style="background:linear-gradient(green,lime)">🌿 Nature Set</div>
+    <div class="item" onclick="gacha()">🎁 GACHA R50</div>
+  </div>
+
+  <div id="ui">
+    <button class="btn" onclick="battle()">⚔️ BATTLE</button>
+    <button class="btn" onclick="rhythm()">🎵 RHYTHM</button>
+    <button class="btn" onclick="school()">🏫 SCHOOL</button>
+    <button class="btn" onclick="saveGame()">💾 SAVE</button>
   </div>
 </div>
 
-<div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
-
 <script>
-// KEEP YOUR BOARD + COLORS FROM YOUR CODE ABOVE
+// GOD TIER GAME ENGINE
+let gameState = {
+  gems:1000, level:1, energy:100, dragonLevel:1,
+  outfit:0, dragonHunger:100, quests:[0,1,2],
+  inventory:['Fire Dress','Starter Wand'],
+  mode:'adventure'
+};
 
-let game, myPlayerId=0;
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 120;
 
-function initBoard(){ /* SAME AS YOURS */ }
-
-// NEW: COMPRESS GAME TO CODE
-window.generateCode = () => {
-  const gameString = JSON.stringify(game);
-  const compressed = btoa(encodeURIComponent(gameString)); // base64
-  showModal(`Send this code to next player:<br><div class="code-box">${compressed}</div><button onclick="navigator.clipboard.writeText('${compressed}')">COPY CODE</button>`);
-  log("Code generated. Send it to next player on WhatsApp");
-}
-
-// NEW: LOAD GAME FROM CODE
-window.loadCodePrompt = () => {
-  showModal(`Paste code from friend:<br><textarea id="codeInput" style="width:100%;height:100px"></textarea><br><button onclick="loadCode()">LOAD GAME</button>`);
-}
-
-window.loadCode = () => {
-  const code = document.getElementById('codeInput').value;
-  try{
-    const decompressed = decodeURIComponent(atob(code));
-    game = JSON.parse(decompressed);
-    closeModal();
-    startGame();
-    log("Game loaded! It's now " + game.players[game.current].name + "'s turn");
-  }catch(e){
-    alert("Invalid code!");
+// TEXTURES - PROCEDURAL 2026 STYLE
+function drawBackground(){
+  const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
+  gradient.addColorStop(0, '#ff00ff');
+  gradient.addColorStop(1, '#1a0033');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  // Floating particles
+  for(let i=0;i<50;i++){
+    ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.5})`;
+    ctx.beginPath();
+    ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*3, 0, Math.PI*2);
+    ctx.fill();
   }
 }
 
-window.startOffline = () => {
-  const name = document.getElementById('playerName').value || "Player1";
-  const playerCount = parseInt(prompt("How many players? 2-4","2"));
-  game = {players:[],current:0,houses:32,hotels:12,freeParkingPot:0};
-  for(let i=0;i<playerCount;i++){
-    game.players.push({name: i==0?name:`Player${i+1}`,money:1500,pos:0,props:[],inJail:0,doubles:0,color:playerColors[i]});
+function drawPlayer(){
+  ctx.font = '80px serif';
+  ctx.fillText('👑', canvas.width/2-40, canvas.height/2);
+  // Outfit effects
+  if(gameState.outfit==0) ctx.fillStyle='rgba(255,0,0,0.3)';
+  if(gameState.outfit==1) ctx.fillStyle='rgba(0,255,255,0.3)';
+  ctx.fillRect(canvas.width/2-50, canvas.height/2-50, 100, 100);
+}
+
+// CORE FEATURES
+function startGame(mode){
+  gameState.mode = mode;
+  document.getElementById('loading').style.display='none';
+  document.getElementById('menu').style.display='none';
+  document.getElementById('game').style.display='block';
+  gameLoop();
+}
+
+function gameLoop(){
+  drawBackground();
+  drawPlayer();
+  updateUI();
+  requestAnimationFrame(gameLoop);
+}
+
+function updateUI(){
+  document.getElementById('gems').innerText = gameState.gems;
+  document.getElementById('level').innerText = gameState.level;
+  document.getElementById('energy').innerText = gameState.energy;
+  document.getElementById('dragonLevel').innerText = gameState.dragonLevel;
+}
+
+// WARDROBE WARRIORS
+function equip(id){
+  gameState.outfit = id;
+  gameState.energy -= 5;
+  alert(`Equipped! New power unlocked!`);
+}
+
+// DRAGON DIVA
+function feedDragon(){
+  if(gameState.gems>=10){
+    gameState.gems-=10;
+    gameState.dragonHunger=100;
+    gameState.dragonLevel++;
+    alert(`Dragon leveled up to ${gameState.dragonLevel}!`);
   }
-  startGame();
 }
 
-function startGame(){
-  document.getElementById('lobby').style.display='none';
-  document.getElementById('game').style.display='flex';
-  initBoard();
-  updatePlayers();
-  updatePlayerInfo();
+// RHYTHM BATTLE
+function rhythm(){
+  let score=0;
+  const notes = ['↑','↓','←','→'];
+  for(let i=0;i<4;i++){
+    if(confirm(`Hit: ${notes[Math.floor(Math.random()*4)]}`)) score+=25;
+  }
+  gameState.gems += score;
+  alert(`Rhythm Score: ${score}! +${score} gems`);
 }
 
-function saveGame(){ localStorage.setItem('fortressSA',JSON.stringify(game)); }
-
-// KEEP ALL YOUR OTHER FUNCTIONS: rollDice, movePlayer, landOn, buyProperty etc
-// JUST CHANGE THEM TO CALL saveGame() AT THE END
-
-window.rollDice = () => {
-  if(myPlayerId!== game.current){ log("Not your turn"); return; }
-  // ... SAME DICE CODE ...
-  const d1 = Math.floor(Math.random()*6)+1;
-  const d2 = Math.floor(Math.random()*6)+1;
-  document.getElementById('d1').innerText=['⚀','⚁','⚂','⚃','⚄','⚅'][d1-1];
-  document.getElementById('d2').innerText=['⚀','⚁','⚂','⚃','⚄','⚅'][d2-1];
-  log(`${game.players[game.current].name} rolled ${d1}+${d2}`);
-  movePlayer(d1+d2, d1==d2);
-  document.getElementById('rollBtn').disabled=true;
-  saveGame();
+// BATTLE SYSTEM
+function battle(){
+  if(gameState.energy<20) return alert("No energy!");
+  gameState.energy-=20;
+  const win = Math.random() > 0.3;
+  if(win){
+    gameState.gems+=100;
+    gameState.level++;
+    alert("VICTORY! +100 gems +1 level");
+  } else {
+    alert("You lost! Try a new outfit!");
+  }
 }
 
-function movePlayer(steps, isDouble){ /* SAME AS YOURS */ }
-function landOn(pos){ /* SAME AS YOURS */ }
-function buyProperty(pos){ /* SAME AS YOURS */ }
-function endTurn(){ 
-  game.current=(game.current+1)%game.players.length;
-  document.getElementById('rollBtn').disabled=false;
-  updatePlayerInfo();
-  saveGame();
-  log(`Turn passed to ${game.players[game.current].name}. Generate code now!`);
+// COVEN ACADEMY
+function school(){
+  const classes = ['Potion Making','Spell Styling','Dragon Care'];
+  const chosen = prompt(`Choose class:\n1. ${classes[0]}\n2. ${classes[1]}\n3. ${classes[2]}`);
+  gameState.gems+=50;
+  alert(`${classes[chosen-1]} complete! +50 gems`);
 }
-window.godMode = () => { game.players[game.current].money+=1000; log("FORTRESS MODE: +R1000"); saveGame(); }
 
-// KEEP updatePlayers, updatePlayerInfo, showModal, closeModal FROM YOUR CODE
-function updatePlayers(){ /* SAME */ }
-function updatePlayerInfo(){
-  const p=game.players[game.current];
-  document.getElementById('currentPlayer').innerText=p.name;
-  let html=`<b>Turn: ${p.name}</b><br>Money: R${p.money}`;
-  document.getElementById('playerInfo').innerHTML=html;
-  // ... rest same
+// GACHA SYSTEM
+function gacha(){
+  if(gameState.gems<50) return alert("Not enough gems!");
+  gameState.gems-=50;
+  const items = ['Legendary Gown','Dragon Egg','Magic Tiara','Crystal Wings'];
+  const won = items[Math.floor(Math.random()*4)];
+  gameState.inventory.push(won);
+  alert(`YOU GOT: ${won}!`);
 }
-function showModal(c){ document.getElementById('modalContent').innerHTML=c; document.getElementById('modal').style.display='flex'; }
-window.closeModal = () => { document.getElementById('modal').style.display='none'; }
+
+// SAVE SYSTEM
+function saveGame(){
+  localStorage.setItem('shanaPrincess', JSON.stringify(gameState));
+  alert("Game Saved!");
+}
+function loadGame(){
+  const data = localStorage.getItem('shanaPrincess');
+  if(data){ gameState = JSON.parse(data); startGame('adventure'); }
+  else alert("No save found");
+}
+
+// START
+setTimeout(()=>{ 
+  document.getElementById('loading').style.display='none'; 
+  document.getElementById('menu').style.display='block'; 
+}, 2000);
+
+// KEYBOARD CONTROLS
+window.addEventListener('keydown', e=>{
+  if(e.key=='b') battle();
+  if(e.key=='r') rhythm();
+  if(e.key=='s') saveGame();
+});
 </script>
 </body>
 </html>
