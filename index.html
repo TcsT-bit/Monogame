@@ -53,41 +53,50 @@ const ECS=(()=>{let id=0,entities=new Set(),comps=new Map();return{create:()=>{c
 const Pool=class{constructor(fn,n){this.fn=fn;this.pool=Array.from({length:n},fn)}acquire(){return this.pool.pop()||this.fn()}release(o){this.pool.push(o)}};
 const Store={gems:1000,level:1,energy:100,dragonLevel:1,outfit:0,mode:'adventure'};
 const OUTFITS=[{c1:"#ff3300",c2:"#ff9900",glow:"#ff6600"},{c1:"#00ccff",c2:"#0066ff",glow:"#00ffff"},{c1:"#ff66cc",c2:"#9900ff",glow:"#ff00ff"},{c1:"#33cc33",c2:"#99ff00",glow:"#00ff00"},{c1:"#ffd700",c2:"#007A4D",glow:"#ffd700"}];
-const gl=document.getElementById('gl').getContext('webgl',{antialias:true,alpha:false});
+
+const canvas=document.getElementById('gl');
+const gl=canvas.getContext('webgl',{antialias:true,alpha:false});
 if(!gl)throw new Error('WebGL not supported');
+
 const vs=`attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`,fs=`precision highp float;uniform vec3 c;void main(){gl_FragColor=vec4(c,1);}`;
-const prog=gl.createProgram();[vs,fs].forEach((s,i)=>{const sh=gl.createShader(i?gl.FRAGMENT_SHADER:gl.VERTEX_SHADER);gl.shaderSource(sh,s);gl.compileShader(sh);gl.attachShader(prog,sh)});gl.linkProgram(prog);
+const prog=gl.createProgram();
+[vs,fs].forEach((s,i)=>{const sh=gl.createShader(i?gl.FRAGMENT_SHADER:gl.VERTEX_SHADER);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(sh);gl.attachShader(prog,sh)});
+gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw gl.getProgramInfoLog(prog);
+
 const buf=gl.createBuffer(),loc=gl.getAttribLocation(prog,'p'),uloc=gl.getUniformLocation(prog,'c');
-const particlePool=new Pool(()=>({x:0,y:0,vx:0,vy:0,life:0,color:[1,1,1]}),500);
+const particlePool=new Pool(()=>({x:0,y:0,vx:0,vy:0,life:0}),500);
 let particles=[],frame=0,raf=null,running=false;
+
+const hex2rgb=h=>h.match(/\w\w/g).map(x=>parseInt(x,16)/255);
+
 const Systems={
-render:(dt)=>{
-gl.viewport(0,0,gl.canvas.width,gl.canvas.height);
+render:()=>{
+gl.viewport(0,0,canvas.width,canvas.height);
 gl.clearColor(.1,.05,.2,1);gl.clear(gl.COLOR_BUFFER_BIT);
 gl.useProgram(prog);gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
-const o=OUTFITS[Store.outfit];
-gl.uniform3f(uloc,...o.glow.match(/\w\w/g).map(x=>parseInt(x,16)/255));
-const verts=new Float32Array([-0.3,0.3,0.3,0.3,0, -0.2]);gl.bufferData(gl.ARRAY_BUFFER,verts,gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,3);
+const o=OUTFITS[Store.outfit];gl.uniform3fv(uloc,hex2rgb(o.glow));
+const verts=new Float32Array([-0.3,0.3,0.3,0.3,0,-0.2]);gl.bufferData(gl.ARRAY_BUFFER,verts,gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,3);
 particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life--;return p.life>0});
 },
-input:()=>{},
 state:()=>{document.getElementById('gems').textContent=Store.gems;document.getElementById('level').textContent=Store.level;document.getElementById('energy').textContent=Store.energy;document.getElementById('dragonLevel').textContent=Store.dragonLevel;}
 };
+
 const Game={
-start:(mode)=>{Store.mode=mode;document.getElementById('loading').style.display='none';document.getElementById('menu').style.display='none';document.getElementById('game').style.display='block';Game.initUI();Game.loop(0)},
-loop:(t)=>{if(!running)return;const dt=16;Systems.input(dt);Systems.render(dt);Systems.state();frame++;raf=requestAnimationFrame(Game.loop)},
+start:(mode)=>{Store.mode=mode;document.getElementById('loading').style.display='none';document.getElementById('menu').style.display='none';document.getElementById('game').style.display='block';running=true;Game.initUI();Game.loop()},
+loop:()=>{if(!running)return;Systems.render();Systems.state();frame++;raf=requestAnimationFrame(Game.loop)},
 initUI:()=>{const w=document.getElementById('wardrobe');w.innerHTML='';OUTFITS.forEach((o,i)=>{const d=document.createElement('div');d.className='item'+(i===Store.outfit?' active':'');d.style.background=`linear-gradient(${o.c1},${o.c2})`;d.onclick=()=>Game.equip(i);w.appendChild(d)})},
 equip:(id)=>{Store.outfit=id;Store.energy=Math.max(0,Store.energy-5);Game.initUI();Game.spawn(canvas.width/2,canvas.height/2,20)},
-battle:()=>{if(Store.energy<20)return;Store.energy-=20;const win=Math.random()<0.3+Store.outfit*0.1;if(win){Store.gems+=100;Store.level++;Game.spawn(canvas.width/2,canvas.height/2,30)}},
+battle:()=>{if(Store.energy<20)return;Store.energy-=20;if(Math.random()<0.3+Store.outfit*0.1){Store.gems+=100;Store.level++;Game.spawn(canvas.width/2,canvas.height/2,30)}},
 rhythm:()=>{let s=0;for(let i=0;i<4;i++)if(Math.random()>.5)s+=25;Store.gems+=s},
 school:()=>{Store.gems+=50;Store.energy=Math.max(0,Store.energy-10)},
-save:()=>{try{localStorage.setItem('sp',JSON.stringify(Store))}catch{}},
-load:()=>{try{const d=localStorage.getItem('sp');if(d)Object.assign(Store,JSON.parse(d));Game.start(Store.mode)}catch{}},
-spawn:(x,y,n)=>{for(let i=0;i<n;i++){const p=particlePool.acquire();p.x=x;p.y=y;p.vx=(Math.random()-.5)*4;p.vy=(Math.random()-.5)*4;p.life=60;p.color=[1,1,1];particles.push(p)}}
+save:()=>{try{localStorage.setItem('sp',JSON.stringify(Store))}catch(e){console.error(e)}},
+load:()=>{try{const d=localStorage.getItem('sp');if(d)Object.assign(Store,JSON.parse(d));Game.start(Store.mode)}catch(e){console.error(e)}},
+spawn:(x,y,n)=>{for(let i=0;i<n;i++){const p=particlePool.acquire();p.x=x;p.y=y;p.vx=(Math.random()-.5)*4;p.vy=(Math.random()-.5)*4;p.life=60;particles.push(p)}}
 };
-running=true;Game.loop(0);
+
 setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('menu').style.display='grid'},1500);
-addEventListener('resize',()=>{gl.canvas.width=innerWidth;gl.canvas.height=innerHeight-60});
+addEventListener('resize',()=>{canvas.width=innerWidth;canvas.height=innerHeight-60});
+canvas.width=innerWidth;canvas.height=innerHeight-60;
 </script>
 </body>
 </html>
