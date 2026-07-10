@@ -48,39 +48,33 @@ body{background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));overflo
 <button class="btn" onclick="G.save()">SAVE</button>
 </div>
 </div>
-<script type="module">
-type Entity=number;type System=(dt:number)=>void;type ComponentMap<T>=Map<Entity,T>;
-interface Vec2{x:number;y:number}interface Particle{vel:Vec2;life:number;maxLife:number;x:number;y:number}
-interface Store{gems:number;level:number;energy:number;dragonLevel:number;outfit:number;mode:string}
+<script>
 const OUTFITS=[{c1:"#ff3300",c2:"#ff9900",glow:"#ff6600"},{c1:"#00ccff",c2:"#0066ff",glow:"#00ffff"},{c1:"#ff66cc",c2:"#9900ff",glow:"#ff00ff"},{c1:"#33cc33",c2:"#99ff00",glow:"#00ff00"},{c1:"#ffd700",c2:"#007A4D",glow:"#ffd700"}];
-class ECS{private id=0;private entities=new Set<Entity>();private components=new Map<string,ComponentMap<any>>();create():Entity{const e=this.id++;this.entities.add(e);return e}add<T>(e:Entity,k:string,c:T):void{if(!this.components.has(k))this.components.set(k,new Map());this.components.get(k)!.set(e,c)}get<T>(e:Entity,k:string):T|undefined{return this.components.get(k)?.get(e)}query(...ks:string[]):Entity[]{return[...this.entities].filter(e=>ks.every(k=>this.components.get(k)?.has(e)))}}
-class Pool<T>{private pool:T[]=[];constructor(private fn:()=>T,size:number){for(let i=0;i<size;i++)this.pool.push(fn())}acquire():T{return this.pool.pop()||this.fn()}release(o:T):void{this.pool.push(o)}}
-class Storage{private key='sp_v1';save(s:Store):void{try{localStorage.setItem(this.key,JSON.stringify(s))}catch{const r=indexedDB.open('sp',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>r.result.transaction('k','readwrite').objectStore('k').put(s,'s')}}load():Store|null{try{const d=localStorage.getItem(this.key);return d?JSON.parse(d):null}catch{return null}}}
+class ECS{constructor(){this.id=0;this.entities=new Set();this.components=new Map()}create(){const e=this.id++;this.entities.add(e);return e}add(e,k,c){if(!this.components.has(k))this.components.set(k,new Map());this.components.get(k).set(e,c)}get(e,k){return this.components.get(k)?.get(e)}}
+class Pool{constructor(fn,size){this.fn=fn;this.pool=Array.from({length:size},fn)}acquire(){return this.pool.pop()||this.fn()}release(o){this.pool.push(o)}}
+class Storage{constructor(){this.key='sp_v1'}save(s){try{localStorage.setItem(this.key,JSON.stringify(s))}catch{}}load(){try{const d=localStorage.getItem(this.key);return d?JSON.parse(d):null}catch{return null}}}
 class Game{
-private ecs=new ECS();private systems:System[]=[];private gl!:WebGL2RenderingContext;private prog!:WebGLProgram;private buf!:WebGLBuffer;private running=false;private last=0;private particlePool=new Pool<Particle>(()=>({vel:{x:0,y:0},life:0,maxLife:0,x:0,y:0}),1000);private particles:Particle[]=[];private store:Store={gems:1000,level:1,energy:100,dragonLevel:1,outfit:0,mode:'adventure'};private storage=new Storage();
-constructor(private canvas:HTMLCanvasElement){const gl=canvas.getContext('webgl2',{antialias:true,alpha:false});if(!gl)throw new Error('WEBGL2');this.gl=gl;this.initGL();this.registerSystems();this.resize();addEventListener('resize',()=>this.resize())}
-private initGL():void{const gl=this.gl;const vs=`#version 300 es
+constructor(canvas){this.canvas=canvas;this.gl=canvas.getContext('webgl2',{antialias:true,alpha:false});if(!this.gl)throw new Error('WEBGL2');this.ecs=new ECS();this.systems=[];this.particlePool=new Pool(()=>({vel:{x:0,y:0},life:0,maxLife:0,x:0,y:0}),1000);this.particles=[];this.store={gems:1000,level:1,energy:100,dragonLevel:1,outfit:0,mode:'adventure'};this.storage=new Storage();this.running=false;this.last=0;this.initGL();this.registerSystems();this.resize();addEventListener('resize',()=>this.resize())}
+initGL(){const gl=this.gl;const vs=`#version 300 es
 in vec2 p;uniform mat3 u;void main(){vec3 pos=u*vec3(p,1.);gl_Position=vec4(pos.xy,0,1);}`;const fs=`#version 300 es
-precision highp float;uniform vec3 c;out vec4 o;void main(){o=vec4(c,1);}`;const compile=(t:number,s:string):WebGLShader=>{const sh=gl.createShader(t)!;gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(sh)!;return sh};this.prog=gl.createProgram()!;gl.attachShader(this.prog,compile(gl.VERTEX_SHADER,vs));gl.attachShader(this.prog,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(this.prog);if(!gl.getProgramParameter(this.prog,gl.LINK_STATUS))throw gl.getProgramInfoLog(this.prog)!;this.buf=gl.createBuffer()!}
-private registerSystems():void{this.systems.push(this.render.bind(this));this.systems.push(this.particles.bind(this));this.systems.push(this.ui.bind(this))}
-private render():void{const gl=this.gl;gl.viewport(0,0,gl.canvas.width,gl.canvas.height);gl.clearColor(.1,.05,.2,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.prog);gl.bindBuffer(gl.ARRAY_BUFFER,this.buf);const loc=gl.getAttribLocation(this.prog,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);const uloc=gl.getUniformLocation(this.prog,'u')!;const cloc=gl.getUniformLocation(this.prog,'c')!;const o=OUTFITS[this.store.outfit];gl.uniformMatrix3fv(uloc,false,new Float32Array([1,0,0,0,1,0,0,0,1]));gl.uniform3fv(cloc,new Float32Array(o.glow.match(/\w\w/g)!.map(x=>parseInt(x,16)/255)));gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-0.3,0.3,0.3,0.3,0,-0.2]),gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,3)}
-private particles(dt:number):void{this.particles=this.particles.filter(p=>{p.x+=p.vel.x;p.y+=p.vel.y;p.life-=dt;return p.life>0})}
-private ui():void{document.getElementById('gems')!.textContent=String(this.store.gems);document.getElementById('level')!.textContent=String(this.store.level);document.getElementById('energy')!.textContent=String(this.store.energy);document.getElementById('dragonLevel')!.textContent=String(this.store.dragonLevel)}
-private loop=(t:number):void=>{if(!this.running)return;const dt=Math.min(32,t-this.last);this.last=t;for(const s of this.systems)s(dt);requestAnimationFrame(this.loop)};
-start(mode:string):void{this.store.mode=mode;document.getElementById('loading')!.style.display='none';document.getElementById('menu')!.style.display='none';document.getElementById('game')!.style.display='block';this.running=true;this.last=performance.now();this.initUI();this.loop(this.last)}
-stop():void{this.running=false}
-initUI():void{const w=document.getElementById('wardrobe')!;w.innerHTML='';OUTFITS.forEach((o,i)=>{const d=document.createElement('div');d.className='item'+(i===this.store.outfit?' active':'');d.style.background=`linear-gradient(${o.c1},${o.c2})`;d.onclick=()=>this.equip(i);w.appendChild(d)})}
-equip(id:number):void{this.store.outfit=id;this.store.energy=Math.max(0,this.store.energy-5);this.initUI();this.spawn(this.canvas.width/2,this.canvas.height/2,20)}
-battle():void{if(this.store.energy<20)return;this.store.energy-=20;if(Math.random()<0.3+this.store.outfit*0.1){this.store.gems+=100;this.store.level++;this.spawn(this.canvas.width/2,this.canvas.height/2,30)}}
-rhythm():void{let s=0;for(let i=0;i<4;i++)if(Math.random()>.5)s+=25;this.store.gems+=s}
-school():void{this.store.gems+=50;this.store.energy=Math.max(0,this.store.energy-10)}
-save():void{this.storage.save(this.store)}
-load():void{const d=this.storage.load();if(d)Object.assign(this.store,d);this.start(this.store.mode)}
-spawn(x:number,y:number,n:number):void{for(let i=0;i<n;i++){const p=this.particlePool.acquire();p.x=x;p.y=y;p.vel.x=(Math.random()-.5)*4;p.vel.y=(Math.random()-.5)*4;p.life=p.maxLife=1000;this.particles.push(p)}}
-private resize():void{this.gl.canvas.width=innerWidth;this.gl.canvas.height=innerHeight-60}
-}
-const G=new Game(document.getElementById('gl') as HTMLCanvasElement);
-setTimeout(()=>{document.getElementById('loading')!.style.display='none';document.getElementById('menu')!.style.display='grid'},1500);
+precision highp float;uniform vec3 c;out vec4 o;void main(){o=vec4(c,1);}`;const compile=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(sh);return sh};this.prog=gl.createProgram();gl.attachShader(this.prog,compile(gl.VERTEX_SHADER,vs));gl.attachShader(this.prog,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(this.prog);if(!gl.getProgramParameter(this.prog,gl.LINK_STATUS))throw gl.getProgramInfoLog(this.prog);this.buf=gl.createBuffer()}
+registerSystems(){this.systems.push(this.render.bind(this));this.systems.push(this.particles.bind(this));this.systems.push(this.ui.bind(this))}
+render(){const gl=this.gl;gl.viewport(0,0,gl.canvas.width,gl.canvas.height);gl.clearColor(.1,.05,.2,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.prog);gl.bindBuffer(gl.ARRAY_BUFFER,this.buf);const loc=gl.getAttribLocation(this.prog,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);const uloc=gl.getUniformLocation(this.prog,'u');const cloc=gl.getUniformLocation(this.prog,'c');const o=OUTFITS[this.store.outfit];gl.uniformMatrix3fv(uloc,false,new Float32Array([1,0,0,0,1,0,0,0,1]));gl.uniform3fv(cloc,new Float32Array(o.glow.match(/\w\w/g).map(x=>parseInt(x,16)/255)));gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-0.3,0.3,0.3,0.3,0,-0.2]),gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,3)}
+particles(dt){this.particles=this.particles.filter(p=>{p.x+=p.vel.x;p.y+=p.vel.y;p.life-=dt;return p.life>0})}
+ui(){document.getElementById('gems').textContent=this.store.gems;document.getElementById('level').textContent=this.store.level;document.getElementById('energy').textContent=this.store.energy;document.getElementById('dragonLevel').textContent=this.store.dragonLevel}
+loop=(t)=>{if(!this.running)return;const dt=Math.min(32,t-this.last);this.last=t;for(const s of this.systems)s(dt);requestAnimationFrame(this.loop)}
+start(mode){this.store.mode=mode;document.getElementById('loading').style.display='none';document.getElementById('menu').style.display='none';document.getElementById('game').style.display='block';this.running=true;this.last=performance.now();this.initUI();this.loop(this.last)}
+initUI(){const w=document.getElementById('wardrobe');w.innerHTML='';OUTFITS.forEach((o,i)=>{const d=document.createElement('div');d.className='item'+(i===this.store.outfit?' active':'');d.style.background=`linear-gradient(${o.c1},${o.c2})`;d.onclick=()=>this.equip(i);w.appendChild(d)})}
+equip(id){this.store.outfit=id;this.store.energy=Math.max(0,this.store.energy-5);this.initUI();this.spawn(this.canvas.width/2,this.canvas.height/2,20)}
+battle(){if(this.store.energy<20)return;this.store.energy-=20;if(Math.random()<0.3+this.store.outfit*0.1){this.store.gems+=100;this.store.level++;this.spawn(this.canvas.width/2,this.canvas.height/2,30)}}
+rhythm(){let s=0;for(let i=0;i<4;i++)if(Math.random()>.5)s+=25;this.store.gems+=s}
+school(){this.store.gems+=50;this.store.energy=Math.max(0,this.store.energy-10)}
+save(){this.storage.save(this.store)}
+load(){const d=this.storage.load();if(d)Object.assign(this.store,d);this.start(this.store.mode)}
+spawn(x,y,n){for(let i=0;i<n;i++){const p=this.particlePool.acquire();p.x=x;p.y=y;p.vel.x=(Math.random()-.5)*4;p.vel.y=(Math.random()-.5)*4;p.life=p.maxLife=1000;this.particles.push(p)}}
+resize(){this.gl.canvas.width=innerWidth;this.gl.canvas.height=innerHeight-60}
+const G=new Game(document.getElementById('gl'));
+setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('menu').style.display='grid'},1500);
 </script>
 </body>
 </html>
