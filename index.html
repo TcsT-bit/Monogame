@@ -3,80 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GOD MODE MONOPOLY 2026</title>
+<title>GOD TIER MONOPOLY 2026</title>
 <style>
   :root{
     --bg1:#0f2027;--bg2:#203a43;--bg3:#2c5364;
-    --glass:rgba(255,255,255,0.08);--blur:20px;
+    --glass:rgba(255,255,255,0.1);--blur:20px;
     --gold:#ffd700;--green:#00ff88;
   }
   *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
   body{
     background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
     color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:10px;
-    backdrop-filter:blur(2px);
   }
   h1{
-    margin:10px 0;font-size:clamp(20px,4vw,36px);
-    background:linear-gradient(90deg,#ffd700,#ff8c00,#ffd700);
+    margin:10px 0;font-size:clamp(22px,5vw,40px);
+    background:linear-gradient(90deg,#ffd700,#ff6b00,#ffd700);background-size:200%;
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    text-shadow:0 0 20px rgba(255,215,0,.4);animation:glow 2s ease-in-out infinite;
+    animation:glow 3s linear infinite;
   }
-  @keyframes glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.3)}}
+  @keyframes glow{0%{background-position:0%}100%{background-position:200%}}
 
   #lobby{
     background:var(--glass);backdrop-filter:blur(var(--blur));
-    border:1px solid rgba(255,255,255,.2);padding:20px;border-radius:20px;
-    text-align:center;margin-bottom:15px;box-shadow:0 8px 32px rgba(0,0,0,.4)
+    border:1px solid rgba(255,255,255,.2);padding:25px;border-radius:20px;
+    text-align:center;margin:20px;box-shadow:0 8px 32px rgba(0,0,0,.4);width:90%;max-width:400px
   }
-  #lobby input{padding:10px;border-radius:10px;border:none;width:200px;margin:5px}
+  #lobby input{padding:12px;border-radius:10px;border:none;width:180px;margin:5px;background:#222;color:#fff}
 
-  #game{display:none;gap:15px;flex-wrap:wrap;justify-content:center}
+  #game{display:none;gap:15px;flex-wrap:wrap;justify-content:center;width:100%}
   #board{
     display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);
-    width:90vmin;height:90vmin;max-width:650px;max-height:650px;
+    width:95vmin;height:95vmin;max-width:700px;max-height:700px;
     background:var(--glass);backdrop-filter:blur(var(--blur));
-    border:2px solid rgba(255,255,255,.3);border-radius:15px;gap:2px;padding:5px;
-    box-shadow:0 0 40px rgba(0,255,136,.2)
+    border:3px solid rgba(255,255,255,.3);border-radius:20px;gap:2px;padding:6px;
+    box-shadow:0 0 50px rgba(0,255,136,.3)
   }
- .tile{
-    background:rgba(240,217,181,.9);color:#000;font-size:8px;text-align:center;
-    padding:2px;display:flex;flex-direction:column;justify-content:space-between;
-    position:relative;border-radius:4px;border:1px solid rgba(0,0,0,.3);
-    transition:transform.2s;cursor:pointer
+.tile{
+    background:rgba(240,217,181,1);color:#000;font-size:7px;text-align:center;
+    padding:3px;display:flex;flex-direction:column;justify-content:space-between;
+    position:relative;border-radius:5px;border:1px solid #000;
+    transition:.2s;cursor:pointer;overflow:hidden
   }
- .tile:hover{transform:scale(1.05);z-index:10}
- .tile.corner{font-size:10px;font-weight:bold;background:linear-gradient(135deg,#8b4513,#a0522d);color:#fff}
- .tile.property{background:rgba(232,228,211,.95)}
- .tile.colorbar{height:6px;width:100%;position:absolute;top:0;left:0;border-radius:4px 4px 0 0}
- .players{position:absolute;bottom:2px;left:2px;display:flex;gap:2px;flex-wrap:wrap}
- .p{width:10px;height:10px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 5px #000}
- .p1{background:#ff3366}.p2{background:#3399ff}.p3{background:#33ff66}.p4{background:#ffdd33}
+.tile:hover{transform:scale(1.08);z-index:10;box-shadow:0 0 10px #fff}
+.tile.corner{font-size:9px;font-weight:900;background:linear-gradient(135deg,#8b4513,#a0522d);color:#fff}
+.tile.property{background:rgba(232,228,211,1)}
+.tile.name{font-weight:bold;line-height:1.1}
+.tile.price{color:#0a5c36;font-weight:bold;font-size:8px}
+.tile.colorbar{height:8px;width:100%;position:absolute;top:0;left:0;border-radius:5px 5px 0 0}
+.players{position:absolute;bottom:1px;left:1px;display:flex;gap:1px;flex-wrap:wrap}
+.p{width:9px;height:9px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 0 4px #000}
+.p1{background:#ff3366}.p2{background:#3399ff}.p3{background:#33ff66}.p4{background:#ffdd33}
 
   #panel{
     background:var(--glass);backdrop-filter:blur(var(--blur));
-    border:1px solid rgba(255,255,255,.2);padding:15px;border-radius:20px;width:320px;
+    border:1px solid rgba(255,255,255,.2);padding:15px;border-radius:20px;width:340px;
     display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4)
   }
-  #info{background:rgba(0,0,0,.5);padding:10px;border-radius:10px;min-height:120px;max-height:200px;overflow-y:auto;font-size:12px}
+  #info{background:rgba(0,0,0,.6);padding:10px;border-radius:10px;min-height:140px;max-height:220px;overflow-y:auto;font-size:12px}
   button{
     background:linear-gradient(90deg,var(--gold),#ff8c00);color:#000;border:none;
-    padding:12px;border-radius:12px;font-weight:bold;cursor:pointer;transition:.2s;
-    box-shadow:0 4px 15px rgba(255,215,0,.3)
+    padding:12px;border-radius:12px;font-weight:900;cursor:pointer;transition:.2s;
+    box-shadow:0 4px 15px rgba(255,215,0,.4)
   }
-  button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,215,0,.5)}
-  button:disabled{background:#555;color:#999;transform:none}
-  #dice{font-size:50px;text-align:center;animation:roll.5s}
-  @keyframes roll{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
- .prop-list{display:flex;flex-direction:column;gap:5px;max-height:150px;overflow-y:auto}
- .prop-item{background:rgba(42,77,58,.8);padding:6px;border-radius:6px;font-size:11px;border-left:3px solid var(--green)}
- .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:100}
- .modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));color:#fff;padding:20px;border-radius:20px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,.3)}
-  #roomLink{background:rgba(0,0,0,.5);padding:8px;border-radius:8px;word-break:break-all;font-size:12px}
+  button:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 6px 25px rgba(255,215,0,.6)}
+  button:disabled{background:#444;color:#888;transform:none}
+  #diceWrap{display:flex;justify-content:center;gap:10px;font-size:55px}
+ .die{animation:roll.6s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes roll{0%{transform:rotate(0) scale(1)}50%{transform:rotate(360deg) scale(1.3)}100%{transform:rotate(720deg) scale(1)}}
+.prop-list{display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto}
+.prop-item{background:rgba(42,77,58,.9);padding:7px;border-radius:8px;font-size:11px;border-left:4px solid var(--green)}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center;z-index:100}
+.modal-content{background:var(--glass);backdrop-filter:blur(var(--blur));color:#fff;padding:25px;border-radius:20px;width:90%;max-width:450px;border:2px solid var(--gold)}
+  #roomLink{background:rgba(0,0,0,.6);padding:10px;border-radius:10px;word-break:break-all;font-size:13px}
 </style>
 </head>
 <body>
-<h1>GOD MODE MONOPOLY 2026</h1>
+<h1>GOD TIER MONOPOLY 2026</h1>
 
 <div id="lobby">
   <h2>Join or Create Room</h2>
@@ -90,13 +92,14 @@
   <div id="board"></div>
   <div id="panel">
     <div><b>Room:</b> <span id="currentRoom"></span></div>
-    <div id="dice">🎲</div>
+    <div id="diceWrap"><span class="die" id="d1">🎲</span><span class="die" id="d2">🎲</span></div>
     <button id="rollBtn" onclick="rollDice()">ROLL DICE</button>
     <button onclick="endTurn()">END TURN</button>
     <button onclick="buyHouse()">BUY HOUSE/HOTEL</button>
-    <button onclick="trade()">TRADE</button>
+    <button onclick="openTrade()">TRADE</button>
     <button onclick="godMode()">GOD MODE +$1000</button>
-    <div id="info"><b>Game Log:</b><br>Welcome to 2026</div>
+    <button onclick="declareBankruptcy()">DECLARE BANKRUPTCY</button>
+    <div id="info"><b>Game Log:</b><br>Welcome to GOD TIER</div>
     <div id="playerInfo"></div>
     <div class="prop-list" id="propList"></div>
   </div>
@@ -104,12 +107,10 @@
 
 <div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
 
-<!-- FIREBASE FOR LINKS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// REPLACE THIS WITH YOUR FIREBASE CONFIG - FREE TO MAKE
 const firebaseConfig = {
   apiKey: "PASTE_YOURS",
   authDomain: "PASTE_YOURS",
@@ -120,7 +121,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const COLORS = {brown:'#8b4513',lightblue:'#add8e6',pink:'#ffc0cb',orange:'#ffa500',red:'#ff0000',yellow:'#ffff00',green:'#008000',blue:'#0000ff'};
-const BOARD = [/* SAME 40 TILES AS YOU SENT ME */
+const BOARD = [
 {name:"GO",type:"go"},{name:"Mediterranean Ave",type:"property",price:60,rent:[2,10,30,90,160,250],color:"brown",group:0},
 {name:"Community Chest",type:"chest"},{name:"Baltic Ave",type:"property",price:60,rent:[4,20,60,180,320,450],color:"brown",group:0},
 {name:"Income Tax",type:"tax",amount:200},{name:"Reading Railroad",type:"rail",price:200},
@@ -159,14 +160,29 @@ const BOARD = [/* SAME 40 TILES AS YOU SENT ME */
 let game, myPlayerId, roomId;
 const playerColors = ["p1","p2","p3","p4"];
 
-// LINK FUNCTIONS
+// FIXED: BOARD RENDER
+function initBoard(){
+  const board = document.getElementById('board');
+  board.innerHTML='';
+  BOARD.forEach((t,i)=>{
+    const div = document.createElement('div');
+    let classes = 'tile';
+    if(['go','jail','free','gotojail'].includes(t.type)) classes+=' corner';
+    if(t.type=='property') classes+=' property';
+    div.className = classes;
+    div.id='tile'+i;
+    if(t.color) div.innerHTML=`<div class="colorbar" style="background:${COLORS[t.color]}"></div>`;
+    div.innerHTML+=`<div class="name">${t.name}</div>`;
+    if(t.price) div.innerHTML+=`<div class="price">$${t.price}</div>`;
+    div.innerHTML+=`<div class="players" id="players${i}"></div>`;
+    board.appendChild(div);
+  });
+}
+
 window.createRoom = () => {
   roomId = Math.random().toString(36).substring(2,8).toUpperCase();
   myPlayerId = 0;
-  game = {
-    players:[{name:"P1",money:1500,pos:0,props:[],inJail:0,color:playerColors[0]}],
-    current:0, houses:32, hotels:12, turn:1
-  };
+  game = {players:[{name:"P1",money:1500,pos:0,props:[],inJail:0,color:playerColors[0]}],current:0,houses:32,hotels:12,turn:1};
   set(ref(db,'rooms/'+roomId),game);
   startGame();
   document.getElementById('roomLink').innerHTML = `Share this link: <br><b>${location.origin+location.pathname}?room=${roomId}</b>`;
@@ -177,17 +193,16 @@ window.joinRoom = () => {
   onValue(ref(db,'rooms/'+roomId),(snap)=>{
     if(snap.exists()){
       game = snap.val();
-      myPlayerId = game.players.length;
-      if(myPlayerId<4){
-        game.players.push({name:"P"+(myPlayerId+1),money:1500,pos:0,props:[],inJail:0,color:playerColors[myPlayerId]});
+      myPlayerId = game.players.findIndex(p=>!p)?? game.players.length;
+      if(myPlayerId>=game.players.length && game.players.length<4){
+        game.players.push({name:"P"+(game.players.length+1),money:1500,pos:0,props:[],inJail:0,color:playerColors[game.players.length]});
         update(ref(db,'rooms/'+roomId),game);
       }
       startGame();
-    }
-  });
+    }else log("Room not found")
+  },{onlyOnce:true});
 }
 
-// Check URL for room
 const urlParams = new URLSearchParams(window.location.search);
 if(urlParams.get('room')){ document.getElementById('roomCode').value = urlParams.get('room'); joinRoom(); }
 
@@ -201,29 +216,151 @@ function startGame(){
 
 function saveToFirebase(){ set(ref(db,'rooms/'+roomId),game); }
 
-// ALL YOUR OLD GAME LOGIC HERE, BUT CALL saveToFirebase() AFTER EVERY MOVE
-function initBoard(){/* SAME AS YOURS */}
-function updatePlayers(){/* SAME AS YOURS */}
+function updatePlayers(){
+  for(let i=0;i<40;i++) document.getElementById('players'+i).innerHTML='';
+  game.players.forEach((p)=>{
+    if(p.money>0){
+      const el = document.createElement('div');
+      el.className='p '+p.color;
+      document.getElementById('players'+p.pos).appendChild(el);
+    }
+  });
+}
+
 function log(msg){ document.getElementById('info').innerHTML+=`<br>${msg}`; document.getElementById('info').scrollTop=9999; }
 
+// FIXED: 2 DICE
 window.rollDice = () => {
-  if(game.players[myPlayerId].inJail>0){ jailTurn(); return; }
+  if(myPlayerId!== game.current){ log("Not your turn"); return; }
+  const p = game.players[myPlayerId];
+  if(p.inJail>0){ jailTurn(); return; }
   const d1 = Math.floor(Math.random()*6)+1;
   const d2 = Math.floor(Math.random()*6)+1;
-  document.getElementById('dice').innerText=`🎲 ${d1} + ${d2}`;
-  log(`${game.players[myPlayerId].name} rolled ${d1}+${d2}`);
-  movePlayer(d1+d2);
+  document.getElementById('d1').innerText=['⚀','⚁','⚂','⚃','⚄','⚅'][d1-1];
+  document.getElementById('d2').innerText=['⚀','⚁','⚂','⚃','⚄','⚅'][d2-1];
+  document.getElementById('d1').classList.add('die');document.getElementById('d2').classList.add('die');
+  setTimeout(()=>{document.getElementById('d1').classList.remove('die');document.getElementById('d2').classList.remove('die');},600);
+  log(`${p.name} rolled ${d1}+${d2}`);
+  movePlayer(d1+d2, d1==d2);
   document.getElementById('rollBtn').disabled=true;
   saveToFirebase();
 }
 
-function movePlayer(steps){/* SAME AS YOURS, END WITH saveToFirebase() */}
-function landOn(pos){/* SAME AS YOURS, END WITH saveToFirebase() */}
-function buyProperty(pos){/* SAME AS YOURS, END WITH saveToFirebase() */}
-function endTurn(){ game.current=(game.current+1)%game.players.length; document.getElementById('rollBtn').disabled=false; saveToFirebase(); }
+function movePlayer(steps, isDouble){
+  const p = game.players[game.current];
+  p.pos = (p.pos+steps)%40;
+  if(p.pos<steps) { p.money+=200; log(`${p.name} passed GO +$200`); }
+  updatePlayers();
+  landOn(p.pos);
+  if(isDouble) { document.getElementById('rollBtn').disabled=false; log("DOUBLES! Roll again"); }
+}
+
+function landOn(pos){
+  const t = BOARD[pos]; const p = game.players[game.current];
+  log(`Landed on ${t.name}`);
+  if(t.type=='property'){
+    const ownerIdx = game.players.findIndex(pl=>pl.props.includes(pos));
+    if(ownerIdx==-1) showBuy(pos);
+    else if(ownerIdx!=game.current) payRent(p,game.players[ownerIdx],t);
+  }
+  if(t.type=='tax'){ p.money-=t.amount; log(`Paid $${t.amount} tax`); }
+  if(t.type=='gotojail'){ p.pos=10; p.inJail=3; log(`Go to Jail!`); }
+  if(t.type=='chance'||t.type=='chest') drawCard();
+  checkBankruptcy(p);
+  saveToFirebase();
+}
+
+function showBuy(pos){
+  const t=BOARD[pos];
+  showModal(`${t.name}<br>Price: $${t.price}<br><button onclick="buyProperty(${pos})">BUY</button> <button onclick="startAuction(${pos})">AUCTION</button> <button onclick="closeModal()">SKIP</button>`);
+}
+
+window.buyProperty = (pos) => {
+  const p=game.players[game.current]; const t=BOARD[pos];
+  if(p.money>=t.price){ p.money-=t.price; p.props.push(pos); log(`${p.name} bought ${t.name}`); }
+  closeModal(); saveToFirebase();
+}
+
+function payRent(payer,owner,t){
+  const houses = t.houses||0;
+  const rent = t.rent[houses];
+  payer.money-=rent; owner.money+=rent;
+  log(`${payer.name} paid $${rent} rent to ${owner.name}`);
+}
+
+window.buyHouse = () => {
+  const p=game.players[game.current];
+  const props = p.props.filter(i=>BOARD[i].type=='property');
+  let html='Select property:<br>';
+  props.forEach(i=>{ html+=`<button onclick="addHouse(${i})">${BOARD[i].name} - $${BOARD[i].price/2}</button><br>`; });
+  showModal(html);
+}
+
+window.addHouse = (pos) => {
+  const p=game.players[game.current]; const t=BOARD[pos];
+  const cost = t.price/2;
+  if(p.money>=cost && game.houses>0){ p.money-=cost; t.houses=(t.houses||0)+1; game.houses--; log(`Bought house on ${t.name}`); }
+  closeModal(); saveToFirebase();
+}
+
+function jailTurn(){
+  const p=game.players[game.current];
+  p.inJail--;
+  if(p.money>=50){ p.money-=50; p.inJail=0; log(`${p.name} paid $50 to get out`); }
+  else log(`${p.name} still in jail ${p.inJail} turns left`);
+  saveToFirebase();
+}
+
+function drawCard(){
+  const cards=["Advance to GO +$200","Go to Jail","Pay $50","Collect $100","Bank error +$200"];
+  const card=cards[Math.floor(Math.random()*cards.length)];
+  log(`Card: ${card}`);
+  const p=game.players[game.current];
+  if(card.includes("GO")){ p.pos=0; p.money+=200; }
+  if(card.includes("Jail")){ p.pos=10; p.inJail=3; }
+  if(card.includes("Pay")) p.money-=50;
+  if(card.includes("Collect")||card.includes("Bank")) p.money+=200;
+}
+
+window.openTrade = () => {
+  let html="Select player to trade with:<br>";
+  game.players.forEach((pl,i)=>{ if(i!=game.current) html+=`<button onclick="tradeWith(${i})">${pl.name}</button>` });
+  showModal(html);
+}
+
+window.tradeWith = (otherId) => {
+  showModal(`Trading with ${game.players[otherId].name} <br><i>Full trade UI: offer money/props</i><br><button onclick='closeModal()'>Close</button>`);
+}
+
+window.startAuction = (pos) => {
+  log(`Auction started for ${BOARD[pos].name}`);
+  closeModal();
+}
+
+window.endTurn = () => {
+  game.current=(game.current+1)%game.players.length;
+  document.getElementById('rollBtn').disabled=false;
+  saveToFirebase();
+}
+
 window.godMode = () => { game.players[myPlayerId].money+=1000; log("GOD MODE: +$1000"); saveToFirebase(); }
+
+function checkBankruptcy(p){
+  if(p.money<0){ log(`${p.name} IS BANKRUPT!`); p.props=[]; }
+}
+
+function updatePlayerInfo(){
+  const p=game.players[game.current];
+  let html=`<b>Turn: ${p.name}</b><br>Money: $${p.money}`;
+  document.getElementById('playerInfo').innerHTML=html;
+  let props='';
+  p.props.forEach(i=>{ props+=`<div class="prop-item">${BOARD[i].name} ${BOARD[i].houses?'H:'+BOARD[i].houses:''}</div>` });
+  document.getElementById('propList').innerHTML=props;
+}
+
 function showModal(c){ document.getElementById('modalContent').innerHTML=c; document.getElementById('modal').style.display='flex'; }
 window.closeModal = () => { document.getElementById('modal').style.display='none'; }
+window.declareBankruptcy = () => { game.players[myPlayerId].money=0; log("You quit"); saveToFirebase(); }
 </script>
 </body>
 </html>
