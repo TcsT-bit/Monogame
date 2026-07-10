@@ -14,7 +14,6 @@
   body{
     background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
     color:#fff;overflow:hidden;height:100vh;
-    background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.3"/></svg>');
   }
   @keyframes glow{0%,100%{filter:drop-shadow(0 0 10px var(--pink))}50%{filter:drop-shadow(0 0 20px var(--cyan))}}
   @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
@@ -36,13 +35,13 @@
   .stat{background:var(--glass);padding:8px 15px;border-radius:15px;border:2px solid var(--gold)}
 
   #mainCanvas{width:100%;height:calc(100% - 60px);background:#000}
-  #ui{position:absolute;bottom:0;left:0;width:100%;display:flex;gap:10px;padding:10px;justify-content:center}
+  #ui{position:absolute;bottom:0;left:0;width:100%;display:flex;gap:10px;padding:10px;justify-content:center;flex-wrap:wrap}
 
-  .wardrobe{position:absolute;right:0;top:60px;width:300px;height:calc(100% - 120px);background:var(--glass);backdrop-filter:blur(var(--blur));overflow-y:auto;padding:10px;border-left:3px solid var(--pink)}
-  .item{width:80px;height:80px;background:rgba(255,255,255,.2);margin:5px;display:inline-block;border-radius:10px;cursor:pointer;border:2px solid transparent}
+  .wardrobe{position:absolute;right:0;top:60px;width:320px;height:calc(100% - 120px);background:var(--glass);backdrop-filter:blur(var(--blur));overflow-y:auto;padding:10px;border-left:3px solid var(--pink)}
+  .item{width:90px;height:90px;background:rgba(255,255,255,.2);margin:5px;display:inline-block;border-radius:10px;cursor:pointer;border:2px solid transparent;text-align:center;font-size:10px;padding-top:5px}
   .item:hover{border-color:var(--gold);transform:scale(1.1)}
 
-  #dragon{position:absolute;left:20px;bottom:100px;width:120px;height:120px;animation:float 2s infinite;cursor:grab}
+  #dragon{position:absolute;left:20px;bottom:100px;width:120px;height:120px;animation:float 2s infinite;cursor:grab;font-size:80px}
   #questLog{position:absolute;left:10px;top:70px;width:250px;background:var(--glass);padding:10px;border-radius:15px;font-size:12px;max-height:200px;overflow-y:auto}
 </style>
 </head>
@@ -75,11 +74,12 @@
   
   <div class="wardrobe" id="wardrobe">
     <h3>DRESS UP</h3>
-    <div class="item" onclick="equip(0)" style="background:linear-gradient(red,orange)">🔥 Fire Dress</div>
-    <div class="item" onclick="equip(1)" style="background:linear-gradient(cyan,blue)">❄️ Ice Gown</div>
-    <div class="item" onclick="equip(2)" style="background:linear-gradient(pink,purple)">✨ Royal Robe</div>
-    <div class="item" onclick="equip(3)" style="background:linear-gradient(green,lime)">🌿 Nature Set</div>
-    <div class="item" onclick="gacha()">🎁 GACHA R50</div>
+    <div class="item" onclick="equip(0)" style="background:linear-gradient(red,orange)">🔥<br>Fire Dress</div>
+    <div class="item" onclick="equip(1)" style="background:linear-gradient(cyan,blue)">❄️<br>Ice Gown</div>
+    <div class="item" onclick="equip(2)" style="background:linear-gradient(pink,purple)">✨<br>Royal Robe</div>
+    <div class="item" onclick="equip(3)" style="background:linear-gradient(green,lime)">🌿<br>Nature Set</div>
+    <div class="item" onclick="equip(4)" style="background:linear-gradient(gold,yellow)">👑<br>SA Queen</div>
+    <div class="item" onclick="gacha()">🎁<br>GACHA R50</div>
   </div>
 
   <div id="ui">
@@ -91,7 +91,7 @@
 </div>
 
 <script>
-// GOD TIER GAME ENGINE
+// GOD TIER GAME ENGINE v2
 let gameState = {
   gems:1000, level:1, energy:100, dragonLevel:1,
   outfit:0, dragonHunger:100, quests:[0,1,2],
@@ -104,7 +104,17 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 120;
 
-// TEXTURES - PROCEDURAL 2026 STYLE
+let animationFrame = 0;
+
+// OUTSOURCED CHARACTER RENDERER - LAYERED SPRITE SYSTEM
+const OUTFITS = [
+  {name:"Fire Dress", color1:"#ff3300", color2:"#ff9900", effect:"fire"},
+  {name:"Ice Gown", color1:"#00ccff", color2:"#0066ff", effect:"ice"},
+  {name:"Royal Robe", color1:"#ff66cc", color2:"#9900ff", effect:"sparkle"},
+  {name:"Nature Set", color1:"#33cc33", color2:"#99ff00", effect:"leaves"},
+  {name:"SA Queen", color1:"#ffd700", color2:"#007A4D", effect:"crown"}
+];
+
 function drawBackground(){
   const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
   gradient.addColorStop(0, '#ff00ff');
@@ -112,22 +122,97 @@ function drawBackground(){
   ctx.fillStyle = gradient;
   ctx.fillRect(0,0,canvas.width,canvas.height);
   
-  // Floating particles
   for(let i=0;i<50;i++){
-    ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.5})`;
+    ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.3})`;
     ctx.beginPath();
-    ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*3, 0, Math.PI*2);
+    ctx.arc((Math.sin(animationFrame*0.01+i)*100)+canvas.width/2, (Math.cos(animationFrame*0.01+i)*100)+canvas.height/2, Math.random()*3, 0, Math.PI*2);
     ctx.fill();
   }
 }
 
+// GOD TIER CHARACTER DRAW FUNCTION
 function drawPlayer(){
-  ctx.font = '80px serif';
-  ctx.fillText('👑', canvas.width/2-40, canvas.height/2);
-  // Outfit effects
-  if(gameState.outfit==0) ctx.fillStyle='rgba(255,0,0,0.3)';
-  if(gameState.outfit==1) ctx.fillStyle='rgba(0,255,255,0.3)';
-  ctx.fillRect(canvas.width/2-50, canvas.height/2-50, 100, 100);
+  const x = canvas.width/2;
+  const y = canvas.height/2;
+  const outfit = OUTFITS[gameState.outfit];
+  
+  ctx.save();
+  ctx.translate(x, y + Math.sin(animationFrame*0.1)*5); // floating animation
+  
+  // SHADOW
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.ellipse(0, 70, 40, 10, 0, 0, Math.PI*2);
+  ctx.fill();
+  
+  // DRESS/BODY - LAYER 1
+  const dressGradient = ctx.createLinearGradient(0,-30,0,60);
+  dressGradient.addColorStop(0, outfit.color1);
+  dressGradient.addColorStop(1, outfit.color2);
+  ctx.fillStyle = dressGradient;
+  ctx.beginPath();
+  ctx.moveTo(-40, 10);
+  ctx.quadraticCurveTo(0, 40, 40, 10);
+  ctx.lineTo(30, 60);
+  ctx.lineTo(-30, 60);
+  ctx.closePath();
+  ctx.fill();
+  
+  // TOP/BODICE - LAYER 2
+  ctx.fillStyle = outfit.color1;
+  ctx.beginPath();
+  ctx.roundRect(-20, -30, 40, 40, 10);
+  ctx.fill();
+  
+  // ARMS
+  ctx.fillStyle = '#ffdbac'; // skin
+  ctx.beginPath();
+  ctx.arc(-25, -10, 8, 0, Math.PI*2); // left arm
+  ctx.arc(25, -10, 8, 0, Math.PI*2); // right arm
+  ctx.fill();
+  
+  // HEAD
+  ctx.fillStyle = '#ffdbac';
+  ctx.beginPath();
+  ctx.arc(0, -45, 18, 0, Math.PI*2);
+  ctx.fill();
+  
+  // HAIR
+  ctx.fillStyle = '#4a2c17';
+  ctx.beginPath();
+  ctx.arc(0, -50, 20, Math.PI, 0);
+  ctx.fill();
+  
+  // CROWN IF ROYAL
+  if(gameState.outfit==4){
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.moveTo(-15,-60);ctx.lineTo(-10,-70);ctx.lineTo(-5,-60);ctx.lineTo(0,-70);
+    ctx.lineTo(5,-60);ctx.lineTo(10,-70);ctx.lineTo(15,-60);
+    ctx.fill();
+  }
+  
+  // EYES
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(-6, -47, 2, 0, Math.PI*2);
+  ctx.arc(6, -47, 2, 0, Math.PI*2);
+  ctx.fill();
+  
+  // EFFECTS
+  if(outfit.effect=="fire"){
+    ctx.fillStyle = 'rgba(255,100,0,0.4)';
+    for(let i=0;i<5;i++) ctx.fillRect(-50+Math.random()*100, -20+Math.random()*60, 10, 10);
+  }
+  if(outfit.effect=="ice"){
+    ctx.fillStyle = 'rgba(0,200,255,0.4)';
+    for(let i=0;i<5;i++) ctx.fillRect(-50+Math.random()*100, -20+Math.random()*60, 5, 15);
+  }
+  if(outfit.effect=="sparkle"){
+    ctx.fillStyle = '#fff';
+    for(let i=0;i<8;i++) ctx.fillText('✨', -40+Math.random()*80, -20+Math.random()*60);
+  }
+  
+  ctx.restore();
 }
 
 // CORE FEATURES
@@ -140,6 +225,7 @@ function startGame(mode){
 }
 
 function gameLoop(){
+  animationFrame++;
   drawBackground();
   drawPlayer();
   updateUI();
@@ -157,7 +243,7 @@ function updateUI(){
 function equip(id){
   gameState.outfit = id;
   gameState.energy -= 5;
-  alert(`Equipped! New power unlocked!`);
+  alert(`Equipped: ${OUTFITS[id].name}! New power unlocked!`);
 }
 
 // DRAGON DIVA
@@ -167,7 +253,7 @@ function feedDragon(){
     gameState.dragonHunger=100;
     gameState.dragonLevel++;
     alert(`Dragon leveled up to ${gameState.dragonLevel}!`);
-  }
+  } else alert("Need 10 gems to feed dragon!");
 }
 
 // RHYTHM BATTLE
@@ -183,15 +269,16 @@ function rhythm(){
 
 // BATTLE SYSTEM
 function battle(){
-  if(gameState.energy<20) return alert("No energy!");
+  if(gameState.energy<20) return alert("No energy! Rest first.");
   gameState.energy-=20;
-  const win = Math.random() > 0.3;
+  const power = gameState.outfit + 1;
+  const win = Math.random() < (0.3 + power*0.1);
   if(win){
     gameState.gems+=100;
     gameState.level++;
-    alert("VICTORY! +100 gems +1 level");
+    alert(`VICTORY with ${OUTFITS[gameState.outfit].name}! +100 gems +1 level`);
   } else {
-    alert("You lost! Try a new outfit!");
+    alert("You lost! Try a stronger outfit!");
   }
 }
 
@@ -199,16 +286,19 @@ function battle(){
 function school(){
   const classes = ['Potion Making','Spell Styling','Dragon Care'];
   const chosen = prompt(`Choose class:\n1. ${classes[0]}\n2. ${classes[1]}\n3. ${classes[2]}`);
-  gameState.gems+=50;
-  alert(`${classes[chosen-1]} complete! +50 gems`);
+  if(chosen>0 && chosen<4){
+    gameState.gems+=50;
+    gameState.energy-=10;
+    alert(`${classes[chosen-1]} complete! +50 gems`);
+  }
 }
 
 // GACHA SYSTEM
 function gacha(){
   if(gameState.gems<50) return alert("Not enough gems!");
   gameState.gems-=50;
-  const items = ['Legendary Gown','Dragon Egg','Magic Tiara','Crystal Wings'];
-  const won = items[Math.floor(Math.random()*4)];
+  const items = ['Legendary Gown','Dragon Egg','Magic Tiara','Crystal Wings','SA Crown'];
+  const won = items[Math.floor(Math.random()*5)];
   gameState.inventory.push(won);
   alert(`YOU GOT: ${won}!`);
 }
@@ -235,6 +325,11 @@ window.addEventListener('keydown', e=>{
   if(e.key=='b') battle();
   if(e.key=='r') rhythm();
   if(e.key=='s') saveGame();
+});
+
+window.addEventListener('resize', ()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight - 120;
 });
 </script>
 </body>
