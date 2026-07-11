@@ -3,23 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speed KM Tracker</title>
+<title>Speed KM Tracker Pro</title>
 <style>
 :root{--bg:#0A0A0F; --accent:#00D26A; --orange:#FF5A00; --card:#111827}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif}
-body{background:var(--bg);color:#fff;text-align:center;padding:20px}
-h1{color:var(--accent);margin-bottom:20px;font-size:24px}
-.display{background:var(--card);padding:30px;border-radius:20px;margin-bottom:20px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:var(--bg);color:#fff;text-align:center;padding:20px;max-width:500px;margin:auto}
+h1{color:var(--accent);margin-bottom:20px}
+.display{background:var(--card);padding:30px;border-radius:20px;margin-bottom:20px;border:2px solid var(--accent)}
 .big{font-size:60px;font-weight:900;color:var(--accent)}
 .label{color:#888;font-size:14px;margin-top:5px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
 .box{background:var(--card);padding:20px;border-radius:16px}
-.box .big{font-size:36px}
+.box .big{font-size:36px;color:var(--orange)}
 button{width:100%;padding:18px;border:none;border-radius:14px;font-size:18px;font-weight:900;cursor:pointer;margin-top:10px}
 .btn-start{background:var(--accent);color:#000}
 .btn-stop{background:var(--orange);color:#000}
 .btn-reset{background:#333;color:#fff}
-.note{font-size:12px;color:#888;margin-top:15px}
+.btn-save{background:#1a73e8;color:#fff}
+.status{font-size:12px;color:#888;margin:10px 0}
 </style>
 </head>
 <body>
@@ -34,29 +35,27 @@ button{width:100%;padding:18px;border:none;border-radius:14px;font-size:18px;fon
 <div class="grid">
   <div class="box">
     <div class="big" id="distance">0.00</div>
-    <div class="label">KM</div>
+    <div class="label">TOTAL KM</div>
   </div>
   <div class="box">
     <div class="big" id="speed">0</div>
-    <div class="label">KM/H</div>
+    <div class="label">SPEED KM/H</div>
   </div>
 </div>
+
+<div class="status" id="status">Status: Waiting...</div>
 
 <button class="btn-start" id="startBtn" onclick="start()">START</button>
 <button class="btn-stop" id="stopBtn" onclick="stop()" style="display:none">STOP</button>
 <button class="btn-reset" onclick="reset()">RESET</button>
-
-<p class="note">Works offline. Uses GPS. Allow location access.</p>
+<button class="btn-save" onclick="saveTrip()">SAVE TRIP</button>
 
 <script>
-let timerInterval;
-let startTime = 0;
-let elapsed = 0;
-let running = false;
-let watchId = null;
-let lastPos = null;
-let totalDistance = 0;
-let currentSpeed = 0;
+let timerInterval, watchId;
+let startTime = 0, elapsed = 0, running = false;
+let lastPos = null, lastTime = null;
+let totalDistance = 0, currentSpeed = 0;
+let tripData = [];
 
 function formatTime(ms){
   let s = Math.floor(ms/1000);
@@ -71,21 +70,24 @@ function updateTimer(){
   document.getElementById('timer').innerText = formatTime(elapsed);
 }
 
+// Haversine formula to calculate distance between 2 GPS points
 function getDistance(lat1, lon1, lat2, lon2){
-  const R = 6371; // KM
+  const R = 6371; 
   const dLat = (lat2-lat1) * Math.PI/180;
   const dLon = (lon2-lon1) * Math.PI/180;
   const a = Math.sin(dLat/2)*Math.sin(dLat/2) + 
     Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
     Math.sin(dLon/2)*Math.sin(dLon/2);
   const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R*c;
+  return R*c; // in KM
 }
 
 function start(){
   if(!navigator.geolocation){
-    alert('GPS not supported'); return;
+    alert('GPS not supported on this device'); return;
   }
+  
+  document.getElementById('status').innerText = 'Status: Getting GPS signal...';
   
   running = true;
   startTime = Date.now() - elapsed;
@@ -94,24 +96,50 @@ function start(){
   document.getElementById('startBtn').style.display='none';
   document.getElementById('stopBtn').style.display='block';
   
+  // Get position every 2 seconds for better accuracy
   watchId = navigator.geolocation.watchPosition(pos=>{
+    document.getElementById('status').innerText = 'Status: Tracking...';
+    
+    const now = Date.now();
+    const currentPos = {
+      lat: pos.coords.latitude, 
+      lon: pos.coords.longitude,
+      time: now
+    };
+    
+    // Calculate speed from distance/time if GPS speed is null
     if(lastPos){
-      let d = getDistance(lastPos.lat, lastPos.lon, pos.coords.latitude, pos.coords.longitude);
-      totalDistance += d;
-      document.getElementById('distance').innerText = totalDistance.toFixed(2);
+      let dist = getDistance(lastPos.lat, lastPos.lon, currentPos.lat, currentPos.lon);
+      let timeDiff = (now - lastTime) / 1000 / 3600; // hours
+      
+      if(dist > 0.005){ // ignore small GPS jumps < 5 meters
+        totalDistance += dist;
+        document.getElementById('distance').innerText = totalDistance.toFixed(2);
+        
+        // Calculate speed: KM / Hours
+        if(timeDiff > 0){
+          currentSpeed = (dist / timeDiff).toFixed(0);
+          document.getElementById('speed').innerText = currentSpeed;
+        }
+      }
     }
-    lastPos = {lat: pos.coords.latitude, lon: pos.coords.longitude};
-    currentSpeed = pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(0) : 0;
-    document.getElementById('speed').innerText = currentSpeed;
-  }, err=>alert('Allow location access'), {enableHighAccuracy:true});
+    
+    lastPos = currentPos;
+    lastTime = now;
+    
+  }, err=>{
+    document.getElementById('status').innerText = 'Status: GPS Error - ' + err.message;
+    alert('Turn on Location/GPS and try again');
+  }, {enableHighAccuracy:true, maximumAge:0, timeout:10000});
 }
 
 function stop(){
   running = false;
   clearInterval(timerInterval);
-  navigator.geolocation.clearWatch(watchId);
+  if(watchId) navigator.geolocation.clearWatch(watchId);
   document.getElementById('startBtn').style.display='block';
   document.getElementById('stopBtn').style.display='none';
+  document.getElementById('status').innerText = 'Status: Stopped';
 }
 
 function reset(){
@@ -120,9 +148,24 @@ function reset(){
   totalDistance = 0;
   currentSpeed = 0;
   lastPos = null;
+  lastTime = null;
   document.getElementById('timer').innerText = '00:00:00';
   document.getElementById('distance').innerText = '0.00';
   document.getElementById('speed').innerText = '0';
+  document.getElementById('status').innerText = 'Status: Waiting...';
+}
+
+function saveTrip(){
+  const trip = {
+    date: new Date().toLocaleString(),
+    time: document.getElementById('timer').innerText,
+    distance: totalDistance.toFixed(2),
+    avgSpeed: elapsed > 0 ? ((totalDistance / (elapsed/1000/3600))).toFixed(0) : 0
+  };
+  let trips = JSON.parse(localStorage.getItem('speedTrips')) || [];
+  trips.push(trip);
+  localStorage.setItem('speedTrips', JSON.stringify(trips));
+  alert(`Trip Saved!\nDistance: ${trip.distance} KM\nTime: ${trip.time}`);
 }
 </script>
 </body>
