@@ -3,119 +3,127 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KM Tracker</title>
+<title>Speed KM Tracker</title>
 <style>
-:root{--bg:#0A0A0F; --card:#111827; --accent:#00D26A; --text:#fff; --muted:#888}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:var(--bg);color:var(--text);padding:20px;max-width:600px;margin:auto}
-h1{text-align:center;color:var(--accent);margin-bottom:20px}
-.card{background:var(--card);padding:20px;border-radius:16px;margin-bottom:15px}
-input,button,select{width:100%;padding:14px;border-radius:10px;border:1px solid #333;background:#1a1f2e;color:#fff;font-size:16px;margin-top:8px}
-button{background:var(--accent);color:#000;border:none;font-weight:700;cursor:pointer;transition:.3s}
-button:hover{transform:scale(1.02)}
-.trip{display:flex;justify-content:space-between;padding:12px;background:#1a1f2e;border-radius:10px;margin-top:10px}
-.total{font-size:28px;color:var(--accent);text-align:center;margin:15px 0}
-.actions{display:flex;gap:10px}
-.actions button{flex:1;background:#333;color:#fff}
-.note{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+:root{--bg:#0A0A0F; --accent:#00D26A; --orange:#FF5A00; --card:#111827}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif}
+body{background:var(--bg);color:#fff;text-align:center;padding:20px}
+h1{color:var(--accent);margin-bottom:20px;font-size:24px}
+.display{background:var(--card);padding:30px;border-radius:20px;margin-bottom:20px}
+.big{font-size:60px;font-weight:900;color:var(--accent)}
+.label{color:#888;font-size:14px;margin-top:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
+.box{background:var(--card);padding:20px;border-radius:16px}
+.box .big{font-size:36px}
+button{width:100%;padding:18px;border:none;border-radius:14px;font-size:18px;font-weight:900;cursor:pointer;margin-top:10px}
+.btn-start{background:var(--accent);color:#000}
+.btn-stop{background:var(--orange);color:#000}
+.btn-reset{background:#333;color:#fff}
+.note{font-size:12px;color:#888;margin-top:15px}
 </style>
 </head>
 <body>
 
-<h1>📍 KM TRACKER</h1>
+<h1>⏱️ SPEED + KM TRACKER</h1>
 
-<div class="card">
-  <h3>New Trip</h3>
-  <input type="text" id="tripName" placeholder="Trip Name - e.g. Site Visit, Delivery">
-  <input type="number" id="startKM" placeholder="Starting KM" step="0.1">
-  <input type="number" id="endKM" placeholder="Ending KM" step="0.1">
-  <select id="purpose">
-    <option value="Business">Business</option>
-    <option value="Personal">Personal</option>
-    <option value="Fuel Claim">Fuel Claim</option>
-  </select>
-  <button onclick="addTrip()">SAVE TRIP</button>
-  <p class="note">Works 100% offline. Data saves on your phone.</p>
+<div class="display">
+  <div class="big" id="timer">00:00:00</div>
+  <div class="label">TIME</div>
 </div>
 
-<div class="card">
-  <h3>Total Distance</h3>
-  <div class="total" id="totalKM">0.0 KM</div>
-  <div class="actions">
-    <button onclick="exportCSV()">EXPORT CSV</button>
-    <button onclick="clearAll()">CLEAR ALL</button>
+<div class="grid">
+  <div class="box">
+    <div class="big" id="distance">0.00</div>
+    <div class="label">KM</div>
+  </div>
+  <div class="box">
+    <div class="big" id="speed">0</div>
+    <div class="label">KM/H</div>
   </div>
 </div>
 
-<div class="card">
-  <h3>Trip History</h3>
-  <div id="tripList"></div>
-</div>
+<button class="btn-start" id="startBtn" onclick="start()">START</button>
+<button class="btn-stop" id="stopBtn" onclick="stop()" style="display:none">STOP</button>
+<button class="btn-reset" onclick="reset()">RESET</button>
+
+<p class="note">Works offline. Uses GPS. Allow location access.</p>
 
 <script>
-let trips = JSON.parse(localStorage.getItem('trips')) || [];
+let timerInterval;
+let startTime = 0;
+let elapsed = 0;
+let running = false;
+let watchId = null;
+let lastPos = null;
+let totalDistance = 0;
+let currentSpeed = 0;
 
-function addTrip(){
-  const name = document.getElementById('tripName').value;
-  const start = parseFloat(document.getElementById('startKM').value);
-  const end = parseFloat(document.getElementById('endKM').value);
-  const purpose = document.getElementById('purpose').value;
+function formatTime(ms){
+  let s = Math.floor(ms/1000);
+  let h = String(Math.floor(s/3600)).padStart(2,'0');
+  let m = String(Math.floor(s%3600/60)).padStart(2,'0');
+  let sec = String(s%60).padStart(2,'0');
+  return `${h}:${m}:${sec}`;
+}
 
-  if(!name || isNaN(start) || isNaN(end)){
-    alert('Please fill all fields'); return;
+function updateTimer(){
+  elapsed = Date.now() - startTime;
+  document.getElementById('timer').innerText = formatTime(elapsed);
+}
+
+function getDistance(lat1, lon1, lat2, lon2){
+  const R = 6371; // KM
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLon = (lon2-lon1) * Math.PI/180;
+  const a = Math.sin(dLat/2)*Math.sin(dLat/2) + 
+    Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+    Math.sin(dLon/2)*Math.sin(dLon/2);
+  const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R*c;
+}
+
+function start(){
+  if(!navigator.geolocation){
+    alert('GPS not supported'); return;
   }
-  if(end < start){
-    alert('End KM must be bigger than Start KM'); return;
-  }
-
-  const distance = (end - start).toFixed(1);
-  const trip = {id:Date.now(), name, start, end, distance, purpose, date:new Date().toLocaleDateString()};
-  trips.push(trip);
-  localStorage.setItem('trips', JSON.stringify(trips));
-  renderTrips();
-  document.getElementById('tripName').value='';
-  document.getElementById('startKM').value='';
-  document.getElementById('endKM').value='';
+  
+  running = true;
+  startTime = Date.now() - elapsed;
+  timerInterval = setInterval(updateTimer, 1000);
+  
+  document.getElementById('startBtn').style.display='none';
+  document.getElementById('stopBtn').style.display='block';
+  
+  watchId = navigator.geolocation.watchPosition(pos=>{
+    if(lastPos){
+      let d = getDistance(lastPos.lat, lastPos.lon, pos.coords.latitude, pos.coords.longitude);
+      totalDistance += d;
+      document.getElementById('distance').innerText = totalDistance.toFixed(2);
+    }
+    lastPos = {lat: pos.coords.latitude, lon: pos.coords.longitude};
+    currentSpeed = pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(0) : 0;
+    document.getElementById('speed').innerText = currentSpeed;
+  }, err=>alert('Allow location access'), {enableHighAccuracy:true});
 }
 
-function renderTrips(){
-  const list = document.getElementById('tripList');
-  list.innerHTML = '';
-  let total = 0;
-  trips.forEach(t=>{
-    total += parseFloat(t.distance);
-    list.innerHTML += `
-      <div class="trip">
-        <div>
-          <b>${t.name}</b><br>
-          <small>${t.date} | ${t.purpose}</small><br>
-          <small>${t.start}KM → ${t.end}KM</small>
-        </div>
-        <div><b>${t.distance} KM</b></div>
-      </div>
-    `;
-  });
-  document.getElementById('totalKM').innerText = total.toFixed(1) + ' KM';
+function stop(){
+  running = false;
+  clearInterval(timerInterval);
+  navigator.geolocation.clearWatch(watchId);
+  document.getElementById('startBtn').style.display='block';
+  document.getElementById('stopBtn').style.display='none';
 }
 
-function clearAll(){
-  if(confirm('Delete all trips?')){
-    trips = [];
-    localStorage.setItem('trips', JSON.stringify(trips));
-    renderTrips();
-  }
+function reset(){
+  stop();
+  elapsed = 0;
+  totalDistance = 0;
+  currentSpeed = 0;
+  lastPos = null;
+  document.getElementById('timer').innerText = '00:00:00';
+  document.getElementById('distance').innerText = '0.00';
+  document.getElementById('speed').innerText = '0';
 }
-
-function exportCSV(){
-  let csv = 'Date,Trip,Start KM,End KM,Distance, Purpose\n';
-  trips.forEach(t=>{csv += `${t.date},${t.name},${t.start},${t.end},${t.distance},${t.purpose}\n`});
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'KM_Trips.csv'; a.click();
-}
-
-renderTrips();
 </script>
 </body>
 </html>
