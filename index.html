@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PSM AUTO AND SERVICES | Mining, Trucks & Auto Workshop</title>
-<meta name="description" content="PSM AUTO AND SERVICES - Family Legacy of Keeping You Moving. Auto, Mine Trucks, TLB, Dump Trucks, Skavator & Heavy Machinery Repairs in Lekgwara">
+<meta name="description" content="PSM AUTO AND SERVICES - Family Legacy of Keeping You Moving. CAT, Bell, Volvo, JCB, Komatsu. Auto, Mine Trucks, TLB, Dump Trucks, Excavator Repairs in Lekgwara">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -24,13 +24,8 @@ h1,h2,h3{font-family:'Orbitron',sans-serif;font-weight:900}
 .btn-whatsapp{background:#25D366;color:#000}
 .btn-whatsapp:hover{background:#1ebe5a;box-shadow:0 0 20px rgba(37,211,102,0.6)}
 
-/* FLOATING WHATSAPP BUTTON */
-.whatsapp-float{
-  position:fixed;bottom:25px;right:25px;width:60px;height:60px;
-  background:#25D366;border-radius:50%;display:grid;place-items:center;
-  box-shadow:0 0 25px rgba(37,211,102,0.8);z-index:999;transition:.3s;
-  animation:pulse 2s infinite;
-}
+/* FLOATING WHATSAPP */
+.whatsapp-float{position:fixed;bottom:25px;right:25px;width:60px;height:60px;background:#25D366;border-radius:50%;display:grid;place-items:center;box-shadow:0 0 25px rgba(37,211,102,0.8);z-index:999;transition:.3s;animation:pulse 2s infinite}
 .whatsapp-float:hover{transform:scale(1.1)}
 .whatsapp-float svg{width:35px;height:35px;fill:#000}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.7)}70%{box-shadow:0 0 0 20px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
@@ -62,6 +57,12 @@ section{padding:100px 5%}
 .card-content{padding:25px}
 .card h3{color:var(--orange);margin-bottom:10px}
 
+/* BRANDS */
+.brands{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:40px;align-items:center;margin-top:50px}
+.brand-logo{background:#fff;padding:20px;border-radius:15px;display:grid;place-items:center;height:100px;transition:.3s;filter:grayscale(100%)}
+.brand-logo:hover{filter:grayscale(0%);transform:scale(1.1);box-shadow:var(--glow-orange)}
+.brand-logo img{max-height:60px;max-width:120px;object-fit:contain}
+
 /* GALLERY */
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
 .gallery img{width:100%;height:200px;object-fit:cover;border-radius:12px;transition:.4s}
@@ -86,7 +87,6 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
 </head>
 <body>
 
-<!-- FLOATING WHATSAPP BUTTON -->
 <a href="https://wa.me/27799097420?text=Hello%20PSM%20AUTO%2C%20I%20need%20a%20quote%20for%20my%20vehicle%2Fmachine" target="_blank" class="whatsapp-float">
   <svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.7.7 5.3 2.1 7.5L4 29l6.6-2C12.3 28.2 14.1 29 16 29c6.6 0 12-5.4 12-12S22.6 3 16 3zm8.2 18.2c-.3.8-1.7 1.6-2.4 1.7-.6.1-1.4.2-2.3-.2-.5-.2-1.2-.5-2.1-.9-3.7-1.9-6.1-6.5-6.3-6.8-.2-.3-1.6-2.1-1.6-4 0-1.9 1-2.8 1.3-3.2.3-.4.7-.5 1-.5h.7c.2 0 .5 0 .7.6.2.7.8 2 .8 2.2 0 .2.1.5 0 .7-.1.2-.3.4-.5.6l-.7.8c-.2.2-.4.5-.2.8.2.3 1 1.7 2.2 2.7 1.5 1.3 2.7 1.7 3.2 1.9.5.2.8.2 1.1-.1.3-.3 1.2-1.4 1.5-1.9.3-.5.6-.4 1-.2.4.2 2.6 1.2 3 1.4.4.2.7.3.8.5.1.3.1 1.6-.8 2.4z"/></svg>
 </a>
@@ -97,6 +97,7 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
     <a href="#home">HOME</a>
     <a href="#services">SERVICES</a>
     <a href="#fleet">FLEET</a>
+    <a href="#brands">BRANDS</a>
     <a href="#gallery">GALLERY</a>
     <a href="#about">ABOUT</a>
     <a href="#contact">CONTACT</a>
@@ -111,7 +112,7 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
   <div class="hero-content">
     <h1>PSM AUTO AND SERVICES</h1>
     <p>A Family Legacy of Keeping You Moving</p>
-    <p>Auto | Mine Trucks | Dump Trucks | TLB | Skavator | Heavy Machinery</p>
+    <p>CAT | Bell | Volvo | JCB | Komatsu | Auto | Mining Machinery Specialists</p>
     <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView()">REQUEST QUOTE</button>
       <button class="btn btn-outline" onclick="document.getElementById('services').scrollIntoView()">OUR SERVICES</button>
@@ -123,28 +124,28 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
   <h2 class="section-title reveal">OUR SERVICES</h2>
   <div class="grid">
     <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1600" alt="Car Workshop">
+      <img src="https://images.pexels.com/photos/8982686/pexels-photo-8982686.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Car Workshop">
       <div class="card-content"><h3>AUTOMOTIVE REPAIRS</h3><p>Engine overhauls, engineering skimming, diagnostics, brakes, suspension. Parts warranty 6 months.</p></div>
     </div>
     <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?q=80&w=1600" alt="Dump Truck">
-      <div class="card-content"><h3>MINE TRUCKS & DUMP TRUCKS</h3><p>CAT, Bell, Volvo haul trucks. Engine rebuilds, diffs, hydraulics. Minimizing downtime.</p></div>
+      <img src="https://images.pexels.com/photos/3846036/pexels-photo-3846036.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Dump Truck">
+      <div class="card-content"><h3>MINE TRUCKS & DUMP TRUCKS</h3><p>CAT, Bell, Volvo haul trucks. Engine rebuilds, diffs, hydraulics. 24/7 on-site support.</p></div>
     </div>
     <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1581093458791-1820a4a8baab?q=80&w=1600" alt="Excavator">
-      <div class="card-content"><h3>EXCAVATORS / SKAVATOR</h3><p>Full rebuilds, hydraulic systems, undercarriage, electrical. On-site repairs.</p></div>
+      <img src="https://images.pexels.com/photos/159298/pexels-photo-159298.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Excavator">
+      <div class="card-content"><h3>EXCAVATORS</h3><p>Full rebuilds, hydraulic systems, undercarriage. CAT, Komatsu, Hitachi specialists.</p></div>
     </div>
     <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?q=80&w=1600" alt="TLB">
-      <div class="card-content"><h3>TLB & BACKHOE</h3><p>Transmission, engine, hydraulics. JCB, CAT, Bell TLB servicing.</p></div>
+      <img src="https://images.pexels.com/photos/1096388/pexels-photo-1096388.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="TLB">
+      <div class="card-content"><h3>TLB & BACKHOE LOADERS</h3><p>Transmission, engine, hydraulics. JCB, CAT, Bell TLB certified repairs.</p></div>
     </div>
     <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1600" alt="Loader">
-      <div class="card-content"><h3>LOADERS & GRADERS</h3><p>Gearboxes, diffs, engine overhauls. 24/7 earthmoving support.</p></div>
+      <img src="https://images.pexels.com/photos/159306/pexels-photo-159306.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Grader">
+      <div class="card-content"><h3>GRADERS & DOZERS</h3><p>Motor graders, bulldozers. Blade hydraulics, transmission, engine overhauls.</p></div>
     </div>
     <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1625246333195-78d9c38bdc2f?q=80&w=1600" alt="Mining Machinery">
-      <div class="card-content"><h3>MINING MACHINERY</h3><p>Drills, support vehicles, custom fabrication. Emergency callouts.</p></div>
+      <img src="https://images.pexels.com/photos/3846027/pexels-photo-3846027.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Mining Machinery">
+      <div class="card-content"><h3>MINING SUPPORT EQUIPMENT</h3><p>Water trucks, drill rigs, loaders, crushers. Emergency callouts in Limpopo.</p></div>
     </div>
   </div>
 </section>
@@ -152,12 +153,14 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
 <section id="fleet" style="background:var(--gray)">
   <h2 class="section-title reveal">MACHINERY WE SERVICE</h2>
   <div class="grid">
-    <div class="card glass reveal"><img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=800" alt=""><div class="card-content"><h3>Cars & 4x4s</h3></div></div>
-    <div class="card glass reveal"><img src="https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?q=80&w=800" alt=""><div class="card-content"><h3>Dump Trucks</h3></div></div>
-    <div class="card glass reveal"><img src="https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?q=80&w=800" alt=""><div class="card-content"><h3>TLB & Backhoe</h3></div></div>
-    <div class="card glass reveal"><img src="https://images.unsplash.com/photo-1581093458791-1820a4a8baab?q=80&w=800" alt=""><div class="card-content"><h3>Excavators / Skavator</h3></div></div>
-    <div class="card glass reveal"><img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800" alt=""><div class="card-content"><h3>Loaders & Graders</h3></div></div>
-    <div class="card glass reveal"><img src="https://images.unsplash.com/photo-1625246333195-78d9c38bdc2f?q=80&w=800" alt=""><div class="card-content"><h3>Mine Support</h3></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/8982686/pexels-photo-8982686.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>Cars & 4x4s</h3><p>Full service & diagnostics</p></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/3846036/pexels-photo-3846036.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>Dump Trucks</h3><p>CAT, Bell, Volvo</p></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/1096388/pexels-photo-1096388.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>TLB & Backhoe</h3><p>Hydraulic & engine</p></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/159298/pexels-photo-159298.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>Excavators</h3><p>Full rebuilds</p></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/159306/pexels-photo-159306.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>Graders & Dozers</h3><p>Blade & transmission</p></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/3846027/pexels-photo-3846027.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>Water Trucks & Drills</h3><p>Support equipment</p></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/210617/pexels-photo-210617.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>Loaders</h3><p>Front end loaders</p></div></div>
+    <div class="card glass reveal"><img src="https://images.pexels.com/photos/44897/pexels-photo-44897.jpeg?auto=compress&cs=tinysrgb&w=800" alt=""><div class="card-content"><h3>Mine Support</h3><p>Custom fabrication</p></div></div>
   </div>
   <div class="stats" style="margin-top:60px">
     <div class="stat reveal"><h2 id="counter1">5+</h2><p>Years Experience</p></div>
@@ -166,13 +169,26 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
   </div>
 </section>
 
-<section id="gallery">
+<section id="brands">
+  <h2 class="section-title reveal">BRANDS WE SERVICE</h2>
+  <p style="text-align:center;font-size:18px;margin-bottom:10px">Certified to work on all major mining and automotive brands</p>
+  <div class="brands">
+    <div class="brand-logo reveal"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Caterpillar_logo.svg" alt="CAT"></div>
+    <div class="brand-logo reveal"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Bell_Equipment_logo.png" alt="Bell"></div>
+    <div class="brand-logo reveal"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Volvo_logo.svg" alt="Volvo"></div>
+    <div class="brand-logo reveal"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9b/JCB_logo.svg" alt="JCB"></div>
+    <div class="brand-logo reveal"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Komatsu_logo.svg" alt="Komatsu"></div>
+    <div class="brand-logo reveal"><img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Mercedes-Benz_logo_2011.svg" alt="Mercedes"></div>
+  </div>
+</section>
+
+<section id="gallery" style="background:var(--gray)">
   <h2 class="section-title reveal">WORKSHOP IN ACTION</h2>
   <div class="gallery">
-    <img class="reveal" src="https://images.unsplash.com/photo-1486262715619-67b85e0cefa0?q=80&w=1200" alt="Workshop">
-    <img class="reveal" src="https://images.unsplash.com/photo-1619646127911-2f93b0c3d6f7?q=80&w=1200" alt="Mechanic">
-    <img class="reveal" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200" alt="Engine">
-    <img class="reveal" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200" alt="Truck Repair">
+    <img class="reveal" src="https://images.pexels.com/photos/3807277/pexels-photo-3807277.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Workshop">
+    <img class="reveal" src="https://images.pexels.com/photos/8982686/pexels-photo-8982686.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Mechanic">
+    <img class="reveal" src="https://images.pexels.com/photos/3807777/pexels-photo-3807777.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Engine">
+    <img class="reveal" src="https://images.pexels.com/photos/3846036/pexels-photo-3846036.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Truck Repair">
   </div>
 </section>
 
@@ -197,7 +213,7 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
     <div class="card-content">
     <input type="text" id="name" placeholder="Full Name" required>
     <input type="tel" id="phone" placeholder="Phone Number" required>
-    <input type="text" id="machine" placeholder="Vehicle / Machine Type - e.g. Dump Truck, TLB">
+    <input type="text" id="machine" placeholder="Vehicle / Machine Type - e.g. CAT Dump Truck, Excavator">
     <textarea id="message" rows="4" placeholder="Describe the issue or service needed" required></textarea>
     <button class="btn btn-whatsapp" type="submit">SEND VIA WHATSAPP</button>
     </div>
@@ -216,16 +232,11 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
 </footer>
 
 <script>
-window.addEventListener('scroll',()=>{
-  document.getElementById('navbar').classList.toggle('scrolled',scrollY>50)
-})
-const io=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active')})
-},{threshold:0.2})
+window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',scrollY>50)})
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active')})},{threshold:0.2})
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el))
 function count(id,target){let c=0;const step=target/100;const t=setInterval(()=>{c+=step;if(c>=target){c=target;clearInterval(t)}document.getElementById(id).innerText=Math.floor(c)},20)}
 setTimeout(()=>{count('counter1',5);count('counter2',500);count('counter3',24)},1000)
-
 document.getElementById('quoteForm').addEventListener('submit', function(e){
   e.preventDefault();
   const name = document.getElementById('name').value;
