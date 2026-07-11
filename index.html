@@ -22,6 +22,18 @@ h1,h2,h3{font-family:'Orbitron',sans-serif;font-weight:900}
 .btn-outline{border:2px solid var(--orange);background:transparent;color:var(--orange)}
 .btn-outline:hover{background:var(--orange);color:#000}
 .btn-whatsapp{background:#25D366;color:#000}
+.btn-whatsapp:hover{background:#1ebe5a;box-shadow:0 0 20px rgba(37,211,102,0.6)}
+
+/* FLOATING WHATSAPP BUTTON */
+.whatsapp-float{
+  position:fixed;bottom:25px;right:25px;width:60px;height:60px;
+  background:#25D366;border-radius:50%;display:grid;place-items:center;
+  box-shadow:0 0 25px rgba(37,211,102,0.8);z-index:999;transition:.3s;
+  animation:pulse 2s infinite;
+}
+.whatsapp-float:hover{transform:scale(1.1)}
+.whatsapp-float svg{width:35px;height:35px;fill:#000}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.7)}70%{box-shadow:0 0 0 20px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
 
 /* HERO */
 .hero{height:100vh;position:relative;display:grid;place-items:center;text-align:center;overflow:hidden}
@@ -74,6 +86,11 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
 </head>
 <body>
 
+<!-- FLOATING WHATSAPP BUTTON -->
+<a href="https://wa.me/27799097420?text=Hello%20PSM%20AUTO%2C%20I%20need%20a%20quote%20for%20my%20vehicle%2Fmachine" target="_blank" class="whatsapp-float">
+  <svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.7.7 5.3 2.1 7.5L4 29l6.6-2C12.3 28.2 14.1 29 16 29c6.6 0 12-5.4 12-12S22.6 3 16 3zm8.2 18.2c-.3.8-1.7 1.6-2.4 1.7-.6.1-1.4.2-2.3-.2-.5-.2-1.2-.5-2.1-.9-3.7-1.9-6.1-6.5-6.3-6.8-.2-.3-1.6-2.1-1.6-4 0-1.9 1-2.8 1.3-3.2.3-.4.7-.5 1-.5h.7c.2 0 .5 0 .7.6.2.7.8 2 .8 2.2 0 .2.1.5 0 .7-.1.2-.3.4-.5.6l-.7.8c-.2.2-.4.5-.2.8.2.3 1 1.7 2.2 2.7 1.5 1.3 2.7 1.7 3.2 1.9.5.2.8.2 1.1-.1.3-.3 1.2-1.4 1.5-1.9.3-.5.6-.4 1-.2.4.2 2.6 1.2 3 1.4.4.2.7.3.8.5.1.3.1 1.6-.8 2.4z"/></svg>
+</a>
+
 <nav id="navbar">
   <img src="data:image/png;base64,iVBORw0KGgo=" alt="PSM AUTO Logo">
   <div class="links">
@@ -84,7 +101,7 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
     <a href="#about">ABOUT</a>
     <a href="#contact">CONTACT</a>
   </div>
-  <a href="https://wa.me/27799097420" target="_blank" class="btn btn-whatsapp">WHATSAPP</a>
+  <a href="https://wa.me/27799097420" target="_blank" class="btn btn-whatsapp">WHATSAPP US</a>
 </nav>
 
 <section class="hero" id="home">
@@ -96,7 +113,7 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
     <p>A Family Legacy of Keeping You Moving</p>
     <p>Auto | Mine Trucks | Dump Trucks | TLB | Skavator | Heavy Machinery</p>
     <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView()">BOOK SERVICE</button>
+      <button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView()">REQUEST QUOTE</button>
       <button class="btn btn-outline" onclick="document.getElementById('services').scrollIntoView()">OUR SERVICES</button>
     </div>
   </div>
@@ -107,45 +124,27 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
   <div class="grid">
     <div class="card glass reveal">
       <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1600" alt="Car Workshop">
-      <div class="card-content">
-        <h3>AUTOMOTIVE REPAIRS</h3>
-        <p>Engine overhauls, engineering skimming, diagnostics, brakes, suspension. Cars & light vehicles. Parts warranty 6 months.</p>
-      </div>
+      <div class="card-content"><h3>AUTOMOTIVE REPAIRS</h3><p>Engine overhauls, engineering skimming, diagnostics, brakes, suspension. Parts warranty 6 months.</p></div>
     </div>
     <div class="card glass reveal">
       <img src="https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?q=80&w=1600" alt="Dump Truck">
-      <div class="card-content">
-        <h3>MINE TRUCKS & DUMP TRUCKS</h3>
-        <p>CAT, Bell, Volvo haul trucks. Engine rebuilds, diffs, hydraulics. Minimizing downtime on site.</p>
-      </div>
+      <div class="card-content"><h3>MINE TRUCKS & DUMP TRUCKS</h3><p>CAT, Bell, Volvo haul trucks. Engine rebuilds, diffs, hydraulics. Minimizing downtime.</p></div>
     </div>
     <div class="card glass reveal">
       <img src="https://images.unsplash.com/photo-1581093458791-1820a4a8baab?q=80&w=1600" alt="Excavator">
-      <div class="card-content">
-        <h3>EXCAVATORS / SKAVATOR</h3>
-        <p>Full rebuilds, hydraulic systems, undercarriage, electrical. On-site repairs available.</p>
-      </div>
+      <div class="card-content"><h3>EXCAVATORS / SKAVATOR</h3><p>Full rebuilds, hydraulic systems, undercarriage, electrical. On-site repairs.</p></div>
     </div>
     <div class="card glass reveal">
       <img src="https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?q=80&w=1600" alt="TLB">
-      <div class="card-content">
-        <h3>TLB & BACKHOE</h3>
-        <p>Transmission, engine, hydraulics. JCB, CAT, Bell TLB servicing and repairs.</p>
-      </div>
+      <div class="card-content"><h3>TLB & BACKHOE</h3><p>Transmission, engine, hydraulics. JCB, CAT, Bell TLB servicing.</p></div>
     </div>
     <div class="card glass reveal">
       <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1600" alt="Loader">
-      <div class="card-content">
-        <h3>LOADERS & GRADERS</h3>
-        <p>Gearboxes, diffs, engine overhauls. Keep your earthmoving fleet moving 24/7.</p>
-      </div>
+      <div class="card-content"><h3>LOADERS & GRADERS</h3><p>Gearboxes, diffs, engine overhauls. 24/7 earthmoving support.</p></div>
     </div>
     <div class="card glass reveal">
       <img src="https://images.unsplash.com/photo-1625246333195-78d9c38bdc2f?q=80&w=1600" alt="Mining Machinery">
-      <div class="card-content">
-        <h3>MINING MACHINERY</h3>
-        <p>Drills, support vehicles, custom fabrication. 24/7 emergency callouts in Limpopo.</p>
-      </div>
+      <div class="card-content"><h3>MINING MACHINERY</h3><p>Drills, support vehicles, custom fabrication. Emergency callouts.</p></div>
     </div>
   </div>
 </section>
@@ -161,7 +160,7 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
     <div class="card glass reveal"><img src="https://images.unsplash.com/photo-1625246333195-78d9c38bdc2f?q=80&w=800" alt=""><div class="card-content"><h3>Mine Support</h3></div></div>
   </div>
   <div class="stats" style="margin-top:60px">
-    <div class="stat reveal"><h2 id="counter1">15</h2><p>Years Experience</p></div>
+    <div class="stat reveal"><h2 id="counter1">5+</h2><p>Years Experience</p></div>
     <div class="stat reveal"><h2 id="counter2">500</h2><p>Machines Serviced</p></div>
     <div class="stat reveal"><h2 id="counter3">24</h2><p>Hour Support</p></div>
   </div>
@@ -183,7 +182,7 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
     <div class="card-content">
     <p style="font-size:18px;line-height:1.8">
     PSM AUTO AND SERVICES (PTY) LTD - <b>A Family Legacy of Keeping You Moving</b><br><br>
-    Based in Lekgwara, we specialize in automotive, mining trucks and heavy machinery repairs. From engineering skimming to full gasket top sets, labour to diagnostics - we keep your fleet moving.
+    Based in Lekgwara, we specialize in automotive, mining trucks and heavy machinery repairs. From engineering skimming to full gasket top sets, labour to diagnostics.
     </p>
     <p style="margin-top:20px"><b>Address:</b> No 291 Mathabatha Lekgwareng, Lebowakgomo 0733</p>
     <p><b>Phone:</b> 079 909 7420 / 079 614 1463</p>
@@ -193,14 +192,14 @@ footer{padding:60px 5%;background:#05050A;text-align:center;border-top:1px solid
 </section>
 
 <section id="contact" style="background:var(--gray)">
-  <h2 class="section-title reveal">REQUEST A QUOTE</h2>
-  <form class="glass card reveal" onsubmit="alert('Quote request sent! We will contact you within 15 minutes.');this.reset();return false">
+  <h2 class="section-title reveal">REQUEST A QUOTE ON WHATSAPP</h2>
+  <form id="quoteForm" class="glass card reveal">
     <div class="card-content">
-    <input type="text" placeholder="Full Name" required>
-    <input type="tel" placeholder="Phone Number" required>
-    <input type="text" placeholder="Vehicle / Machine Type - e.g. Dump Truck, TLB">
-    <textarea rows="4" placeholder="Describe the issue or service needed" required></textarea>
-    <button class="btn btn-primary" type="submit">SEND REQUEST</button>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <input type="text" id="machine" placeholder="Vehicle / Machine Type - e.g. Dump Truck, TLB">
+    <textarea id="message" rows="4" placeholder="Describe the issue or service needed" required></textarea>
+    <button class="btn btn-whatsapp" type="submit">SEND VIA WHATSAPP</button>
     </div>
   </form>
   <div style="text-align:center;margin-top:30px" class="reveal">
@@ -225,7 +224,18 @@ const io=new IntersectionObserver(entries=>{
 },{threshold:0.2})
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el))
 function count(id,target){let c=0;const step=target/100;const t=setInterval(()=>{c+=step;if(c>=target){c=target;clearInterval(t)}document.getElementById(id).innerText=Math.floor(c)},20)}
-setTimeout(()=>{count('counter1',15);count('counter2',500);count('counter3',24)},1000)
+setTimeout(()=>{count('counter1',5);count('counter2',500);count('counter3',24)},1000)
+
+document.getElementById('quoteForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const phone = document.getElementById('phone').value;
+  const machine = document.getElementById('machine').value;
+  const message = document.getElementById('message').value;
+  const whatsappMessage = `*NEW QUOTE REQUEST - PSM AUTO*%0A%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*Machine/Vehicle:* ${machine}%0A*Issue:* ${message}%0A%0A_Sent from PSM Auto Website_`;
+  window.open(`https://wa.me/27799097420?text=${whatsappMessage}`, '_blank');
+  this.reset();
+});
 </script>
 </body>
 </html>
