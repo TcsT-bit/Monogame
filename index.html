@@ -3,170 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speed KM Tracker Pro</title>
+<title>TITAN - God Tier Editor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 <style>
-:root{--bg:#0A0A0F; --accent:#00D26A; --orange:#FF5A00; --card:#111827}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:var(--bg);color:#fff;text-align:center;padding:20px;max-width:500px;margin:auto}
-h1{color:var(--accent);margin-bottom:20px}
-.display{background:var(--card);padding:30px;border-radius:20px;margin-bottom:20px;border:2px solid var(--accent)}
-.big{font-size:60px;font-weight:900;color:var(--accent)}
-.label{color:#888;font-size:14px;margin-top:5px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
-.box{background:var(--card);padding:20px;border-radius:16px}
-.box .big{font-size:36px;color:var(--orange)}
-button{width:100%;padding:18px;border:none;border-radius:14px;font-size:18px;font-weight:900;cursor:pointer;margin-top:10px}
-.btn-start{background:var(--accent);color:#000}
-.btn-stop{background:var(--orange);color:#000}
-.btn-reset{background:#333;color:#fff}
-.btn-save{background:#1a73e8;color:#fff}
-.status{font-size:12px;color:#888;margin:10px 0}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI'}
+body{display:flex;height:100vh;background:#0A0A0F;color:#fff}
+.toolbar{width:80px;background:#111827;padding:10px;display:flex;flex-direction:column;gap:10px}
+.toolbar button{background:#1F2937;border:none;color:#00D26A;padding:12px;border-radius:8px;cursor:pointer;font-size:20px}
+.toolbar button:hover{background:#00D26A;color:#000}
+.layers{width:250px;background:#111827;padding:15px}
+#canvas{flex:1;background:#222;cursor:crosshair}
+.header{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.header button{padding:10px 20px;background:#00D26A;border:none;border-radius:8px;color:#000;font-weight:900;cursor:pointer}
 </style>
 </head>
 <body>
 
-<h1>⏱️ SPEED + KM TRACKER</h1>
-
-<div class="display">
-  <div class="big" id="timer">00:00:00</div>
-  <div class="label">TIME</div>
+<div class="toolbar">
+  <button onclick="addText()">T</button>
+  <button onclick="addRect()">▭</button>
+  <button onclick="addCircle()">○</button>
+  <button onclick="document.getElementById('imgInput').click()">🖼️</button>
+  <input type="file" id="imgInput" style="display:none" onchange="addImage(event)">
 </div>
 
-<div class="grid">
-  <div class="box">
-    <div class="big" id="distance">0.00</div>
-    <div class="label">TOTAL KM</div>
-  </div>
-  <div class="box">
-    <div class="big" id="speed">0</div>
-    <div class="label">SPEED KM/H</div>
-  </div>
+<canvas id="canvas"></canvas>
+
+<div class="layers">
+  <h3>LAYERS</h3>
+  <div id="layerList"></div>
+  <button onclick="exportPNG()" style="width:100%;margin-top:20px;padding:12px;background:#FF5A00;border:none;border-radius:8px;color:#000;font-weight:900">EXPORT PNG</button>
 </div>
 
-<div class="status" id="status">Status: Waiting...</div>
-
-<button class="btn-start" id="startBtn" onclick="start()">START</button>
-<button class="btn-stop" id="stopBtn" onclick="stop()" style="display:none">STOP</button>
-<button class="btn-reset" onclick="reset()">RESET</button>
-<button class="btn-save" onclick="saveTrip()">SAVE TRIP</button>
+<div class="header">
+  <button onclick="addTemplate()">LOAD TEMPLATE</button>
+  <button onclick="undo()">UNDO</button>
+</div>
 
 <script>
-let timerInterval, watchId;
-let startTime = 0, elapsed = 0, running = false;
-let lastPos = null, lastTime = null;
-let totalDistance = 0, currentSpeed = 0;
-let tripData = [];
+const canvas = new fabric.Canvas('canvas', {
+  width: window.innerWidth - 330,
+  height: window.innerHeight,
+  backgroundColor: '#ffffff',
+  preserveObjectStacking: true
+});
 
-function formatTime(ms){
-  let s = Math.floor(ms/1000);
-  let h = String(Math.floor(s/3600)).padStart(2,'0');
-  let m = String(Math.floor(s%3600/60)).padStart(2,'0');
-  let sec = String(s%60).padStart(2,'0');
-  return `${h}:${m}:${sec}`;
+// GOD TIER SETTINGS
+fabric.Object.prototype.transparentCorners = false;
+fabric.Object.prototype.cornerColor = '#00D26A';
+fabric.Object.prototype.cornerStyle = 'circle';
+
+function addText(){
+  const text = new fabric.Textbox('Edit Me', {
+    left: 100, top: 100, fontSize: 40, fill: '#000',
+    fontFamily: 'Arial', width: 300
+  });
+  canvas.add(text).setActiveObject(text);
+  updateLayers();
 }
 
-function updateTimer(){
-  elapsed = Date.now() - startTime;
-  document.getElementById('timer').innerText = formatTime(elapsed);
+function addRect(){
+  const rect = new fabric.Rect({
+    left: 150, top: 150, width: 200, height: 100,
+    fill: '#00D26A', stroke: '#000', strokeWidth: 2
+  });
+  canvas.add(rect);
+  updateLayers();
 }
 
-// Haversine formula to calculate distance between 2 GPS points
-function getDistance(lat1, lon1, lat2, lon2){
-  const R = 6371; 
-  const dLat = (lat2-lat1) * Math.PI/180;
-  const dLon = (lon2-lon1) * Math.PI/180;
-  const a = Math.sin(dLat/2)*Math.sin(dLat/2) + 
-    Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
-    Math.sin(dLon/2)*Math.sin(dLon/2);
-  const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R*c; // in KM
+function addCircle(){
+  const circle = new fabric.Circle({
+    left: 200, top: 200, radius: 50, fill: '#FF5A00'
+  });
+  canvas.add(circle);
+  updateLayers();
 }
 
-function start(){
-  if(!navigator.geolocation){
-    alert('GPS not supported on this device'); return;
+function addImage(e){
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = function(f){
+    fabric.Image.fromURL(f.target.result, function(img){
+      img.scaleToWidth(300);
+      canvas.add(img);
+      updateLayers();
+    });
   }
-  
-  document.getElementById('status').innerText = 'Status: Getting GPS signal...';
-  
-  running = true;
-  startTime = Date.now() - elapsed;
-  timerInterval = setInterval(updateTimer, 1000);
-  
-  document.getElementById('startBtn').style.display='none';
-  document.getElementById('stopBtn').style.display='block';
-  
-  // Get position every 2 seconds for better accuracy
-  watchId = navigator.geolocation.watchPosition(pos=>{
-    document.getElementById('status').innerText = 'Status: Tracking...';
-    
-    const now = Date.now();
-    const currentPos = {
-      lat: pos.coords.latitude, 
-      lon: pos.coords.longitude,
-      time: now
-    };
-    
-    // Calculate speed from distance/time if GPS speed is null
-    if(lastPos){
-      let dist = getDistance(lastPos.lat, lastPos.lon, currentPos.lat, currentPos.lon);
-      let timeDiff = (now - lastTime) / 1000 / 3600; // hours
-      
-      if(dist > 0.005){ // ignore small GPS jumps < 5 meters
-        totalDistance += dist;
-        document.getElementById('distance').innerText = totalDistance.toFixed(2);
-        
-        // Calculate speed: KM / Hours
-        if(timeDiff > 0){
-          currentSpeed = (dist / timeDiff).toFixed(0);
-          document.getElementById('speed').innerText = currentSpeed;
-        }
-      }
-    }
-    
-    lastPos = currentPos;
-    lastTime = now;
-    
-  }, err=>{
-    document.getElementById('status').innerText = 'Status: GPS Error - ' + err.message;
-    alert('Turn on Location/GPS and try again');
-  }, {enableHighAccuracy:true, maximumAge:0, timeout:10000});
+  reader.readAsDataURL(file);
 }
 
-function stop(){
-  running = false;
-  clearInterval(timerInterval);
-  if(watchId) navigator.geolocation.clearWatch(watchId);
-  document.getElementById('startBtn').style.display='block';
-  document.getElementById('stopBtn').style.display='none';
-  document.getElementById('status').innerText = 'Status: Stopped';
+function updateLayers(){
+  const list = document.getElementById('layerList');
+  list.innerHTML = '';
+  canvas.getObjects().reverse().forEach((obj,i)=>{
+    list.innerHTML += `<div style="padding:8px;background:#1F2937;margin:5px 0;border-radius:6px">${obj.type} ${i+1}</div>`;
+  });
 }
 
-function reset(){
-  stop();
-  elapsed = 0;
-  totalDistance = 0;
-  currentSpeed = 0;
-  lastPos = null;
-  lastTime = null;
-  document.getElementById('timer').innerText = '00:00:00';
-  document.getElementById('distance').innerText = '0.00';
-  document.getElementById('speed').innerText = '0';
-  document.getElementById('status').innerText = 'Status: Waiting...';
+function exportPNG(){
+  const dataURL = canvas.toDataURL({format: 'png', multiplier: 3}); // 3x for 300DPI
+  const a = document.createElement('a');
+  a.href = dataURL; a.download = 'Titan_Export.png'; a.click();
 }
 
-function saveTrip(){
-  const trip = {
-    date: new Date().toLocaleString(),
-    time: document.getElementById('timer').innerText,
-    distance: totalDistance.toFixed(2),
-    avgSpeed: elapsed > 0 ? ((totalDistance / (elapsed/1000/3600))).toFixed(0) : 0
-  };
-  let trips = JSON.parse(localStorage.getItem('speedTrips')) || [];
-  trips.push(trip);
-  localStorage.setItem('speedTrips', JSON.stringify(trips));
-  alert(`Trip Saved!\nDistance: ${trip.distance} KM\nTime: ${trip.time}`);
+function addTemplate(){
+  // Pro template system
+  canvas.clear();
+  canvas.backgroundColor = '#0A0A0F';
+  addText();
+  addRect();
 }
+
+canvas.on('object:added', updateLayers);
+canvas.on('object:removed', updateLayers);
 </script>
 </body>
 </html>
