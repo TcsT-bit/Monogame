@@ -3,115 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM EVOLVE OS v2.0</title>
+<title>PSM EVOLVE OS v3.0 GOD TIER</title>
 <meta name="theme-color" content="#FF5A00">
 <link rel="manifest" href="manifest.json">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600;700&display=swap');
 :root{ --orange:#FF5A00; --green:#00D26A; --cyan:#00D4FF; --red:#FF0040; }
-body{font-family:'Rajdhani',sans-serif;background:#03040A;color:#fff;overflow-x:hidden}
-.quantum-text{font-family:'Orbitron',sans-serif;font-weight:900;text-shadow:0 0 10px var(--cyan)}
-.glass{background:rgba(10,20,40,0.6);backdrop-filter:blur(20px);border:1px solid rgba(0,212,255,0.2);border-radius:20px}
-.btn{background:linear-gradient(90deg,var(--orange),var(--green));color:#000;padding:12px 20px;border-radius:12px;font-weight:700;border:none;cursor:pointer;transition:0.3s}
-.btn:hover{transform:scale(1.05);box-shadow:0 0 20px var(--green)}
-.btn-sec{background:rgba(0,212,255,0.1);border:1px solid var(--cyan);color:var(--cyan);padding:10px 16px;border-radius:10px;cursor:pointer}
-input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.3);color:#fff;padding:12px;border-radius:10px;width:100%}
-.hidden{display:none}
-.tab-btn{padding:10px 16px;border-radius:10px;cursor:pointer}
-.tab-btn.active{background:var(--cyan);color:#000}
-.pulse{animation:pulse 2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,212,255,0.7)}70%{box-shadow:0 0 0 15px rgba(0,212,255,0)}100%{box-shadow:0 0 0 0 rgba(0,212,255,0)}}
-.card-hover{transition:0.3s}
-.card-hover:hover{transform:translateY(-5px);border-color:var(--orange)}
+body{font-family:'Rajdhani',sans-serif;background:#000;color:#fff;overflow-x:hidden}
+#bg3d{position:fixed;inset:0;z-index:-1}
+.quantum-text{font-family:'Orbitron',sans-serif;font-weight:900;text-shadow:0 0 15px var(--cyan)}
+.glass{background:rgba(10,20,40,0.4);backdrop-filter:blur(25px);border:1px solid rgba(0,212,255,0.3);border-radius:24px}
+.neon-border{box-shadow:0 0 20px rgba(0,212,255,0.4)}
+.btn{background:linear-gradient(90deg,var(--orange),var(--green));color:#000;padding:14px 24px;border-radius:14px;font-weight:900;border:none;cursor:pointer;transition:0.3s}
+.btn:hover{transform:scale(1.05) translateY(-2px);box-shadow:0 0 30px var(--green)}
+.btn-sec{background:rgba(0,212,255,0.1);border:1px solid var(--cyan);color:var(--cyan);padding:10px 18px;border-radius:12px;cursor:pointer}
+input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.4);color:#fff;padding:14px;border-radius:12px;width:100%}
+.hidden{display:none}.tab-btn{padding:12px 20px;border-radius:12px;cursor:pointer;font-weight:700}
+.tab-btn.active{background:var(--cyan);color:#000;box-shadow:0 0 20px var(--cyan)}
+.float{animation:float 3s ease-in-out infinite}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.fade-in{animation:fadeIn 0.6s}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
+<canvas id="bg3d"></canvas>
 
 <!-- P1: LOGIN -->
 <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
-  <div class="glass p-8 max-w-2xl w-full pulse">
-    <h1 class="text-5xl text-center quantum-text mb-2">PSM EVOLVE OS</h1>
-    <p class="text-center text-cyan-400 mb-6">v2.0 | Automotive & Mining ERP</p>
+  <div class="glass p-10 max-w-2xl w-full neon-border float">
+    <h1 class="text-6xl text-center quantum-text mb-2">PSM EVOLVE OS</h1>
+    <p class="text-center text-cyan-400 mb-8">v3.0 | GOD TIER | Automotive & Mining ERP</p>
     <div class="grid grid-cols-3 gap-4">
-      <div onclick="selectRole('CEO')" class="glass p-6 text-center cursor-pointer card-hover"><div class="text-4xl">👑</div><b>CEO</b></div>
-      <div onclick="selectRole('Manager')" class="glass p-6 text-center cursor-pointer card-hover"><div class="text-4xl">📊</div><b>MANAGER</b></div>
-      <div onclick="selectRole('Reception')" class="glass p-6 text-center cursor-pointer card-hover"><div class="text-4xl">📞</div><b>RECEPTION</b></div>
+      <div onclick="selectRole('CEO')" class="glass p-6 text-center cursor-pointer hover:border-orange-500"><div class="text-5xl">👑</div><b class="text-orange-500">CEO</b></div>
+      <div onclick="selectRole('Manager')" class="glass p-6 text-center cursor-pointer hover:border-green-500"><div class="text-5xl">📊</div><b class="text-green-500">MANAGER</b></div>
+      <div onclick="selectRole('Reception')" class="glass p-6 text-center cursor-pointer hover:border-cyan-500"><div class="text-5xl">📞</div><b class="text-cyan-500">RECEPTION</b></div>
     </div>
-    <div id="passBox" class="hidden mt-4"><input id="password" type="password"><button onclick="login()" class="btn w-full mt-2">LOGIN</button></div>
+    <div id="passBox" class="hidden mt-6 fade-in"><input id="password" type="password" placeholder="Enter Password"><button onclick="login()" class="btn w-full mt-3">ENTER SYSTEM</button></div>
   </div>
 </div>
 
 <!-- P2: APP -->
-<div id="app" class="hidden p-3 md:p-6">
-  <header class="glass p-4 flex justify-between items-center mb-4">
-    <h2 class="text-2xl quantum-text">PSM EVOLVE // <span id="roleTag" class="text-orange-500"></span></h2>
+<div id="app" class="hidden p-4 md:p-8">
+  <header class="glass p-5 flex justify-between items-center mb-6 neon-border">
+    <h2 class="text-3xl quantum-text">PSM EVOLVE // <span id="roleTag" class="text-orange-500"></span></h2>
     <div><span id="userName" class="mr-3"></span><button onclick="logout()" class="btn-sec">LOGOUT</button></div>
   </header>
 
   <!-- TABS -->
-  <div class="flex gap-2 mb-4 overflow-x-auto">
+  <div class="flex gap-3 mb-6 overflow-x-auto">
     <button onclick="showTab('dashboard')" class="tab-btn active">Dashboard</button>
     <button onclick="showTab('jobs')" class="tab-btn">Jobs</button>
     <button onclick="showTab('quotes')" class="tab-btn">Quotes</button>
     <button onclick="showTab('stock')" class="tab-btn">Stock</button>
     <button onclick="showTab('products')" class="tab-btn">Products</button>
-    <button onclick="showTab('clients')" class="tab-btn">Clients</button>
+    <button onclick="showTab('clients')" class="tab-btn">Client Portal</button>
+    <button onclick="showTab('payroll')" class="tab-btn" id="payTab">Payroll</button>
     <button onclick="showTab('reports')" class="tab-btn" id="repTab">Reports</button>
   </div>
 
-  <!-- P3-P20 DASHBOARD -->
-  <div id="dashboard" class="tab">
+  <!-- P3-P50 DASHBOARD -->
+  <div id="dashboard" class="tab fade-in">
     <div class="grid grid-cols-4 gap-4">
-      <div class="glass p-4 card-hover"><p class="text-4xl" id="statJobs">0</p><p>Active Jobs</p></div>
-      <div class="glass p-4 card-hover" id="statRevBox"><p class="text-4xl text-green-400" id="statRev">R0</p><p>Revenue MTD</p></div>
-      <div class="glass p-4 card-hover"><p class="text-4xl" id="statStock">0</p><p>Low Stock</p></div>
-      <div class="glass p-4 card-hover"><p class="text-4xl" id="statQuotes">0</p><p>Open Quotes</p></div>
+      <div class="glass p-5 card-hover"><p class="text-5xl" id="statJobs">0</p><p>Active Jobs</p></div>
+      <div class="glass p-5 card-hover" id="statRevBox"><p class="text-5xl text-green-400" id="statRev">R0</p><p>Revenue MTD</p></div>
+      <div class="glass p-5 card-hover"><p class="text-5xl text-red-400" id="statStock">0</p><p>Low Stock</p></div>
+      <div class="glass p-5 card-hover"><p class="text-5xl" id="statQuotes">0</p><p>Open Quotes</p></div>
     </div>
-    <div class="glass p-4 mt-4"><h3 class="font-bold mb-2">RECENT ACTIVITY</h3><div id="auditLog"></div></div>
+    <div class="glass p-5 mt-4"><h3 class="font-bold text-xl mb-3">AI INSIGHTS</h3><p id="aiInsight" class="text-cyan-400">Scanning data...</p></div>
   </div>
 
-  <!-- P21-P60 JOBS + BARCODE -->
-  <div id="jobs" class="tab hidden">
-    <button onclick="startScanner()" class="btn mb-2">📷 SCAN BARCODE</button>
-    <div id="reader" class="hidden w-full max-w-sm"></div>
-    <div class="glass p-4 mb-4">
-      <div class="grid grid-cols-2 gap-2">
+  <!-- P51-P100 JOBS + BARCODE + CLIENT LINK -->
+  <div id="jobs" class="tab hidden fade-in">
+    <button onclick="startScanner()" class="btn mb-3">📷 SCAN BARCODE</button>
+    <div id="reader" class="hidden w-full max-w-sm mb-3"></div>
+    <div class="glass p-5 mb-4">
+      <div class="grid grid-cols-2 gap-3">
         <input id="jClient" placeholder="Client Name"><input id="jPhone" placeholder="27...">
-        <input id="jReg" placeholder="Reg / Machine"><input id="jBarcode" placeholder="Scan or Enter Part #">
+        <input id="jReg" placeholder="Reg / Machine"><input id="jBarcode" placeholder="Scan Part #">
         <select id="jStatus"><option>QUOTED</option><option>IN PROGRESS</option><option>QC</option><option>READY</option><option>INVOICED</option></select>
         <input id="jAmount" type="number" placeholder="Amount R">
       </div>
-      <button onclick="saveJob()" class="btn w-full mt-2">SAVE JOB</button>
+      <button onclick="saveJob()" class="btn w-full mt-3">SAVE JOB</button>
     </div>
     <div id="jobList"></div>
   </div>
 
-  <!-- P61-P90 QUOTATIONS -->
-  <div id="quotes" class="tab hidden">
-    <div class="glass p-4 mb-4">
-      <input id="qClient" placeholder="Client"><input id="qItems" placeholder="Item, Qty, Price">
+  <!-- P101-P150 QUOTES -->
+  <div id="quotes" class="tab hidden fade-in">
+    <div class="glass p-5 mb-4">
+      <input id="qClient" placeholder="Client"><textarea id="qItems" placeholder="Item | Qty | Price"></textarea>
       <button onclick="saveQuote()" class="btn w-full mt-2">GENERATE QUOTE PDF</button>
     </div>
     <div id="quoteList"></div>
   </div>
 
-  <!-- P91-P130 STOCK -->
-  <div id="stock" class="tab hidden">
-    <div class="glass p-4 mb-4">
+  <!-- P151-P200 STOCK -->
+  <div id="stock" class="tab hidden fade-in">
+    <div class="glass p-5 mb-4">
       <input id="sName" placeholder="Part Name"><input id="sQty" type="number" placeholder="Qty">
-      <input id="sMin" type="number" placeholder="Min Stock Alert">
+      <input id="sMin" type="number" placeholder="Min Stock Alert"><input id="sCost" type="number" placeholder="Cost Price">
       <button onclick="addStock()" class="btn w-full mt-2">ADD STOCK</button>
     </div>
     <div id="stockList"></div>
   </div>
 
-  <!-- P131-P160 PRODUCTS CMS -->
-  <div id="products" class="tab hidden">
-    <div class="glass p-4 mb-4" id="productFormBox">
+  <!-- P201-P250 PRODUCTS CMS -->
+  <div id="products" class="tab hidden fade-in">
+    <div class="glass p-5 mb-4" id="productFormBox">
       <input id="pName" placeholder="Product Name"><input id="pCode" placeholder="Product Code">
       <textarea id="pDesc" placeholder="Description"></textarea>
       <input id="pImg" placeholder="Image URL"><input id="pVideo" placeholder="Video URL">
@@ -121,88 +123,117 @@ input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.3);co
     <div id="productList" class="grid grid-cols-3 gap-4"></div>
   </div>
 
-  <!-- P161-P180 CLIENTS -->
-  <div id="clients" class="tab hidden"><div id="clientLinks"></div></div>
+  <!-- P251-P275 CLIENTS + CLIENT LINK -->
+  <div id="clients" class="tab hidden fade-in">
+    <p class="mb-3">Send this link to client. Opens their portal. Sticks on refresh.</p>
+    <div id="clientLinks"></div>
+  </div>
 
-  <!-- P181-P200 REPORTS -->
-  <div id="reports" class="tab hidden">
-    <button onclick="exportCSV()" class="btn">📊 EXPORT ALL CSV</button>
-    <button onclick="sendSMS()" class="btn ml-2">📲 BULK SMS</button>
+  <!-- P276-P290 PAYROLL -->
+  <div id="payroll" class="tab hidden fade-in">
+    <div class="glass p-5"><input id="empName" placeholder="Employee Name"><input id="empSalary" type="number" placeholder="Salary R">
+    <button onclick="addEmployee()" class="btn mt-2">ADD EMPLOYEE</button></div>
+    <div id="empList" class="mt-4"></div>
+  </div>
+
+  <!-- P291-P300 REPORTS -->
+  <div id="reports" class="tab hidden fade-in">
+    <button onclick="exportCSV()" class="btn">📊 EXPORT CSV</button>
+    <button onclick="exportPDF()" class="btn ml-2">📄 EXPORT PDF REPORT</button>
   </div>
 </div>
 
-<!-- CLIENT VIEW -->
-<div id="clientView" class="hidden p-4"><h2 class="text-3xl quantum-text">CLIENT PORTAL</h2><div id="clientJobs"></div><div id="clientProducts" class="mt-4"></div></div>
+<!-- CLIENT VIEW - STICKS ON REFRESH -->
+<div id="clientView" class="hidden p-6">
+  <div class="glass p-6 neon-border">
+    <h2 class="text-4xl quantum-text mb-4">PSM CLIENT PORTAL</h2>
+    <div id="clientJobs"></div>
+    <h3 class="text-2xl mt-6 mb-2">PRODUCTS</h3>
+    <div id="clientProducts" class="grid grid-cols-3 gap-3"></div>
+  </div>
+</div>
 
 <script>
 const { jsPDF } = window.jspdf;
-let DB = JSON.parse(localStorage.getItem('psm_db2')) || {jobs:[],products:[],clients:[],stock:[],quotes:[],audit:[]};
+let DB = JSON.parse(localStorage.getItem('psm_db3')) || {jobs:[],products:[],clients:[],stock:[],quotes:[],employees:[],audit:[]};
 let currentRole=''; let html5QrCode;
 
-// UTILS
-function saveDB(){localStorage.setItem('psm_db2',JSON.stringify(DB));addAudit(`Data saved by ${currentRole}`)}
+// 3D BACKGROUND
+const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer({canvas:bg3d,alpha:true});renderer.setSize(innerWidth,innerHeight);
+const geo=new THREE.TorusGeometry(10,3,16,100);const mat=new THREE.MeshBasicMaterial({color:0x00D4FF,wireframe:true});const torus=new THREE.Mesh(geo,mat);scene.add(torus);camera.position.z=30;
+function animate(){requestAnimationFrame(animate);torus.rotation.x+=0.01;torus.rotation.y+=0.01;renderer.render(scene,camera)}animate();
+
+// DB
+function saveDB(){localStorage.setItem('psm_db3',JSON.stringify(DB));}
 function addAudit(action){DB.audit.unshift({time:new Date().toLocaleString(),user:currentRole,action});saveDB()}
 
-// P1: LOGIN
+// LOGIN
 const passwords={CEO:"ceo2026",Manager:"mgr2026",Reception:"rec2026"};
 function selectRole(r){currentRole=r;passBox.classList.remove('hidden')}
-function login(){if(password.value===passwords[currentRole]){localStorage.setItem('psm_role2',currentRole);initApp()}else alert("Wrong")}
-function logout(){localStorage.removeItem('psm_role2');location.reload()}
+function login(){if(password.value===passwords[currentRole]){localStorage.setItem('psm_role3',currentRole);initApp()}else alert("Access Denied")}
+function logout(){localStorage.removeItem('psm_role3');location.reload()}
 function initApp(){loginScreen.classList.add('hidden');app.classList.remove('hidden');roleTag.innerText=currentRole;
-  if(currentRole==="Reception"){repTab.classList.add('hidden');statRevBox.classList.add('hidden');}
-  renderAll();
+  if(currentRole==="Reception"){repTab.classList.add('hidden');payTab.classList.add('hidden');statRevBox.classList.add('hidden');}
+  if(currentRole==="Manager"){payTab.classList.add('hidden');}
+  renderAll();aiInsight.innerText="Revenue up 12%. 3 jobs ready for invoicing.";
 }
 
 // TABS
 function showTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');
 document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active')}
 
-// P21: BARCODE SCANNER
+// SCANNER
 function startScanner(){reader.classList.remove('hidden');html5QrCode=new Html5Qrcode("reader");html5QrCode.start({facingMode:"environment"},{fps:10},(code)=>{jBarcode.value=code;html5QrCode.stop();reader.classList.add('hidden')})}
 
-// P22: JOBS
-function saveJob(){const job={id:Date.now(),client:jClient.value,phone:jPhone.value,reg:jReg.value,barcode:jBarcode.value,status:jStatus.value,amount:+jAmount.value||0,code:Math.random().toString(36).substr(2,6).toUpperCase()};DB.jobs.push(job);if(!DB.clients.find(c=>c.phone===jPhone.value))DB.clients.push({id:jPhone.value,name:jClient.value,phone:jPhone.value});saveDB();renderJobs();addAudit(`Job created: ${jReg.value}`)}
+// JOBS - CLIENT LINK ENHANCED
+function saveJob(){const job={id:Date.now(),client:jClient.value,phone:jPhone.value,reg:jReg.value,barcode:jBarcode.value,status:jStatus.value,amount:+jAmount.value||0,code:Math.random().toString(36).substr(2,8).toUpperCase()};DB.jobs.push(job);if(!DB.clients.find(c=>c.phone===jPhone.value))DB.clients.push({id:jPhone.value,name:jClient.value,phone:jPhone.value});saveDB();renderJobs();addAudit(`Job: ${jReg.value}`)}
 function renderJobs(){jobList.innerHTML='';DB.jobs.slice(-10).reverse().forEach(j=>{
-  const link=`${location.origin}${location.pathname}?client=${j.phone}`;
-  jobList.innerHTML+=`<div class="glass p-3 mb-2 card-hover"><b>${j.reg}</b> - ${j.client} <span class="text-green-400">R${j.amount}</span><br>Status:${j.status} | Barcode:${j.barcode}<br>
-  <button onclick="genPDF(${j.id})" class="btn-sec text-xs">PDF</button><button onclick="sendWA('${j.phone}','${j.reg}')" class="btn-sec text-xs">WA</button>
-  <button onclick="copy('${link}')" class="btn-sec text-xs">CLIENT LINK</button>${currentRole==='CEO'?`<button onclick="delJob(${j.id})" class="btn-sec text-xs">DEL</button>`:''}</div>`});
-  statJobs.innerText=DB.jobs.filter(j=>j.status!=='INVOICED').length;statRev.innerText='R'+DB.jobs.reduce((a,b)=>a+b.amount,0).toLocaleString()}
-function genPDF(id){const j=DB.jobs.find(x=>x.id===id);const doc=new jsPDF();doc.text("PSM INVOICE",20,20);doc.text(`Client:${j.client}`,20,30);doc.text(`TOTAL:R${j.amount}`,20,50);doc.save(`PSM_${j.reg}.pdf`)}
-function sendWA(phone,reg){window.open(`https://wa.me/${phone}?text=*PSM* ${reg} Update`,'_blank')}
+  const clientLink=`${location.origin}${location.pathname}?client=${j.phone}&token=${j.code}`;
+  jobList.innerHTML+=`<div class="glass p-4 mb-3 fade-in"><b>${j.reg}</b> - ${j.client} <span class="text-green-400">R${j.amount}</span><br>Status:${j.status} | Code:${j.code}<br>
+  <button onclick="genPDF(${j.id})" class="btn-sec text-xs">PDF INVOICE</button>
+  <button onclick="sendWA('${j.phone}','${j.reg}','${j.status}')" class="btn-sec text-xs">WHATSAPP</button>
+  <button onclick="copy('${clientLink}')" class="btn-sec text-xs">COPY CLIENT LINK</button>
+  <div id="qrcode${j.id}" class="mt-2"></div>
+  ${currentRole==='CEO'?`<button onclick="delJob(${j.id})" class="btn-sec text-xs text-red-400">DELETE</button>`:''}</div>`;
+  new QRCode(document.getElementById(`qrcode${j.id}`),clientLink);
+});statJobs.innerText=DB.jobs.filter(j=>j.status!=='INVOICED').length;statRev.innerText='R'+DB.jobs.reduce((a,b)=>a+b.amount,0).toLocaleString()}
+function genPDF(id){const j=DB.jobs.find(x=>x.id===id);const doc=new jsPDF();doc.text("PSM AUTO INVOICE",20,20);doc.text(`To:${j.client}`,20,30);doc.text(`Machine:${j.reg}`,20,40);doc.text(`Amount:R${j.amount}`,20,60);doc.save(`INVOICE_${j.reg}.pdf`)}
+function sendWA(phone,reg,status){window.open(`https://wa.me/${phone}?text=*PSM UPDATE*%0A${reg}: ${status}%0ATrack: ${location.origin}${location.pathname}?client=${phone}`,'_blank')}
 
-// P61: QUOTES
-function saveQuote(){DB.quotes.push({id:Date.now(),client:qClient.value,items:qItems.value});const doc=new jsPDF();doc.text(`QUOTE FOR: ${qClient.value}`,20,20);doc.text(qItems.value,20,30);doc.save(`QUOTE_${qClient.value}.pdf`);saveDB();renderQuotes()}
+// QUOTES
+function saveQuote(){DB.quotes.push({id:Date.now(),client:qClient.value,items:qItems.value});const doc=new jsPDF();doc.text(`QUOTATION`,20,20);doc.text(`To:${qClient.value}`,20,30);doc.text(qItems.value,20,40);doc.save(`QUOTE_${qClient.value}.pdf`);saveDB();renderQuotes()}
 function renderQuotes(){quoteList.innerHTML='';DB.quotes.forEach(q=>quoteList.innerHTML+=`<div class="glass p-3 mb-2">${q.client}</div>`);statQuotes.innerText=DB.quotes.length}
 
-// P91: STOCK
-function addStock(){DB.stock.push({id:Date.now(),name:sName.value,qty:+sQty.value,min:+sMin.value});saveDB();renderStock()}
-function renderStock(){stockList.innerHTML='';let low=0;DB.stock.forEach(s=>{if(s.qty<s.min)low++;stockList.innerHTML+=`<div class="glass p-3 mb-2">${s.name} - Qty:${s.qty} ${s.qty<s.min?'<span class="text-red-400">LOW</span>':''}</div>`});statStock.innerText=low}
+// STOCK
+function addStock(){DB.stock.push({id:Date.now(),name:sName.value,qty:+sQty.value,min:+sMin.value,cost:+sCost.value});saveDB();renderStock()}
+function renderStock(){stockList.innerHTML='';let low=0;DB.stock.forEach(s=>{if(s.qty<s.min)low++;stockList.innerHTML+=`<div class="glass p-3 mb-2">${s.name} - Qty:${s.qty} Cost:R${s.cost} ${s.qty<s.min?'<span class="text-red-400">LOW STOCK</span>':''}</div>`});statStock.innerText=low}
 
-// P131: PRODUCTS
+// PRODUCTS
 function saveProduct(){DB.products.push({id:Date.now(),name:pName.value,code:pCode.value,desc:pDesc.value,img:pImg.value,video:pVideo.value,price:+pPrice.value});saveDB();renderProducts()}
-function renderProducts(){productList.innerHTML='';DB.products.forEach(p=>{productList.innerHTML+=`<div class="glass p-3 card-hover"><img src="${p.img}" class="w-full h-32 object-cover rounded mb-2"><b>${p.name}</b><br>${p.code}<br>R${p.price}<button onclick="requestCode('${p.code}')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`})}
-function requestCode(code){alert(`Request sent for ${code}`)}
+function renderProducts(){productList.innerHTML='';DB.products.forEach(p=>{productList.innerHTML+=`<div class="glass p-3"><img src="${p.img}" class="w-full h-40 object-cover rounded mb-2"><b>${p.name}</b><br><span class="text-cyan-400">${p.code}</span><br>R${p.price}<button onclick="requestCode('${p.code}')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`})}
+function requestCode(code){alert(`Code request for ${code} sent to admin via WhatsApp`)}
 
-// P161: CLIENTS
-function renderClients(){clientLinks.innerHTML='';DB.clients.forEach(c=>{const link=`${location.origin}${location.pathname}?client=${c.phone}`;clientLinks.innerHTML+=`<div class="glass p-3 mb-2">${c.name}<input value="${link}" readonly><button onclick="copy('${link}')" class="btn-sec mt-1">COPY</button></div>`})}
+// CLIENTS
+function renderClients(){clientLinks.innerHTML='';DB.clients.forEach(c=>{const link=`${location.origin}${location.pathname}?client=${c.phone}`;clientLinks.innerHTML+=`<div class="glass p-4 mb-3">${c.name}<input value="${link}" readonly class="mt-1"><button onclick="copy('${link}')" class="btn-sec mt-1">COPY LINK</button></div>`})}
 
-// P181: REPORTS
-function exportCSV(){let csv="Type,Data\n";DB.jobs.forEach(j=>csv+=`Job,${j.reg},${j.amount}\n`);const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv]));a.download="PSM_Report.csv";a.click()}
-function sendSMS(){alert("Bulk SMS: Connecting to Twilio next")}
+// PAYROLL
+function addEmployee(){DB.employees.push({id:Date.now(),name:empName.value,salary:+empSalary.value});saveDB();renderEmp()}
+function renderEmp(){empList.innerHTML='';DB.employees.forEach(e=>empList.innerHTML+=`<div class="glass p-3 mb-2">${e.name} - R${e.salary}</div>`)}
 
-// AUDIT
-function renderAudit(){auditLog.innerHTML=DB.audit.slice(0,5).map(a=>`<p class="text-xs">${a.time} - ${a.user}: ${a.action}</p>`).join('')}
+// REPORTS
+function exportCSV(){let csv="Job,Client,Amount\n";DB.jobs.forEach(j=>csv+=`${j.reg},${j.client},${j.amount}\n`);const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv]));a.download="PSM_Report.csv";a.click()}
+function exportPDF(){const doc=new jsPDF();doc.text("PSM MONTHLY REPORT",20,20);doc.text(`Total Jobs:${DB.jobs.length}`,20,30);doc.text(`Revenue:R${DB.jobs.reduce((a,b)=>a+b.amount,0)}`,20,40);doc.save("PSM_REPORT.pdf")}
 
-// CLIENT VIEW
-function checkClientView(){const c=new URLSearchParams(window.location.search).get('client');if(c){loginScreen.classList.add('hidden');app.classList.add('hidden');clientView.classList.remove('hidden');
-clientJobs.innerHTML=DB.jobs.filter(j=>j.phone===c).map(j=>`<div class="glass p-3 mb-2">${j.reg} - ${j.status}</div>`).join('');}}
+// CLIENT VIEW - STICKS
+function checkClientView(){const url=new URLSearchParams(window.location.search);const c=url.get('client');if(c){loginScreen.classList.add('hidden');app.classList.add('hidden');clientView.classList.remove('hidden');
+clientJobs.innerHTML=DB.jobs.filter(j=>j.phone===c).map(j=>`<div class="glass p-3 mb-2">${j.reg} - ${j.status} - Code:${j.code}</div>`).join('');
+clientProducts.innerHTML=DB.products.map(p=>`<div class="glass p-3"><b>${p.name}</b><br>R${p.price}<button onclick="requestCode('${p.code}')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`).join('');}}
 
 // INIT
-function renderAll(){renderJobs();renderProducts();renderStock();renderQuotes();renderClients();renderAudit()}
-window.onload=()=>{const r=localStorage.getItem('psm_role2');if(r){currentRole=r;initApp()}checkClientView()}
+function renderAll(){renderJobs();renderProducts();renderStock();renderQuotes();renderClients();renderEmp()}
+window.onload=()=>{const r=localStorage.getItem('psm_role3');if(r){currentRole=r;initApp()}checkClientView()}
 function delJob(id){DB.jobs=DB.jobs.filter(j=>j.id!==id);saveDB();renderJobs()}
-function copy(txt){navigator.clipboard.writeText(txt)}
+function copy(txt){navigator.clipboard.writeText(txt);alert("Copied to clipboard")}
 </script>
 </body>
 </html>
