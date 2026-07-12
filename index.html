@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-black">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +9,31 @@
 <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-body { background: #000; font-family: 'Orbitron', sans-serif; overflow: hidden; }
-.holo-bg { background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.1) 0%, #000 70%); }
+html, body { 
+  background: #000000!important; /* FORCE BLACK */
+  font-family: 'Orbitron', sans-serif; 
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+.holo-bg { 
+  background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.15) 0%, #000 60%)!important; 
+}
 .holo-card {
-  background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(0,255,136,0.05));
-  border: 1px solid rgba(0,212,255,0.3);
+  background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,255,136,0.05));
+  border: 1px solid rgba(0,212,255,0.4);
   backdrop-filter: blur(40px);
   transform-style: preserve-3d;
+  border-radius: 20px;
 }
 .neon-text { text-shadow: 0 0 10px #00D4FF, 0 0 20px #00D4FF, 0 0 40px #00D4FF; }
-.scanline { background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); }
+.scanline { 
+  background: repeating-linear-gradient(0deg, rgba(0,212,255,0.03), rgba(0,212,255,0.03) 1px, transparent 1px, transparent 2px); 
+}
 .hud-line { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, #00FF88, transparent); animation: scan 3s linear infinite; }
 @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 .voice-active { box-shadow: 0 0 60px #00FF88; animation: voice-pulse 0.5s infinite; }
-@keyframes voice-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+@keyframes voice-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); }
 </style>
 </head>
 <body class="text-white holo-bg scanline">
@@ -36,43 +47,43 @@ body { background: #000; font-family: 'Orbitron', sans-serif; overflow: hidden; 
     <h1 class="text-4xl font-black neon-text">PSM OS // LEVEL 10</h1>
     <p class="text-cyan-400">NEURAL NETWORK: 500/500 PILLARS ACTIVE</p>
   </div>
-  <div class="flex gap-4">
-    <button id="voiceBtn" onclick="startVoice()" class="border-2 border-green-400 px-6 py-3 rounded-full">🎤 VOICE</button>
-    <div id="clock" class="text-2xl"></div>
+  <div class="flex gap-4 items-center">
+    <button id="voiceBtn" onclick="startVoice()" class="border-2 border-green-400 px-6 py-3 rounded-full hover:bg-green-400/10 transition">🎤 VOICE</button>
+    <div id="clock" class="text-2xl neon-text"></div>
   </div>
 </header>
 
 <!-- LEVEL 10: HOLOGRAPHIC KPI ORBIT -->
-<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] max-w-full">
   <div class="holo-card w-64 p-6 absolute" style="top:0; left:50%; transform:translateX(-50%)" data-tilt data-tilt-max="20">
-    <p class="text-sm">REVENUE</p>
+    <p class="text-sm text-gray-400">REVENUE</p>
     <p id="kpiRev" class="text-4xl font-black neon-text">R0</p>
   </div>
   <div class="holo-card w-64 p-6 absolute" style="bottom:0; left:50%; transform:translateX(-50%)" data-tilt>
-    <p class="text-sm">VALUATION</p>
+    <p class="text-sm text-gray-400">VALUATION</p>
     <p id="kpiVal" class="text-4xl font-black neon-text">R0</p>
   </div>
   <div class="holo-card w-64 p-6 absolute" style="left:0; top:50%; transform:translateY(-50%)" data-tilt>
-    <p class="text-sm">DOWNTIME</p>
+    <p class="text-sm text-gray-400">DOWNTIME</p>
     <p id="kpiDown" class="text-4xl font-black text-red-400">R0/min</p>
     <div class="hud-line w-full top-0"></div>
   </div>
   <div class="holo-card w-64 p-6 absolute" style="right:0; top:50%; transform:translateY(-50%)" data-tilt>
-    <p class="text-sm">AI ACCURACY</p>
+    <p class="text-sm text-gray-400">AI ACCURACY</p>
     <p class="text-4xl font-black text-green-400">99.9%</p>
   </div>
 </div>
 
 <!-- LEVEL 10: AI NEURAL HUD CENTER -->
 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-  <div class="w-96 h-96 border-2 border-cyan-400 rounded-full flex items-center justify-center">
-    <div id="aiCore" class="w-32 h-32 bg-gradient-to-r from-cyan-400 to-green-400 rounded-full animate-pulse"></div>
+  <div class="w-96 h-96 border-2 border-cyan-400/50 rounded-full flex items-center justify-center">
+    <div id="aiCore" class="w-32 h-32 bg-gradient-to-r from-cyan-400 to-green-400 rounded-full animate-pulse shadow-[0_0_60px_rgba(0,212,255,0.8)]"></div>
   </div>
   <p id="aiText" class="text-center mt-4 text-cyan-400">AI: AWAITING COMMAND</p>
 </div>
 
 <!-- LEVEL 10: VOICE FEEDBACK -->
-<div id="voiceLog" class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/70 p-4 rounded-2xl w-[600px] text-center hidden">
+<div id="voiceLog" class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/80 border border-cyan-400/30 p-4 rounded-2xl w-[600px] max-w-[90%] text-center hidden">
   <p>Listening...</p>
 </div>
 
@@ -80,10 +91,12 @@ body { background: #000; font-family: 'Orbitron', sans-serif; overflow: hidden; 
 let synth = window.speechSynthesis;
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
-// LEVEL 10: 3D BACKGROUND
+// LEVEL 10: 3D BACKGROUND - NOW WITH BLACK CLEAR COLOR
 let scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000); // FORCE 3D CANVAS BLACK
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer({canvas:bg3d, alpha:true});
+let renderer = new THREE.WebGLRenderer({canvas:bg3d, alpha:false, antialias:true}); // alpha:false = no transparency
+renderer.setClearColor(0x000, 1); // BLACK
 renderer.setSize(window.innerWidth, window.innerHeight);
 let geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
 let material = new THREE.MeshBasicMaterial({color:0x00D4FF, wireframe:true});
@@ -115,12 +128,19 @@ recognition.onresult = (e) => {
 }
 function speak(text){
   let u = new SpeechSynthesisUtterance(text);
-  u.voice = synth.getVoices().find(v => v.name.includes("Google"));
+  u.voice = synth.getVoices().find(v => v.name.includes("Google")) || synth.getVoices()[0];
   synth.speak(u);
 }
 
 // CLOCK
 setInterval(()=>clock.innerText = new Date().toLocaleTimeString(),1000);
+
+// RESIZE FIX
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+})
 </script>
 </body>
 </html>
