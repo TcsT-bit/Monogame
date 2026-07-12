@@ -4,268 +4,254 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PSM AUTO AND SERVICES | QUANTUM OS v500</title>
-<meta name="description" content="PSM AUTO AND SERVICES - Family Legacy of Keeping You Moving">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
-:root{ --orange:#FF5A00; --green:#00D26A; --cyan:#00D4FF; --dark:#0A0A0F; --red:#FF0040; }
+:root{ --orange:#FF5A00; --green:#00D26A; --cyan:#00D4FF; --red:#FF0040; }
 
-html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; overflow-x: hidden; margin: 0; scroll-behavior: smooth; }
+html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; overflow-x: hidden; margin: 0; }
 .quantum-bg { background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.15) 0%, #000 70%)!important; }
-
-.q-card { background: rgba(10,20,40,0.8); border: 1px solid rgba(0,212,255,0.3); border-radius: 20px; box-shadow: 0 0 30px rgba(0,212,255,0.1); }
+.q-card { background: rgba(10,20,40,0.85); border: 1px solid rgba(0,212,255,0.3); border-radius: 20px; }
 .quantum-text { text-shadow: 0 0 8px var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 900; }
-.orange-text { color: var(--orange); }.green-text { color: var(--green); }.red-text { color: var(--red); }
-
-.pillar-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; position: fixed; bottom: 10px; right: 10px; opacity: 0.5; z-index: 5; }
-.pillar-dot { width: 3px; height: 3px; background: linear-gradient(45deg, var(--cyan), var(--green)); animation: quantum-pulse 4s infinite; }
-@keyframes quantum-pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
-
-.demo-badge { position: fixed; top: 10px; right: 10px; background: var(--green); color: #000; padding: 6px 12px; border-radius: 20px; font-weight: 900; z-index: 50; font-size: 11px; }
-.admin-badge { background: var(--red); color: #fff; }
-
-.whatsapp-float{position:fixed;bottom:20px;left:20px;width:55px;height:55px;background:#25D366;border-radius:50%;display:grid;place-items:center;z-index:999}
-
-.btn-primary{background:linear-gradient(90deg,var(--orange),var(--green));color:#000;padding:12px 20px;border-radius:12px;font-weight:700;cursor:pointer;border:none}
-.btn-danger{background:var(--red);color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px}
-.btn-secondary{background:rgba(0,212,255,0.2);border:1px solid var(--cyan);color:var(--cyan);padding:10px;border-radius:10px;cursor:pointer}
-input,select,textarea{background:rgba(0,0,0,0.5);border:1px solid rgba(0,212,255,0.3);color:#fff;padding:12px;border-radius:10px;width:100%}
-.glass{background:rgba(255,255,255,0.06);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1)}
-.reveal{opacity:0;transform:translateY(30px);transition:0.8s}
-.reveal.active{opacity:1;transform:translateY(0)}
+.btn-primary{background:linear-gradient(90deg,var(--orange),var(--green));color:#000;padding:14px 20px;border-radius:12px;font-weight:700;cursor:pointer;border:none;width:100%}
+.btn-role{padding:20px;border-radius:16px;border:2px solid var(--cyan);cursor:pointer;transition:0.3s;text-align:center}
+.btn-role:hover{background:rgba(0,212,255,0.1);transform:scale(1.05)}
 .hidden{display:none}
+.role-ceo{border-color:var(--orange)}
+.role-manager{border-color:var(--green)}
+.role-reception{border-color:var(--cyan)}
 
-/* MOBILE */
-@media (max-width: 768px){
-.grid-cols-3{grid-template-columns: repeat(1, minmax(0, 1fr))!important}
-.grid-cols-6{grid-template-columns: repeat(3, minmax(0, 1fr))!important}
-.text-5xl{font-size: 2.2rem!important}
- nav.links{display:none}
- canvas{display:none}
-}
+@media (max-width: 768px){.grid-cols-3{grid-template-columns: repeat(1, minmax(0, 1fr))!important} canvas{display:none} }
 </style>
 </head>
 <body class="text-white quantum-bg">
 
-<a href="https://wa.me/27799097420" target="_blank" class="whatsapp-float"><svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.7.7 5.3 2.1 7.5L4 29l6.6-2C12.3 28.2 14.1 29 16 29c6.6 0 12-5.4 12-12S22.6 3 16 3z" fill="#000"/></svg></a>
-
-<div class="demo-badge" id="modeBadge">DEMO MODE</div>
-<canvas id="bg3d" class="fixed inset-0 -z-10"></canvas>
-<div class="pillar-grid" id="pillarGrid"></div>
-
-<nav class="fixed top-0 w-full z-30 flex justify-between items-center p-4 glass">
-  <img src="https://files.catbox.moe/lsd025.jpg" alt="PSM AUTO Logo" class="h-10">
-  <div class="links flex gap-4 text-sm font-bold">
-    <a href="#os">DASHBOARD</a><a href="#jobs">JOBS</a><a href="#admin">ADMIN</a><a href="#services">SERVICES</a><a href="#contact">CONTACT</a>
-  </div>
-</nav>
-
-<!-- SECTION 1: DASHBOARD -->
-<section id="os" class="min-h-screen pt-24 p-4 md:p-8">
-  <header class="flex flex-col md:flex-row justify-between mb-6 gap-4">
-    <div>
-      <h1 class="text-4xl md:text-5xl font-black quantum-text">PSM OS // QUANTUM</h1>
-      <p class="text-cyan-400 text-base">VALUATION: <span id="valuation">R84,000,000</span></p>
-    </div>
-    <button onclick="quantumMode()" class="q-card px-6 py-3 font-black text-lg quantum-text">Ω RUN DIAGNOSTIC</button>
-  </header>
-  <div class="grid grid-cols-3 gap-4">
-    <div class="q-card p-4 md:p-6 col-span-3 md:col-span-2"><h3 class="text-lg font-black quantum-text">QUANTUM FINANCE</h3><p class="text-3xl md:text-5xl font-black quantum-text mt-2" id="revenue">R0</p></div>
-    <div class="q-card p-4 md:p-6"><h3 class="text-lg font-black quantum-text">NEURAL AI</h3><p id="aiPred" class="text-cyan-400 mt-3 text-sm">Scanning...</p></div>
-    <div class="q-card p-4 md:p-6 col-span-3"><h3 class="text-lg font-black quantum-text">OPERATIONS</h3><div id="liveJobs" class="mt-2 grid grid-cols-3 gap-2"></div></div>
-  </div>
-</section>
-
-<!-- SECTION 2: JOBS -->
-<section id="jobs" class="py-16 px-4 md:px-8 bg-gray-900/30">
-  <h2 class="text-3xl text-center font-black quantum-text">CREATE JOB</h2>
-  <div class="q-card p-5 max-w-3xl mx-auto mt-6">
-    <div class="grid grid-cols-2 gap-3">
-      <input id="clientName" placeholder="Client Name">
-      <input id="clientPhone" placeholder="WhatsApp 27...">
-      <input id="reg" placeholder="Reg/Machine">
-      <select id="category"><option>Auto</option><option>Mining</option><option>Engineering</option></select>
-      <textarea id="description" rows="2" placeholder="Job Description" class="col-span-2"></textarea>
-      <input id="amount" type="number" placeholder="Amount R">
-    </div>
-    <button onclick="saveJob()" class="btn-primary w-full mt-3">💾 SAVE JOB</button>
-    <p id="jobStatus" class="text-center text-green-400 mt-3 text-sm"></p>
-  </div>
-  <div class="mt-6 max-w-3xl mx-auto"><div id="jobList" class="space-y-2"></div></div>
-</section>
-
-<!-- SECTION 3: ADMIN PANEL - NEW -->
-<section id="admin" class="py-16 px-4">
-  <h2 class="text-3xl text-center font-black quantum-text">ADMIN CONTROL PANEL</h2>
-
-  <!-- LOGIN -->
-  <div id="loginBox" class="q-card p-6 max-w-md mx-auto mt-6">
-    <h3 class="text-xl font-black text-center mb-4">ADMIN LOGIN</h3>
-    <input id="adminUser" placeholder="Username" value="admin" class="mb-3">
-    <input id="adminPass" type="password" placeholder="Password" value="psm2026" class="mb-3">
-    <button onclick="adminLogin()" class="btn-primary w-full">LOGIN</button>
-    <p class="text-xs text-center mt-2 text-gray-400">Demo: admin / psm2026</p>
-  </div>
-
-  <!-- ADMIN DASHBOARD -->
-  <div id="adminPanel" class="hidden max-w-6xl mx-auto mt-6">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-2xl font-black green-text">MANAGE ALL JOBS</h3>
-      <button onclick="adminLogout()" class="btn-danger">LOGOUT</button>
+<!-- LOGIN SCREEN - SHOWS FIRST -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+  <div class="q-card p-8 max-w-2xl w-full">
+    <div class="text-center mb-6">
+      <img src="https://files.catbox.moe/lsd025.jpg" class="h-16 mx-auto mb-3">
+      <h1 class="text-4xl font-black quantum-text">PSM OS // QUANTUM</h1>
+      <p class="text-cyan-400">Select Your Role To Continue</p>
     </div>
 
-    <div class="grid grid-cols-4 gap-4 mb-6">
-      <div class="q-card p-4 text-center"><p class="text-3xl font-black" id="totalJobs">0</p><p>Total Jobs</p></div>
-      <div class="q-card p-4 text-center"><p class="text-3xl font-black green-text" id="totalRevenue">R0</p><p>Revenue</p></div>
-      <div class="q-card p-4 text-center"><p class="text-3xl font-black orange-text" id="pendingJobs">0</p><p>Pending</p></div>
-      <div class="q-card p-4 text-center"><button onclick="exportData()" class="btn-secondary w-full">📊 EXPORT CSV</button></div>
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div onclick="selectRole('CEO')" class="btn-role role-ceo">
+        <p class="text-2xl">👑</p>
+        <p class="font-black text-lg">CEO</p>
+        <p class="text-xs">Full Access</p>
+      </div>
+      <div onclick="selectRole('Manager')" class="btn-role role-manager">
+        <p class="text-2xl">📊</p>
+        <p class="font-black text-lg">MANAGER</p>
+        <p class="text-xs">Ops + Jobs</p>
+      </div>
+      <div onclick="selectRole('Reception')" class="btn-role role-reception">
+        <p class="text-2xl">📞</p>
+        <p class="font-black text-lg">RECEPTION</p>
+        <p class="text-xs">Create Jobs</p>
+      </div>
     </div>
 
-    <div id="adminJobList" class="space-y-3"></div>
+    <div id="passBox" class="hidden">
+      <input id="password" type="password" placeholder="Enter Password" class="w-full bg-gray-800 p-3 rounded-lg mb-3">
+      <button onclick="login()" class="btn-primary">LOGIN</button>
+      <p id="loginError" class="text-red-400 text-center mt-2 text-sm"></p>
+    </div>
   </div>
-</section>
+</div>
 
-<!-- YOUR OTHER SECTIONS -->
-<section id="services" class="py-16 px-4">
-  <h2 class="text-4xl text-center font-black quantum-text reveal">OUR SERVICES</h2>
-  <div class="grid grid-cols-3 gap-6 mt-10 max-w-7xl mx-auto">
-    <div class="q-card p-0 overflow-hidden reveal"><img src="https://files.catbox.moe/reqaiw.jpg" class="w-full h-52 object-cover"><div class="p-5"><h3 class="text-xl font-black orange-text">AUTOMOTIVE REPAIRS</h3></div></div>
-    <div class="q-card p-0 overflow-hidden reveal"><img src="https://files.catbox.moe/6vrsp4.jpg" class="w-full h-52 object-cover"><div class="p-5"><h3 class="text-xl font-black orange-text">MINE TRUCKS</h3></div></div>
-    <div class="q-card p-0 overflow-hidden reveal"><img src="https://files.catbox.moe/4q7sto.jpg" class="w-full h-52 object-cover"><div class="p-5"><h3 class="text-xl font-black orange-text">EXCAVATORS & TLB</h3></div></div>
+<!-- MAIN APP - HIDDEN UNTIL LOGIN -->
+<div id="app" class="hidden">
+  <div class="fixed top-4 right-4 q-card p-2 text-xs z-50">
+    <p>Role: <span id="currentRole" class="font-black"></span></p>
+    <button onclick="logout()" class="text-red-400">LOGOUT</button>
   </div>
-</section>
 
-<section id="contact" class="py-16 px-4 bg-gray-900/50">
-  <h2 class="text-4xl text-center font-black quantum-text reveal">REQUEST A QUOTE</h2>
-  <form id="quoteForm" class="q-card p-6 max-w-2xl mx-auto mt-6 reveal">
-    <input type="text" id="name" placeholder="Full Name" required class="mb-3">
-    <input type="tel" id="phone" placeholder="Phone Number" required class="mb-3">
-    <textarea id="message" rows="3" placeholder="Describe the issue" required class="mb-3"></textarea>
-    <button class="btn-primary w-full" type="submit">SEND VIA WHATSAPP</button>
-  </form>
-</section>
+  <!-- NAV -->
+  <nav class="fixed top-0 w-full z-30 flex justify-between items-center p-4 bg-black/70">
+    <img src="https://files.catbox.moe/lsd025.jpg" class="h-10">
+    <div id="navLinks" class="flex gap-4 text-sm font-bold"></div>
+  </nav>
 
-<footer class="text-center py-8 border-t border-gray-800 text-sm">
-  <p>© 2026 PSM AUTO | Bank: Standard Bank 10278202576</p>
-</footer>
+  <!-- DASHBOARD -->
+  <section id="os" class="min-h-screen pt-24 p-4">
+    <h1 class="text-4xl font-black quantum-text mb-6">PSM OS // QUANTUM</h1>
+    <div class="grid grid-cols-3 gap-4">
+
+      <!-- FINANCE - CEO ONLY -->
+      <div id="financeCard" class="q-card p-6 col-span-3 md:col-span-2">
+        <h3 class="text-lg font-black quantum-text">QUANTUM FINANCE</h3>
+        <p class="text-4xl font-black quantum-text mt-2" id="revenue">R8,400,000</p>
+      </div>
+
+      <!-- JOBS -->
+      <div class="q-card p-6 col-span-3">
+        <h3 class="text-lg font-black quantum-text">JOBS</h3>
+        <div id="jobList" class="mt-3 space-y-2"></div>
+      </div>
+
+      <!-- CREATE JOB - RECEPTION + -->
+      <div id="createJobCard" class="q-card p-6 col-span-3">
+        <h3 class="text-lg font-black quantum-text">CREATE NEW JOB</h3>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <input id="clientName" placeholder="Client Name">
+          <input id="clientPhone" placeholder="WhatsApp 27...">
+          <input id="reg" placeholder="Reg/Machine">
+          <select id="status"><option>QUOTED</option><option>IN PROGRESS</option><option>QC</option><option>INVOICED</option></select>
+          <input id="amount" type="number" placeholder="Amount R" class="col-span-2">
+        </div>
+        <button onclick="saveJob()" class="btn-primary mt-3">💾 SAVE JOB</button>
+      </div>
+
+      <!-- ADMIN TOOLS - CEO ONLY -->
+      <div id="adminTools" class="q-card p-6 col-span-3">
+        <h3 class="text-lg font-black red-text">CEO ADMIN TOOLS</h3>
+        <button onclick="exportData()" class="btn-primary mt-2">📊 EXPORT ALL DATA</button>
+        <button onclick="clearData()" class="btn-primary mt-2 bg-red-600">🗑️ CLEAR ALL DATA</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SERVICES - PUBLIC -->
+  <section id="services" class="py-16 px-4">
+    <h2 class="text-4xl text-center font-black quantum-text">OUR SERVICES</h2>
+    <div class="grid grid-cols-3 gap-6 mt-10 max-w-7xl mx-auto">
+      <div class="q-card p-5"><h3 class="text-xl font-black text-orange-500">AUTOMOTIVE REPAIRS</h3></div>
+      <div class="q-card p-5"><h3 class="text-xl font-black text-orange-500">MINE TRUCKS</h3></div>
+      <div class="q-card p-5"><h3 class="text-xl font-black text-orange-500">EXCAVATORS</h3></div>
+    </div>
+  </section>
+</div>
 
 <script>
 const { jsPDF } = window.jspdf;
-let jobs = JSON.parse(localStorage.getItem('psm_jobs')) || [
-  {id:1, reg: "CAT-773", client: "Anglo Platinum", phone: "27799097420", total: 84000, category: "Mining", desc: "Engine overhaul", status: "IN PROGRESS", date: new Date().toLocaleDateString()}
-];
-let isAdmin = false;
+let currentRole = '';
+let jobs = JSON.parse(localStorage.getItem('psm_jobs')) || [];
 
-// INIT
-let dots = ''; for(let i=0; i<100; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.01}s"></div>` }
-pillarGrid.innerHTML = dots;
-quantumCount("revenue", 8400000); loadJobs(); loadAdminJobs();
-
-function quantumCount(id, end){ let s=0; let step = end/30; let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},10); }
-
-// JOB FUNCTIONS
-function saveJob(){
-  const job = {id: Date.now(), client: clientName.value, phone: clientPhone.value, reg: reg.value, category: category.value, desc: description.value, total: parseFloat(amount.value) || 0, status: "QUOTED", date: new Date().toLocaleDateString()};
-  jobs.push(job); localStorage.setItem('psm_jobs', JSON.stringify(jobs));
-  jobStatus.innerText = "Job Saved: " + job.reg; loadJobs(); loadAdminJobs();
+// ROLE PASSWORDS - CHANGE THESE
+const passwords = {
+  CEO: "ceo2026",
+  Manager: "mgr2026",
+  Reception: "rec2026"
 }
 
-function loadJobs(){
-  jobList.innerHTML = ''; liveJobs.innerHTML = '';
-  jobs.slice(-6).forEach(j=>{
-    jobList.innerHTML += `<div class="q-card p-3 text-sm"><b>${j.reg}</b> - ${j.client} <span class="green-text">R${j.total.toLocaleString()}</span><br><span class="text-cyan-400">${j.category} | ${j.status}</span></div>`;
-    liveJobs.innerHTML += `<div class="q-card p-2 text-xs">${j.reg}<br>R${j.total.toLocaleString()}</div>`;
-  });
+function selectRole(role){
+  currentRole = role;
+  document.getElementById('passBox').classList.remove('hidden');
+  document.getElementById('password').placeholder = `Enter ${role} Password`;
 }
 
-// ADMIN FUNCTIONS
-function adminLogin(){
-  if(adminUser.value === "admin" && adminPass.value === "psm2026"){
-    isAdmin = true;
-    loginBox.classList.add('hidden');
-    adminPanel.classList.remove('hidden');
-    modeBadge.innerText = "ADMIN MODE"; modeBadge.classList.add('admin-badge');
-    loadAdminJobs();
-  } else { alert("Wrong credentials") }
-}
-
-function adminLogout(){
-  isAdmin = false;
-  loginBox.classList.remove('hidden');
-  adminPanel.classList.add('hidden');
-  modeBadge.innerText = "DEMO MODE"; modeBadge.classList.remove('admin-badge');
-}
-
-function loadAdminJobs(){
-  adminJobList.innerHTML = '';
-  let total = 0; let pending = 0;
-  jobs.forEach(j=>{
-    total += j.total; if(j.status!== "INVOICED") pending++;
-    adminJobList.innerHTML += `
-    <div class="q-card p-4 flex justify-between items-center">
-      <div>
-        <p class="font-black">${j.reg} - ${j.client}</p>
-        <p class="text-sm">R${j.total.toLocaleString()} | ${j.category} | ${j.date}</p>
-        <select onchange="updateStatus(${j.id}, this.value)" class="mt-2 text-sm bg-gray-800">
-          <option ${j.status==="QUOTED"?"selected":""}>QUOTED</option>
-          <option ${j.status==="IN PROGRESS"?"selected":""}>IN PROGRESS</option>
-          <option ${j.status==="QC"?"selected":""}>QC</option>
-          <option ${j.status==="INVOICED"?"selected":""}>INVOICED</option>
-        </select>
-      </div>
-      <div class="flex gap-2">
-        <button onclick="sendClientLink(${j.id})" class="btn-secondary text-xs">📲 WA</button>
-        <button onclick="deleteJob(${j.id})" class="btn-danger">DELETE</button>
-      </div>
-    </div>`;
-  });
-  totalJobs.innerText = jobs.length;
-  totalRevenue.innerText = "R" + total.toLocaleString();
-  pendingJobs.innerText = pending;
-}
-
-function updateStatus(id, status){
-  jobs = jobs.map(j => j.id === id? {...j, status} : j);
-  localStorage.setItem('psm_jobs', JSON.stringify(jobs));
-  loadAdminJobs(); loadJobs();
-}
-
-function deleteJob(id){
-  if(confirm("Delete this job?")){
-    jobs = jobs.filter(j => j.id!== id);
-    localStorage.setItem('psm_jobs', JSON.stringify(jobs));
-    loadAdminJobs(); loadJobs();
+function login(){
+  const pass = document.getElementById('password').value;
+  if(pass === passwords[currentRole]){
+    localStorage.setItem('psm_role', currentRole);
+    showApp();
+  } else {
+    document.getElementById('loginError').innerText = "Wrong Password";
   }
 }
 
-function sendClientLink(id){
-  const job = jobs.find(j=>j.id===id);
-  const msg = `*PSM AUTO UPDATE*%0AHi ${job.client}%0AYour ${job.reg} Status: *${job.status}*`;
-  window.open(`https://wa.me/${job.phone}?text=${msg}`, '_blank');
+function showApp(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('currentRole').innerText = currentRole;
+  applyRolePermissions();
+  loadJobs();
+}
+
+function logout(){
+  localStorage.removeItem('psm_role');
+  location.reload();
+}
+
+function applyRolePermissions(){
+  const nav = document.getElementById('navLinks');
+
+  if(currentRole === "CEO"){
+    nav.innerHTML = `<a href="#os">DASHBOARD</a><a href="#services">SERVICES</a>`;
+    document.getElementById('financeCard').classList.remove('hidden');
+    document.getElementById('adminTools').classList.remove('hidden');
+    document.getElementById('createJobCard').classList.remove('hidden');
+  }
+
+  if(currentRole === "Manager"){
+    nav.innerHTML = `<a href="#os">DASHBOARD</a><a href="#services">SERVICES</a>`;
+    document.getElementById('financeCard').classList.add('hidden'); // No finance
+    document.getElementById('adminTools').classList.add('hidden'); // No delete
+    document.getElementById('createJobCard').classList.remove('hidden');
+  }
+
+  if(currentRole === "Reception"){
+    nav.innerHTML = `<a href="#os">JOBS</a><a href="#services">SERVICES</a>`;
+    document.getElementById('financeCard').classList.add('hidden');
+    document.getElementById('adminTools').classList.add('hidden');
+    document.getElementById('createJobCard').classList.remove('hidden');
+    // Disable status change for reception
+    document.getElementById('status').disabled = true;
+  }
+}
+
+function saveJob(){
+  const job = {
+    id: Date.now(),
+    client: clientName.value,
+    phone: clientPhone.value,
+    reg: reg.value,
+    total: parseFloat(amount.value) || 0,
+    status: status.value,
+    createdBy: currentRole
+  };
+  jobs.push(job);
+  localStorage.setItem('psm_jobs', JSON.stringify(jobs));
+  loadJobs();
+  alert("Job Saved");
+}
+
+function loadJobs(){
+  jobList.innerHTML = '';
+  jobs.slice(-10).forEach(j=>{
+    let deleteBtn = currentRole === "CEO"? `<button onclick="deleteJob(${j.id})" class="text-red-400 text-xs">DELETE</button>` : '';
+    jobList.innerHTML += `
+    <div class="q-card p-3 flex justify-between">
+      <div>
+        <p class="font-black">${j.reg} - ${j.client}</p>
+        <p class="text-sm">R${j.total.toLocaleString()} | ${j.status} | By: ${j.createdBy}</p>
+      </div>
+      ${deleteBtn}
+    </div>`;
+  });
+}
+
+function deleteJob(id){
+  if(currentRole!== "CEO") return;
+  jobs = jobs.filter(j => j.id!== id);
+  localStorage.setItem('psm_jobs', JSON.stringify(jobs));
+  loadJobs();
 }
 
 function exportData(){
-  let csv = "ID,Reg,Client,Amount,Category,Status,Date\n";
-  jobs.forEach(j=>{ csv += `${j.id},${j.reg},${j.client},${j.total},${j.category},${j.status},${j.date}\n` });
+  if(currentRole!== "CEO") return;
+  let csv = "ID,Reg,Client,Amount,Status,CreatedBy\n";
+  jobs.forEach(j=>{ csv += `${j.id},${j.reg},${j.client},${j.total},${j.status},${j.createdBy}\n` });
   const blob = new Blob([csv], {type: 'text/csv'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'PSM_Jobs.csv'; a.click();
 }
 
-// OTHER JS
-let aiProgress = 0; setInterval(()=>{ aiProgress = (aiProgress + 4) % 100; aiBar.style.width = aiProgress + '%'; }, 1000);
-function quantumMode(){ pillarStatus.innerText = "Diagnostic..."; quantumCount("revenue", 8400000); setTimeout(()=>pillarStatus.innerText = "Optimal", 2000); }
+function clearData(){
+  if(currentRole!== "CEO") return;
+  if(confirm("Delete ALL jobs?")){ localStorage.clear(); location.reload(); }
+}
 
-const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active')})},{threshold:0.15})
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el))
-
-document.getElementById('quoteForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const whatsappMessage = `*NEW QUOTE*%0A*Name:* ${name.value}%0A*Phone:* ${phone.value}%0A*Issue:* ${message.value}`;
-  window.open(`https://wa.me/27799097420?text=${whatsappMessage}`, '_blank'); this.reset();
-});
+// AUTO LOGIN IF ALREADY LOGGED IN
+window.onload = () => {
+  const savedRole = localStorage.getItem('psm_role');
+  if(savedRole){ currentRole = savedRole; showApp(); }
+}
 </script>
 </body>
 </html>
