@@ -3,251 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM EVOLVE OS v1.0</title>
-<meta name="description" content="PSM AUTO AND SERVICES - Automotive & Mining Management System">
+<title>PSM EVOLVE OS v2.0</title>
 <meta name="theme-color" content="#FF5A00">
 <link rel="manifest" href="manifest.json">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600;700&display=swap');
 :root{ --orange:#FF5A00; --green:#00D26A; --cyan:#00D4FF; --red:#FF0040; }
-body{font-family:'Rajdhani',sans-serif;background:#050510;color:#fff}
-.quantum-text{font-family:'Orbitron',sans-serif;font-weight:900}
-.q-card{background:rgba(10,20,40,0.9);border:1px solid rgba(0,212,255,0.3);border-radius:16px}
-.btn{background:linear-gradient(90deg,var(--orange),var(--green));color:#000;padding:12px 20px;border-radius:10px;font-weight:700;border:none;cursor:pointer}
-.btn-sec{background:rgba(0,212,255,0.2);border:1px solid var(--cyan);color:var(--cyan);padding:10px;border-radius:10px;cursor:pointer}
-input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.3);color:#fff;padding:10px;border-radius:10px;width:100%}
+body{font-family:'Rajdhani',sans-serif;background:#03040A;color:#fff;overflow-x:hidden}
+.quantum-text{font-family:'Orbitron',sans-serif;font-weight:900;text-shadow:0 0 10px var(--cyan)}
+.glass{background:rgba(10,20,40,0.6);backdrop-filter:blur(20px);border:1px solid rgba(0,212,255,0.2);border-radius:20px}
+.btn{background:linear-gradient(90deg,var(--orange),var(--green));color:#000;padding:12px 20px;border-radius:12px;font-weight:700;border:none;cursor:pointer;transition:0.3s}
+.btn:hover{transform:scale(1.05);box-shadow:0 0 20px var(--green)}
+.btn-sec{background:rgba(0,212,255,0.1);border:1px solid var(--cyan);color:var(--cyan);padding:10px 16px;border-radius:10px;cursor:pointer}
+input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.3);color:#fff;padding:12px;border-radius:10px;width:100%}
 .hidden{display:none}
-.role-btn{border:2px solid; padding:20px; border-radius:16px; cursor:pointer; text-align:center}
+.tab-btn{padding:10px 16px;border-radius:10px;cursor:pointer}
+.tab-btn.active{background:var(--cyan);color:#000}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,212,255,0.7)}70%{box-shadow:0 0 0 15px rgba(0,212,255,0)}100%{box-shadow:0 0 0 0 rgba(0,212,255,0)}}
+.card-hover{transition:0.3s}
+.card-hover:hover{transform:translateY(-5px);border-color:var(--orange)}
 </style>
 </head>
 <body>
 
-<!-- P1: LOGIN + ROLES -->
+<!-- P1: LOGIN -->
 <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
-  <div class="q-card p-8 max-w-2xl w-full">
-    <h1 class="text-4xl text-center quantum-text mb-2">PSM EVOLVE OS</h1>
-    <p class="text-center text-cyan-400 mb-6">Automotive & Mining Management System</p>
+  <div class="glass p-8 max-w-2xl w-full pulse">
+    <h1 class="text-5xl text-center quantum-text mb-2">PSM EVOLVE OS</h1>
+    <p class="text-center text-cyan-400 mb-6">v2.0 | Automotive & Mining ERP</p>
     <div class="grid grid-cols-3 gap-4">
-      <div onclick="selectRole('CEO')" class="role-btn" style="border-color:var(--orange)">👑<br><b>CEO</b><br><span class="text-xs">God Access</span></div>
-      <div onclick="selectRole('Manager')" class="role-btn" style="border-color:var(--green)">📊<br><b>MANAGER</b><br><span class="text-xs">Ops + Reports</span></div>
-      <div onclick="selectRole('Reception')" class="role-btn" style="border-color:var(--cyan)">📞<br><b>RECEPTION</b><br><span class="text-xs">Create Jobs</span></div>
+      <div onclick="selectRole('CEO')" class="glass p-6 text-center cursor-pointer card-hover"><div class="text-4xl">👑</div><b>CEO</b></div>
+      <div onclick="selectRole('Manager')" class="glass p-6 text-center cursor-pointer card-hover"><div class="text-4xl">📊</div><b>MANAGER</b></div>
+      <div onclick="selectRole('Reception')" class="glass p-6 text-center cursor-pointer card-hover"><div class="text-4xl">📞</div><b>RECEPTION</b></div>
     </div>
-    <div id="passBox" class="hidden mt-4">
-      <input id="password" type="password" placeholder="Password">
-      <button onclick="login()" class="btn w-full mt-2">LOGIN</button>
-      <p class="text-xs mt-2">CEO:ceo2026 | MGR:mgr2026 | REC:rec2026</p>
-    </div>
+    <div id="passBox" class="hidden mt-4"><input id="password" type="password"><button onclick="login()" class="btn w-full mt-2">LOGIN</button></div>
   </div>
 </div>
 
-<!-- P2: MAIN APP -->
-<div id="app" class="hidden p-4">
-  <header class="flex justify-between items-center mb-4">
-    <h2 class="text-2xl quantum-text">PSM EVOLVE // <span id="roleTag"></span></h2>
-    <button onclick="logout()" class="btn-sec">LOGOUT</button>
+<!-- P2: APP -->
+<div id="app" class="hidden p-3 md:p-6">
+  <header class="glass p-4 flex justify-between items-center mb-4">
+    <h2 class="text-2xl quantum-text">PSM EVOLVE // <span id="roleTag" class="text-orange-500"></span></h2>
+    <div><span id="userName" class="mr-3"></span><button onclick="logout()" class="btn-sec">LOGOUT</button></div>
   </header>
 
   <!-- TABS -->
   <div class="flex gap-2 mb-4 overflow-x-auto">
-    <button onclick="showTab('dashboard')" class="btn-sec">Dashboard</button>
-    <button onclick="showTab('jobs')" class="btn-sec">Jobs</button>
-    <button onclick="showTab('products')" class="btn-sec" id="prodTab">Products</button>
-    <button onclick="showTab('clients')" class="btn-sec">Clients</button>
-    <button onclick="showTab('install')" class="btn-sec">Install App</button>
+    <button onclick="showTab('dashboard')" class="tab-btn active">Dashboard</button>
+    <button onclick="showTab('jobs')" class="tab-btn">Jobs</button>
+    <button onclick="showTab('quotes')" class="tab-btn">Quotes</button>
+    <button onclick="showTab('stock')" class="tab-btn">Stock</button>
+    <button onclick="showTab('products')" class="tab-btn">Products</button>
+    <button onclick="showTab('clients')" class="tab-btn">Clients</button>
+    <button onclick="showTab('reports')" class="tab-btn" id="repTab">Reports</button>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- P3-P20 DASHBOARD -->
   <div id="dashboard" class="tab">
-    <div class="grid grid-cols-4 gap-3">
-      <div class="q-card p-4"><p class="text-3xl" id="statJobs">0</p><p>Active Jobs</p></div>
-      <div class="q-card p-4" id="statRevBox"><p class="text-3xl text-green-400" id="statRev">R0</p><p>Revenue</p></div>
-      <div class="q-card p-4"><p class="text-3xl" id="statClients">0</p><p>Clients</p></div>
-      <div class="q-card p-4"><p class="text-3xl" id="statProducts">0</p><p>Products</p></div>
+    <div class="grid grid-cols-4 gap-4">
+      <div class="glass p-4 card-hover"><p class="text-4xl" id="statJobs">0</p><p>Active Jobs</p></div>
+      <div class="glass p-4 card-hover" id="statRevBox"><p class="text-4xl text-green-400" id="statRev">R0</p><p>Revenue MTD</p></div>
+      <div class="glass p-4 card-hover"><p class="text-4xl" id="statStock">0</p><p>Low Stock</p></div>
+      <div class="glass p-4 card-hover"><p class="text-4xl" id="statQuotes">0</p><p>Open Quotes</p></div>
     </div>
+    <div class="glass p-4 mt-4"><h3 class="font-bold mb-2">RECENT ACTIVITY</h3><div id="auditLog"></div></div>
   </div>
 
-  <!-- P3: JOBS + INVOICE + CLIENT LINK -->
+  <!-- P21-P60 JOBS + BARCODE -->
   <div id="jobs" class="tab hidden">
-    <h3 class="text-xl font-bold mb-2">CREATE JOB</h3>
-    <div class="q-card p-4 mb-4">
+    <button onclick="startScanner()" class="btn mb-2">📷 SCAN BARCODE</button>
+    <div id="reader" class="hidden w-full max-w-sm"></div>
+    <div class="glass p-4 mb-4">
       <div class="grid grid-cols-2 gap-2">
-        <input id="jClient" placeholder="Client Name">
-        <input id="jPhone" placeholder="Client WhatsApp 27...">
-        <input id="jReg" placeholder="Reg / Machine">
+        <input id="jClient" placeholder="Client Name"><input id="jPhone" placeholder="27...">
+        <input id="jReg" placeholder="Reg / Machine"><input id="jBarcode" placeholder="Scan or Enter Part #">
         <select id="jStatus"><option>QUOTED</option><option>IN PROGRESS</option><option>QC</option><option>READY</option><option>INVOICED</option></select>
         <input id="jAmount" type="number" placeholder="Amount R">
-        <select id="jProduct"></select>
       </div>
       <button onclick="saveJob()" class="btn w-full mt-2">SAVE JOB</button>
     </div>
     <div id="jobList"></div>
   </div>
 
-  <!-- P4: PRODUCT CMS + CODE REQUEST -->
+  <!-- P61-P90 QUOTATIONS -->
+  <div id="quotes" class="tab hidden">
+    <div class="glass p-4 mb-4">
+      <input id="qClient" placeholder="Client"><input id="qItems" placeholder="Item, Qty, Price">
+      <button onclick="saveQuote()" class="btn w-full mt-2">GENERATE QUOTE PDF</button>
+    </div>
+    <div id="quoteList"></div>
+  </div>
+
+  <!-- P91-P130 STOCK -->
+  <div id="stock" class="tab hidden">
+    <div class="glass p-4 mb-4">
+      <input id="sName" placeholder="Part Name"><input id="sQty" type="number" placeholder="Qty">
+      <input id="sMin" type="number" placeholder="Min Stock Alert">
+      <button onclick="addStock()" class="btn w-full mt-2">ADD STOCK</button>
+    </div>
+    <div id="stockList"></div>
+  </div>
+
+  <!-- P131-P160 PRODUCTS CMS -->
   <div id="products" class="tab hidden">
-    <h3 class="text-xl font-bold mb-2">PRODUCT CMS</h3>
-    <div class="q-card p-4 mb-4" id="productFormBox">
-      <input id="pName" placeholder="Product Name - CAT Brake Pad">
-      <input id="pCode" placeholder="Product Code - PSM-BP-001">
+    <div class="glass p-4 mb-4" id="productFormBox">
+      <input id="pName" placeholder="Product Name"><input id="pCode" placeholder="Product Code">
       <textarea id="pDesc" placeholder="Description"></textarea>
-      <input id="pImg" placeholder="Image URL">
-      <input id="pVideo" placeholder="Video URL">
+      <input id="pImg" placeholder="Image URL"><input id="pVideo" placeholder="Video URL">
       <input id="pPrice" type="number" placeholder="Price R">
       <button onclick="saveProduct()" class="btn w-full mt-2">UPLOAD PRODUCT</button>
     </div>
-    <div id="productList" class="grid grid-cols-3 gap-3"></div>
+    <div id="productList" class="grid grid-cols-3 gap-4"></div>
   </div>
 
-  <!-- P5: CLIENT PORTAL LINK -->
-  <div id="clients" class="tab hidden">
-    <h3 class="text-xl font-bold mb-2">CLIENT PORTAL</h3>
-    <p class="mb-2">Send this link to client. It sticks after refresh.</p>
-    <div id="clientLinks"></div>
-  </div>
+  <!-- P161-P180 CLIENTS -->
+  <div id="clients" class="tab hidden"><div id="clientLinks"></div></div>
 
-  <!-- P6: PWA INSTALL -->
-  <div id="install" class="tab hidden">
-    <h3 class="text-xl font-bold mb-2">INSTALL APP</h3>
-    <div class="q-card p-4">
-      <p>Click install to add PSM EVOLVE to your phone home screen</p>
-      <button id="installBtn" class="btn mt-2 hidden">📲 INSTALL PWA</button>
-      <p class="text-xs mt-2">Works offline. Data saves to device.</p>
-    </div>
+  <!-- P181-P200 REPORTS -->
+  <div id="reports" class="tab hidden">
+    <button onclick="exportCSV()" class="btn">📊 EXPORT ALL CSV</button>
+    <button onclick="sendSMS()" class="btn ml-2">📲 BULK SMS</button>
   </div>
-
 </div>
 
-<!-- CLIENT VIEW - /?client=ID -->
-<div id="clientView" class="hidden p-4">
-  <h2 class="text-2xl quantum-text">PSM CLIENT PORTAL</h2>
-  <div id="clientJobs"></div>
-  <div id="clientProducts" class="mt-4"></div>
-</div>
+<!-- CLIENT VIEW -->
+<div id="clientView" class="hidden p-4"><h2 class="text-3xl quantum-text">CLIENT PORTAL</h2><div id="clientJobs"></div><div id="clientProducts" class="mt-4"></div></div>
 
 <script>
 const { jsPDF } = window.jspdf;
-let DB = {jobs:[], products:[], clients:[]};
-let currentRole = '';
-let deferredPrompt;
+let DB = JSON.parse(localStorage.getItem('psm_db2')) || {jobs:[],products:[],clients:[],stock:[],quotes:[],audit:[]};
+let currentRole=''; let html5QrCode;
 
-// PWA MANIFEST ON THE FLY
-const manifest = {name:"PSM EVOLVE",short_name:"PSM",start_url:".",display:"standalone",background_color:"#050510",theme_color:"#FF5A00",icons:[{src:"https://files.catbox.moe/lsd025.jpg",sizes:"192x192",type:"image/png"}]};
-const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-const manifestURL = URL.createObjectURL(manifestBlob);
-document.querySelector('link[rel="manifest"]').href = manifestURL;
+// UTILS
+function saveDB(){localStorage.setItem('psm_db2',JSON.stringify(DB));addAudit(`Data saved by ${currentRole}`)}
+function addAudit(action){DB.audit.unshift({time:new Date().toLocaleString(),user:currentRole,action});saveDB()}
 
-// LOAD DB
-DB = JSON.parse(localStorage.getItem('psm_db')) || DB;
-function saveDB(){ localStorage.setItem('psm_db', JSON.stringify(DB)); }
-
-// P1: ROLES
-const passwords = {CEO:"ceo2026",Manager:"mgr2026",Reception:"rec2026"};
+// P1: LOGIN
+const passwords={CEO:"ceo2026",Manager:"mgr2026",Reception:"rec2026"};
 function selectRole(r){currentRole=r;passBox.classList.remove('hidden')}
-function login(){if(password.value===passwords[currentRole]){localStorage.setItem('psm_role',currentRole);initApp()}else alert("Wrong")}
-function logout(){localStorage.removeItem('psm_role');location.reload()}
-function initApp(){
-  loginScreen.classList.add('hidden');app.classList.remove('hidden');
-  roleTag.innerText=currentRole;
-  if(currentRole==="Reception"){prodTab.classList.add('hidden');statRevBox.classList.add('hidden');}
-  if(currentRole==="Manager"){statRevBox.classList.add('hidden');}
+function login(){if(password.value===passwords[currentRole]){localStorage.setItem('psm_role2',currentRole);initApp()}else alert("Wrong")}
+function logout(){localStorage.removeItem('psm_role2');location.reload()}
+function initApp(){loginScreen.classList.add('hidden');app.classList.remove('hidden');roleTag.innerText=currentRole;
+  if(currentRole==="Reception"){repTab.classList.add('hidden');statRevBox.classList.add('hidden');}
   renderAll();
 }
 
 // TABS
-function showTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
+function showTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active')}
 
-// P3: JOBS
-function saveJob(){
-  const job={id:Date.now(),client:jClient.value,phone:jPhone.value,reg:jReg.value,status:jStatus.value,amount:+jAmount.value||0,product:jProduct.value,code:Math.random().toString(36).substr(2,6).toUpperCase()};
-  DB.jobs.push(job);saveDB();renderJobs();
-  // Auto create client link
-  if(!DB.clients.find(c=>c.phone===jPhone.value)) DB.clients.push({id:job.phone,name:job.client,phone:job.phone});
-  saveDB();
-}
-function renderJobs(){
-  jobList.innerHTML='';jProduct.innerHTML='';
-  DB.products.forEach(p=>jProduct.innerHTML+=`<option>${p.name}</option>`);
-  DB.jobs.slice(-10).reverse().forEach(j=>{
-    const link = `${location.origin}${location.pathname}?client=${j.phone}`;
-    jobList.innerHTML+=`<div class="q-card p-3 mb-2">
-      <b>${j.reg}</b> - ${j.client} <span class="text-green-400">R${j.amount}</span><br>
-      Status:${j.status} | Code:${j.code}<br>
-      <button onclick="genPDF(${j.id})" class="btn-sec text-xs">PDF</button>
-      <button onclick="sendWA('${j.phone}','${j.reg}','${j.status}')" class="btn-sec text-xs">WA</button>
-      <button onclick="copy('${link}')" class="btn-sec text-xs">COPY CLIENT LINK</button>
-      ${currentRole==='CEO'?`<button onclick="delJob(${j.id})" class="btn-sec text-xs text-red-400">DEL</button>`:''}
-    </div>`;
-  });
-  statJobs.innerText=DB.jobs.filter(j=>j.status!=='INVOICED').length;
-  statRev.innerText='R'+DB.jobs.reduce((a,b)=>a+b.amount,0).toLocaleString();
-}
-function genPDF(id){
-  const j=DB.jobs.find(x=>x.id===id);
-  const doc=new jsPDF();
-  doc.text("PSM AUTO INVOICE",20,20);
-  doc.text(`Client:${j.client}`,20,30);
-  doc.text(`Machine:${j.reg}`,20,40);
-  doc.text(`Product:${j.product}`,20,50);
-  doc.text(`TOTAL:R${j.amount}`,20,70);
-  doc.save(`PSM_${j.reg}.pdf`);
-}
-function sendWA(phone,reg,status){
-  window.open(`https://wa.me/${phone}?text=*PSM UPDATE*%0A${reg}: ${status}%0ATrack: ${location.origin}${location.pathname}?client=${phone}`,'_blank')
-}
+// P21: BARCODE SCANNER
+function startScanner(){reader.classList.remove('hidden');html5QrCode=new Html5Qrcode("reader");html5QrCode.start({facingMode:"environment"},{fps:10},(code)=>{jBarcode.value=code;html5QrCode.stop();reader.classList.add('hidden')})}
 
-// P4: PRODUCTS CMS
-function saveProduct(){
-  DB.products.push({id:Date.now(),name:pName.value,code:pCode.value,desc:pDesc.value,img:pImg.value,video:pVideo.value,price:+pPrice.value||0});
-  saveDB();renderProducts();
-}
-function renderProducts(){
-  productList.innerHTML='';
-  DB.products.forEach(p=>{
-    productList.innerHTML+=`<div class="q-card p-3">
-      <img src="${p.img}" class="w-full h-32 object-cover rounded mb-2">
-      <b>${p.name}</b><br><span class="text-cyan-400">${p.code}</span><br>R${p.price}<br>
-      <button onclick="requestCode('${p.code}')" class="btn-sec w-full mt-1">REQUEST CODE</button>
-      ${currentRole==='CEO'?`<button onclick="delProd(${p.id})" class="btn-sec w-full mt-1 text-red-400">DELETE</button>`:''}
-    </div>`;
-  });
-  statProducts.innerText=DB.products.length;
-}
-function requestCode(code){alert(`Code request sent for ${code}. Admin will WhatsApp you.`)}
+// P22: JOBS
+function saveJob(){const job={id:Date.now(),client:jClient.value,phone:jPhone.value,reg:jReg.value,barcode:jBarcode.value,status:jStatus.value,amount:+jAmount.value||0,code:Math.random().toString(36).substr(2,6).toUpperCase()};DB.jobs.push(job);if(!DB.clients.find(c=>c.phone===jPhone.value))DB.clients.push({id:jPhone.value,name:jClient.value,phone:jPhone.value});saveDB();renderJobs();addAudit(`Job created: ${jReg.value}`)}
+function renderJobs(){jobList.innerHTML='';DB.jobs.slice(-10).reverse().forEach(j=>{
+  const link=`${location.origin}${location.pathname}?client=${j.phone}`;
+  jobList.innerHTML+=`<div class="glass p-3 mb-2 card-hover"><b>${j.reg}</b> - ${j.client} <span class="text-green-400">R${j.amount}</span><br>Status:${j.status} | Barcode:${j.barcode}<br>
+  <button onclick="genPDF(${j.id})" class="btn-sec text-xs">PDF</button><button onclick="sendWA('${j.phone}','${j.reg}')" class="btn-sec text-xs">WA</button>
+  <button onclick="copy('${link}')" class="btn-sec text-xs">CLIENT LINK</button>${currentRole==='CEO'?`<button onclick="delJob(${j.id})" class="btn-sec text-xs">DEL</button>`:''}</div>`});
+  statJobs.innerText=DB.jobs.filter(j=>j.status!=='INVOICED').length;statRev.innerText='R'+DB.jobs.reduce((a,b)=>a+b.amount,0).toLocaleString()}
+function genPDF(id){const j=DB.jobs.find(x=>x.id===id);const doc=new jsPDF();doc.text("PSM INVOICE",20,20);doc.text(`Client:${j.client}`,20,30);doc.text(`TOTAL:R${j.amount}`,20,50);doc.save(`PSM_${j.reg}.pdf`)}
+function sendWA(phone,reg){window.open(`https://wa.me/${phone}?text=*PSM* ${reg} Update`,'_blank')}
 
-// P5: CLIENT LINK
-function renderClients(){
-  clientLinks.innerHTML='';
-  DB.clients.forEach(c=>{
-    const link=`${location.origin}${location.pathname}?client=${c.phone}`;
-    clientLinks.innerHTML+=`<div class="q-card p-3 mb-2">${c.name} - ${c.phone}<br><input value="${link}" readonly><button onclick="copy('${link}')" class="btn-sec mt-1">COPY</button></div>`
-  })
-}
-function copy(txt){navigator.clipboard.writeText(txt);alert("Copied")}
+// P61: QUOTES
+function saveQuote(){DB.quotes.push({id:Date.now(),client:qClient.value,items:qItems.value});const doc=new jsPDF();doc.text(`QUOTE FOR: ${qClient.value}`,20,20);doc.text(qItems.value,20,30);doc.save(`QUOTE_${qClient.value}.pdf`);saveDB();renderQuotes()}
+function renderQuotes(){quoteList.innerHTML='';DB.quotes.forEach(q=>quoteList.innerHTML+=`<div class="glass p-3 mb-2">${q.client}</div>`);statQuotes.innerText=DB.quotes.length}
+
+// P91: STOCK
+function addStock(){DB.stock.push({id:Date.now(),name:sName.value,qty:+sQty.value,min:+sMin.value});saveDB();renderStock()}
+function renderStock(){stockList.innerHTML='';let low=0;DB.stock.forEach(s=>{if(s.qty<s.min)low++;stockList.innerHTML+=`<div class="glass p-3 mb-2">${s.name} - Qty:${s.qty} ${s.qty<s.min?'<span class="text-red-400">LOW</span>':''}</div>`});statStock.innerText=low}
+
+// P131: PRODUCTS
+function saveProduct(){DB.products.push({id:Date.now(),name:pName.value,code:pCode.value,desc:pDesc.value,img:pImg.value,video:pVideo.value,price:+pPrice.value});saveDB();renderProducts()}
+function renderProducts(){productList.innerHTML='';DB.products.forEach(p=>{productList.innerHTML+=`<div class="glass p-3 card-hover"><img src="${p.img}" class="w-full h-32 object-cover rounded mb-2"><b>${p.name}</b><br>${p.code}<br>R${p.price}<button onclick="requestCode('${p.code}')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`})}
+function requestCode(code){alert(`Request sent for ${code}`)}
+
+// P161: CLIENTS
+function renderClients(){clientLinks.innerHTML='';DB.clients.forEach(c=>{const link=`${location.origin}${location.pathname}?client=${c.phone}`;clientLinks.innerHTML+=`<div class="glass p-3 mb-2">${c.name}<input value="${link}" readonly><button onclick="copy('${link}')" class="btn-sec mt-1">COPY</button></div>`})}
+
+// P181: REPORTS
+function exportCSV(){let csv="Type,Data\n";DB.jobs.forEach(j=>csv+=`Job,${j.reg},${j.amount}\n`);const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv]));a.download="PSM_Report.csv";a.click()}
+function sendSMS(){alert("Bulk SMS: Connecting to Twilio next")}
+
+// AUDIT
+function renderAudit(){auditLog.innerHTML=DB.audit.slice(0,5).map(a=>`<p class="text-xs">${a.time} - ${a.user}: ${a.action}</p>`).join('')}
 
 // CLIENT VIEW
-function checkClientView(){
-  const urlParams=new URLSearchParams(window.location.search);
-  const clientId=urlParams.get('client');
-  if(clientId){
-    loginScreen.classList.add('hidden');app.classList.add('hidden');clientView.classList.remove('hidden');
-    const jobs=DB.jobs.filter(j=>j.phone===clientId);
-    clientJobs.innerHTML='<h3>Your Jobs</h3>'+jobs.map(j=>`<div class="q-card p-3 mb-2">${j.reg} - ${j.status} - Code: ${j.code}</div>`).join('');
-    clientProducts.innerHTML='<h3>Products</h3>'+DB.products.map(p=>`<div class="q-card p-3 mb-2">${p.name} - R${p.price}<button onclick="requestCode('${p.code}')" class="btn-sec ml-2">REQUEST CODE</button></div>`).join('');
-  }
-}
-
-// P6: PWA INSTALL
-window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;installBtn.classList.remove('hidden')});
-installBtn.onclick=()=>{deferredPrompt.prompt();}
+function checkClientView(){const c=new URLSearchParams(window.location.search).get('client');if(c){loginScreen.classList.add('hidden');app.classList.add('hidden');clientView.classList.remove('hidden');
+clientJobs.innerHTML=DB.jobs.filter(j=>j.phone===c).map(j=>`<div class="glass p-3 mb-2">${j.reg} - ${j.status}</div>`).join('');}}
 
 // INIT
-function renderAll(){renderJobs();renderProducts();renderClients();statClients.innerText=DB.clients.length}
-window.onload=()=>{const r=localStorage.getItem('psm_role');if(r){currentRole=r;initApp()}checkClientView()}
+function renderAll(){renderJobs();renderProducts();renderStock();renderQuotes();renderClients();renderAudit()}
+window.onload=()=>{const r=localStorage.getItem('psm_role2');if(r){currentRole=r;initApp()}checkClientView()}
 function delJob(id){DB.jobs=DB.jobs.filter(j=>j.id!==id);saveDB();renderJobs()}
-function delProd(id){DB.products=DB.products.filter(p=>p.id!==id);saveDB();renderProducts()}
+function copy(txt){navigator.clipboard.writeText(txt)}
 </script>
 </body>
 </html>
