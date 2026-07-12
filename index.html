@@ -3,168 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM OS v500 GOD TIER UI</title>
+<title>PSM OS v500 - LEVEL 10</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
 <style>
-:root { --bg: #020617; --card: #0F172A; --accent: #00D4FF; --green: #00FF88; --danger: #FF0055; }
-body { background: var(--bg); font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-#particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
-.god-card { background: linear-gradient(135deg, rgba(15,23,42,0.8) 0%, rgba(2,6,23,0.8) 100%); border: 1px solid rgba(0,212,255,0.2); border-radius: 24px; backdrop-filter: blur(30px); transition: all 0.4s; }
-.god-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 0 60px rgba(0,212,255,0.2); }
-.gradient-btn { background: linear-gradient(90deg, var(--accent), var(--green)); color: #000; font-weight: 900; border-radius: 16px; }
-.ai-avatar { width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle, #00D4FF, #00FF88); animation: pulse-glow 2s infinite; }
-@keyframes pulse-glow { 0%,100% { box-shadow: 0 0 20px rgba(0,212,255,0.5); } 50% { box-shadow: 0 0 60px rgba(0,212,255,1); } }
-.alarm { animation: alarm-flash 1s infinite; }
-@keyframes alarm-flash { 0%,100% { background: var(--danger); } 50% { background: #000; } }
-.command-palette { background: rgba(15,23,42,0.95); backdrop-filter: blur(40px); border: 1px solid var(--accent); }
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+body { background: #000; font-family: 'Orbitron', sans-serif; overflow: hidden; }
+.holo-bg { background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.1) 0%, #000 70%); }
+.holo-card {
+  background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(0,255,136,0.05));
+  border: 1px solid rgba(0,212,255,0.3);
+  backdrop-filter: blur(40px);
+  transform-style: preserve-3d;
+}
+.neon-text { text-shadow: 0 0 10px #00D4FF, 0 0 20px #00D4FF, 0 0 40px #00D4FF; }
+.scanline { background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); }
+.hud-line { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, #00FF88, transparent); animation: scan 3s linear infinite; }
+@keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.voice-active { box-shadow: 0 0 60px #00FF88; animation: voice-pulse 0.5s infinite; }
+@keyframes voice-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 </style>
 </head>
-<body class="text-white">
+<body class="text-white holo-bg scanline">
 
-<!-- LEVEL 5: PARTICLE BACKGROUND -->
-<div id="particles-js"></div>
+<!-- LEVEL 10: 3D BACKGROUND CANVAS -->
+<canvas id="bg3d" class="fixed inset-0 -z-10"></canvas>
 
-<!-- LEVEL 5: AI AVATAR - BOTTOM RIGHT -->
-<div class="fixed bottom-24 right-6 z-50 flex items-center gap-3">
-  <div id="aiSpeech" class="god-card p-3 max-w-xs hidden">
-    <p class="text-sm">Boss: CAT-773 downtime will cost R12,450/min</p>
+<!-- LEVEL 10: TOP HUD BAR -->
+<header class="absolute top-0 w-full p-6 flex justify-between items-center z-20">
+  <div>
+    <h1 class="text-4xl font-black neon-text">PSM OS // LEVEL 10</h1>
+    <p class="text-cyan-400">NEURAL NETWORK: 500/500 PILLARS ACTIVE</p>
   </div>
-  <div onclick="talkToAI()" class="ai-avatar flex items-center justify-center cursor-pointer">
-    <svg class="w-8 h-8 text-black" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.19 0 2.34-.21 3.41-.6L22 22l-2.41-2.41C20.9 18.35 22 15.28 22 12c0-5.52-4.48-10-10-10z"/></svg>
-  </div>
-</div>
-
-<!-- HEADER -->
-<header class="sticky top-0 z-40 bg-[#020617]/80 backdrop-blur-2xl border-b border-[rgba(0,212,255,0.1)]">
-  <div class="max-w-[1800px] mx-auto p-4 flex justify-between">
-    <div class="flex items-center gap-4">
-      <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-green-400 rounded-2xl flex items-center justify-center font-black text-black text-2xl">P</div>
-      <div>
-        <h1 class="text-2xl font-black">PSM OS</h1>
-        <p class="text-xs text-green-400">● GOD TIER v500 ● 500 PILLARS</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-4">
-      <button onclick="openCommand()" class="bg-[#0F172A] px-4 py-2 rounded-xl text-sm">⌘K Command</button>
-      <span id="liveClock"></span>
-    </div>
+  <div class="flex gap-4">
+    <button id="voiceBtn" onclick="startVoice()" class="border-2 border-green-400 px-6 py-3 rounded-full">🎤 VOICE</button>
+    <div id="clock" class="text-2xl"></div>
   </div>
 </header>
 
-<!-- LEVEL 4: ANIMATED KPI GRID -->
-<div class="max-w-[1800px] mx-auto p-8">
-  <div class="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
-    <div class="god-card p-6">
-      <p class="text-gray-400">Revenue MTD</p>
-      <p id="kpiRev" class="text-4xl font-black mt-2">R0</p>
-      <p class="text-green-400 text-sm mt-1">↑ 32.1%</p>
-    </div>
-    <div class="god-card p-6">
-      <p class="text-gray-400">Gross Profit</p>
-      <p id="kpiGP" class="text-4xl font-black mt-2 text-green-400">0%</p>
-    </div>
-    <div class="god-card p-6">
-      <p class="text-gray-400">Valuation 10x</p>
-      <p id="kpiVal" class="text-4xl font-black mt-2 text-cyan-400">R0</p>
-    </div>
-    <div class="god-card p-6 alarm">
-      <p class="text-white">Downtime Cost</p>
-      <p id="kpiDowntime" class="text-4xl font-black mt-2">R0/min</p>
-    </div>
-    <div class="god-card p-6">
-      <p class="text-gray-400">AI Predictions</p>
-      <p class="text-4xl font-black mt-2">98.7%</p>
-    </div>
+<!-- LEVEL 10: HOLOGRAPHIC KPI ORBIT -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">
+  <div class="holo-card w-64 p-6 absolute" style="top:0; left:50%; transform:translateX(-50%)" data-tilt data-tilt-max="20">
+    <p class="text-sm">REVENUE</p>
+    <p id="kpiRev" class="text-4xl font-black neon-text">R0</p>
   </div>
-
-  <!-- LEVEL 4: 3D CHART -->
-  <div class="god-card p-6 mb-8">
-    <h3 class="text-xl font-bold mb-4">Revenue Forecast - AI Driven</h3>
-    <canvas id="revenueChart" height="100"></canvas>
+  <div class="holo-card w-64 p-6 absolute" style="bottom:0; left:50%; transform:translateX(-50%)" data-tilt>
+    <p class="text-sm">VALUATION</p>
+    <p id="kpiVal" class="text-4xl font-black neon-text">R0</p>
   </div>
-
-  <!-- LEVEL 4: PREMIUM KANBAN -->
-  <div class="flex justify-between mb-4">
-    <h2 class="text-2xl font-bold">Live Job Board</h2>
-    <button onclick="newJobModal()" class="gradient-btn px-6 py-3">+ NEW JOB</button>
+  <div class="holo-card w-64 p-6 absolute" style="left:0; top:50%; transform:translateY(-50%)" data-tilt>
+    <p class="text-sm">DOWNTIME</p>
+    <p id="kpiDown" class="text-4xl font-black text-red-400">R0/min</p>
+    <div class="hud-line w-full top-0"></div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-    <div><h3 class="font-semibold mb-3">QUOTED</h3><div id="col-quote" class="space-y-4 min-h-"></div></div>
-    <div><h3 class="font-semibold mb-3">APPROVED</h3><div id="col-approved" class="space-y-4 min-h-"></div></div>
-    <div><h3 class="font-semibold mb-3">IN PROGRESS</h3><div id="col-progress" class="space-y-4 min-h-"></div></div>
-    <div><h3 class="font-semibold mb-3">QC</h3><div id="col-qc" class="space-y-4 min-h-"></div></div>
-    <div><h3 class="font-semibold mb-3">INVOICED</h3><div id="col-invoiced" class="space-y-4 min-h-"></div></div>
+  <div class="holo-card w-64 p-6 absolute" style="right:0; top:50%; transform:translateY(-50%)" data-tilt>
+    <p class="text-sm">AI ACCURACY</p>
+    <p class="text-4xl font-black text-green-400">99.9%</p>
   </div>
 </div>
 
-<!-- LEVEL 5: COMMAND PALETTE -->
-<div id="command" class="hidden fixed inset-0 bg-black/80 z-50 flex items-start justify-center pt-20">
-  <div class="command-palette w-[600px] rounded-2xl p-4">
-    <input id="cmdInput" placeholder="Type command... e.g. 'new job CAT 773'" class="w-full bg-transparent outline-none text-lg">
-    <div class="mt-4 text-sm text-gray-400">Try: "new job", "show finance", "call Anglo"</div>
+<!-- LEVEL 10: AI NEURAL HUD CENTER -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+  <div class="w-96 h-96 border-2 border-cyan-400 rounded-full flex items-center justify-center">
+    <div id="aiCore" class="w-32 h-32 bg-gradient-to-r from-cyan-400 to-green-400 rounded-full animate-pulse"></div>
   </div>
+  <p id="aiText" class="text-center mt-4 text-cyan-400">AI: AWAITING COMMAND</p>
+</div>
+
+<!-- LEVEL 10: VOICE FEEDBACK -->
+<div id="voiceLog" class="absolute bottom-20 left-1/2 -translate-x-1/2 bg-black/70 p-4 rounded-2xl w-[600px] text-center hidden">
+  <p>Listening...</p>
 </div>
 
 <script>
-let jobs = [{id:'JC001',reg:'CAT-773',client:'Anglo Platinum',total:84000,cost:48000,status:'progress'}];
+let synth = window.speechSynthesis;
+let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
-// LEVEL 5: PARTICLES
-particlesJS("particles-js",{particles:{number:{value:60},color:{value:"#00D4FF"},opacity:{value:0.15},size:{value:3},line_linked:{enable:true,color:"#00D4FF"}}});
+// LEVEL 10: 3D BACKGROUND
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+let renderer = new THREE.WebGLRenderer({canvas:bg3d, alpha:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+let geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+let material = new THREE.MeshBasicMaterial({color:0x00D4FF, wireframe:true});
+let torus = new THREE.Mesh(geometry, material);
+scene.add(torus); camera.position.z = 30;
+function animate3D(){ requestAnimationFrame(animate3D); torus.rotation.x += 0.005; torus.rotation.y += 0.005; renderer.render(scene,camera); }
+animate3D();
 
-// LEVEL 4: ANIMATED COUNTERS
-function animateValue(id, end) {
-  let obj = document.getElementById(id);
-  let start = 0;
-  let range = end;
-  let duration = 2000;
-  let startTime = performance.now();
-  function update(t) {
-    let p = Math.min((t - startTime)/duration, 1);
-    obj.innerText = "R" + Math.floor(start + range * p).toLocaleString();
-    if(p < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
+// LEVEL 10: VANILLA TILT FOR HOLOGRAMS
+VanillaTilt.init(document.querySelectorAll(".holo-card"), {max: 25, speed: 400, glare: true, "max-glare": 0.5});
+
+// LEVEL 10: ANIMATED COUNTERS
+function count(id, end){ let s=0; let i=setInterval(()=>{s+=end/100; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},20); }
+count("kpiRev", 8400000); count("kpiVal", 84000000); count("kpiDown", 12450);
+
+// LEVEL 10: VOICE CONTROL
+function startVoice(){
+  voiceBtn.classList.add('voice-active');
+  voiceLog.classList.remove('hidden');
+  recognition.start();
+  speak("PSM OS Online. State your command.");
+}
+recognition.onresult = (e) => {
+  let cmd = e.results[0][0].transcript.toLowerCase();
+  voiceLog.innerHTML = `<p>Command: ${cmd}</p>`;
+  if(cmd.includes("new job")) { speak("Creating new job card"); aiText.innerText = "AI: Creating Job for CAT 773"; }
+  if(cmd.includes("revenue")) { speak("Revenue this month is 8.4 million Rand"); }
+  voiceBtn.classList.remove('voice-active');
+}
+function speak(text){
+  let u = new SpeechSynthesisUtterance(text);
+  u.voice = synth.getVoices().find(v => v.name.includes("Google"));
+  synth.speak(u);
 }
 
-// LEVEL 4: CHART.JS WITH GLOW
-new Chart(revenueChart,{type:'line',data:{labels:['Jan','Feb','Mar','Apr'],datasets:[{label:'Revenue',data:[200000,400000,600000,840000],borderColor:'#00D4FF',tension:0.4,fill:true,backgroundColor:'rgba(0,212,255,0.1)'}]},options:{plugins:{legend:{display:false}}}});
-
-// LEVEL 5: VOICE AI
-function talkToAI(){
-  aiSpeech.classList.remove('hidden');
-  let msg = new SpeechSynthesisUtterance("Warning: CAT 773 predicted failure in 142 hours. Downtime cost 12 thousand 4 hundred 50 Rand per minute.");
-  speechSynthesis.speak(msg);
-  setTimeout(()=>aiSpeech.classList.add('hidden'),5000);
-}
-
-// LEVEL 5: COMMAND PALETTE
-function openCommand(){command.classList.remove('hidden'); cmdInput.focus();}
-document.addEventListener('keydown', e => { if(e.metaKey && e.key === 'k') openCommand(); });
-cmdInput.addEventListener('keyup', e => { if(e.key === 'Enter' && cmdInput.value.includes('new job')) { newJobModal(); command.classList.add('hidden'); }});
-
-// LOAD EVERYTHING
-function loadKanban(){
-  ['quote','approved','progress','qc','invoiced'].forEach(c=>document.getElementById('col-'+c).innerHTML='');
-  jobs.forEach(j=>{
-    let gp = ((j.total-j.cost)/j.total*100).toFixed(1);
-    document.getElementById('col-'+j.status).innerHTML += `
-    <div class="god-card p-4" data-id="${j.id}">
-      <div class="flex justify-between"><p class="font-bold text-lg">${j.reg}</p><p class="text-green-400 font-bold">R${j.total.toLocaleString()}</p></div>
-      <p class="text-sm text-gray-400">${j.client}</p>
-      <div class="mt-3 flex justify-between"><span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">GP: ${gp}%</span></div>
-    </div>`;
-  });
-}
-animateValue("kpiRev", 840000);
-animateValue("kpiVal", 8400000);
-animateValue("kpiDowntime", 12450);
-loadKanban();
-
-setInterval(()=>liveClock.innerText=new Date().toLocaleTimeString('en-ZA'),1000);
+// CLOCK
+setInterval(()=>clock.innerText = new Date().toLocaleTimeString(),1000);
 </script>
 </body>
 </html>
