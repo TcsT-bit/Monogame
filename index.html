@@ -13,12 +13,12 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 html, body { background: #000!important; font-family: 'Orbitron', sans-serif; overflow: hidden; margin: 0; }
-.holo-bg { background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.2) 0%, #000 50%)!important; }
-.holo-card { background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,255,136,0.08)); border: 1px solid rgba(0,212,255,0.5); backdrop-filter: blur(50px); border-radius: 24px; }
-.neon-text { text-shadow: 0 0 10px #00D4FF, 0 0 30px #00D4FF; }
-.pillar-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; position: fixed; bottom: 10px; left: 10px; }
-.pillar-dot { width: 8px; height: 8px; background: #00FF88; border-radius: 50%; animation: pillar-pulse 2s infinite; }
-@keyframes pillar-pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; box-shadow: 0 0 10px #00FF88; } }
+.holo-bg { background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.15) 0%, #000 50%)!important; }
+.holo-card { background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,255,136,0.05)); border: 1px solid rgba(0,212,255,0.4); backdrop-filter: blur(30px); border-radius: 20px; will-change: transform; } /* GPU ACCEL */
+.neon-text { text-shadow: 0 0 10px #00D4FF; } /* REDUCED GLOW FOR FPS */
+.pillar-grid { display: grid; grid-template-columns: repeat(25, 1fr); gap: 1px; position: fixed; bottom: 10px; left: 10px; transform: scale(0.5); } /* 25x20 = 500 dots, smaller */
+.pillar-dot { width: 4px; height: 4px; background: #00FF88; border-radius: 50%; animation: pillar-pulse 3s infinite; will-change: opacity; } /* SLOWER ANIMATION = LESS CPU */
+@keyframes pillar-pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 0.8; } }
 </style>
 </head>
 <body class="text-white holo-bg">
@@ -27,12 +27,11 @@ html, body { background: #000!important; font-family: 'Orbitron', sans-serif; ov
 
 <!-- 500 PILLARS VISUAL -->
 <div class="pillar-grid" id="pillarGrid"></div>
-<div class="fixed bottom-10 left-10 text-xs">
+<div class="fixed bottom-10 left-10 text-xs z-20">
   <p class="text-green-400 font-black">500/500 PILLARS ACTIVE</p>
   <p id="pillarStatus">Omega Core: Online</p>
 </div>
 
-<!-- TOP HUD -->
 <header class="absolute top-0 w-full p-6 flex justify-between z-20">
   <div>
     <h1 class="text-5xl font-black neon-text">PSM OS // OMEGA</h1>
@@ -41,38 +40,32 @@ html, body { background: #000!important; font-family: 'Orbitron', sans-serif; ov
   <button onclick="omegaCommand()" class="bg-gradient-to-r from-cyan-400 to-green-400 text-black px-8 py-4 rounded-2xl font-black text-xl">Ω OMEGA MODE</button>
 </header>
 
-<!-- MAIN DASHBOARD GRID -->
-<div class="absolute inset-0 pt-32 p-8 grid-cols-4 grid-rows-3 gap-6">
+<div class="absolute inset-0 pt-32 p-8 grid grid-cols-4 grid-rows-3 gap-6">
 
-  <!-- PILLARS 1-100: FINANCE -->
   <div class="holo-card p-6 col-span-2">
     <h3 class="text-xl font-black">FINANCE CORE</h3>
     <p class="text-4xl font-black neon-text mt-2" id="revenue">R0</p>
-    <canvas id="financeChart" height="80"></canvas>
+    <canvas id="financeChart" height="60"></canvas> <!-- SMALLER CHART -->
   </div>
 
-  <!-- PILLARS 101-200: AI PREDICTIONS -->
   <div class="holo-card p-6">
     <h3 class="text-xl font-black">AI PREDICTION</h3>
     <p id="aiPred" class="text-cyan-400 mt-4">Scanning 500 assets...</p>
   </div>
 
-  <!-- PILLARS 201-300: LIVE JOBS -->
   <div class="holo-card p-6 overflow-y-auto">
     <h3 class="text-xl font-black">LIVE JOBS</h3>
     <div id="liveJobs"></div>
   </div>
 
-  <!-- PILLARS 301-400: INVENTORY -->
   <div class="holo-card p-6 col-span-2">
     <h3 class="text-xl font-black">INVENTORY SWARM</h3>
     <p id="inventory">R2,340,000 in parts</p>
   </div>
 
-  <!-- PILLARS 401-500: VOICE + CRM -->
   <div class="holo-card p-6 col-span-2">
     <h3 class="text-xl font-black">CRM + VOICE OS</h3>
-    <button onclick="startVoice()" class="w-full bg-green-400/20 border border-green-400 py-4 rounded-xl mt-4">🎤 TALK TO OMEGA</button>
+    <button onclick="startVoice()" class="w-full bg-green-400/20 border-green-400 py-4 rounded-xl mt-4">🎤 TALK TO OMEGA</button>
   </div>
 
 </div>
@@ -83,22 +76,28 @@ const firebaseConfig = { apiKey: "YOUR_KEY", projectId: "psm-os" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 500 PILLARS VISUAL
-for(let i=0; i<500; i++){ pillarGrid.innerHTML += `<div class="pillar-dot" style="animation-delay:${i*0.01}s"></div>` }
+// 500 PILLARS VISUAL - BATCH RENDER FOR SPEED
+let dots = '';
+for(let i=0; i<500; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.005}s"></div>` }
+pillarGrid.innerHTML = dots;
 
-// PILLARS 1-100: FINANCE ANIMATED
-function countUp(id, end){ let s=0; let i=setInterval(()=>{s+=end/200; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},10); }
+// PILLARS 1-100: FINANCE ANIMATED - 4X FASTER
+function countUp(id, end){
+  let s=0;
+  let step = end/50; // was 200, now 50 = 4x faster
+  let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},8); // was 10ms, now 8ms
+}
 countUp("revenue", 8400000);
 
-// PILLARS 101-200: AI PREDICTION LOOP
+// PILLARS 101-200: AI PREDICTION LOOP - 2X FASTER
 const predictions = ["CAT-773: Bearing failure in 142h", "Anglo: Quote R1.2M ready", "Inventory: Brake pads low"];
 let pIdx = 0;
-setInterval(()=>{ aiPred.innerText = "AI: " + predictions[pIdx++ % predictions.length]; }, 3000);
+setInterval(()=>{ aiPred.innerText = "AI: " + predictions[pIdx++ % predictions.length]; }, 1500); // was 3000ms
 
 // PILLARS 201-300: LIVE JOBS FROM FIREBASE
-db.collection("jobs").onSnapshot(snap=>{
+db.collection("jobs").limit(20).onSnapshot(snap=>{ // LIMIT 20 TO PREVENT LAG
   liveJobs.innerHTML = '';
-  snap.forEach(doc=>{ let j = doc.data(); liveJobs.innerHTML += `<p class="text-sm">${j.reg} - R${j.total}</p>`; });
+  snap.forEach(doc=>{ let j = doc.data(); liveJobs.innerHTML += `<p class="text-sm">${j.reg} - R${j.total?.toLocaleString()}</p>`; });
 });
 
 // PILLARS 401-500: VOICE OMEGA
@@ -107,7 +106,7 @@ function startVoice(){ recognition.start(); }
 recognition.onresult = (e) => {
   let cmd = e.results[0][0].transcript;
   pillarStatus.innerText = "Omega: Executing " + cmd;
-  new SpeechSynthesisUtterance("Command received").speak();
+  speechSynthesis.speak(new SpeechSynthesisUtterance("Command received"));
 }
 
 function omegaCommand(){
@@ -115,18 +114,32 @@ function omegaCommand(){
   countUp("revenue", 8400000);
 }
 
-// 3D BACKGROUND
+// 3D BACKGROUND - OPTIMIZED FOR 60FPS
 let scene = new THREE.Scene(); scene.background = new THREE.Color(0x000);
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:true});
+let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:false, powerPreference:"high-performance"}); // antialias OFF
 renderer.setSize(window.innerWidth, window.innerHeight);
-let geo = new THREE.IcosahedronGeometry(15, 1); let mat = new THREE.MeshBasicMaterial({color:0x00D4FF, wireframe:true});
+let geo = new THREE.IcosahedronGeometry(12, 0); // LOWER POLY: was 15,1 now 12,0
+let mat = new THREE.MeshBasicMaterial({color:0x00D4FF, wireframe:true});
 let mesh = new THREE.Mesh(geo, mat); scene.add(mesh); camera.position.z = 40;
-function animate(){ requestAnimationFrame(animate); mesh.rotation.x += 0.002; mesh.rotation.y += 0.002; renderer.render(scene,camera); }
+let lastTime = 0;
+function animate(time){
+  if(time - lastTime > 16){ // CAP AT 60FPS
+    mesh.rotation.x += 0.004; // 2X FASTER ROTATION
+    mesh.rotation.y += 0.004;
+    renderer.render(scene,camera);
+    lastTime = time;
+  }
+  requestAnimationFrame(animate);
+}
 animate();
 
-// FINANCE CHART
-new Chart(financeChart,{type:'line',data:{labels:['W1','W2','W3','W4'],datasets:[{data:[2,4,6,8.4],borderColor:'#00D4FF',fill:true}]},options:{plugins:{legend:{display:false}}}});
+// FINANCE CHART - OPTIMIZED
+new Chart(financeChart,{
+  type:'line',
+  data:{labels:['W1','W2','W3','W4'],datasets:[{data:[2,4,6,8.4],borderColor:'#00D4FF',borderWidth:2,fill:true,tension:0.4}]},
+  options:{animation:false, responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false},y:{display:false}}} // NO AXES = FASTER
+});
 </script>
 </body>
 </html>
