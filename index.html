@@ -2,162 +2,169 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>PSM OS v500 PRO UI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSM OS v500 GOD TIER UI</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root { --bg: #040A18; --card: #0B1224; --accent: #00D4FF; --green: #00FF88; }
-body { background: radial-gradient(1200px 800px at 50% -20%, rgba(0,212,255,0.1), transparent), var(--bg); font-family: 'Manrope', sans-serif; }
-.card { background: linear-gradient(180deg, rgba(11,18,36,0.9) 0%, rgba(4,10,24,0.9) 100%); border: 1px solid rgba(0,212,255,0.15); border-radius: 24px; backdrop-filter: blur(20px); }
-.btn { background: linear-gradient(90deg, var(--accent), var(--green)); color: #000; font-weight: 800; border-radius: 16px; transition: all 0.2s; }
-.btn:active { transform: scale(0.97); }
-.job-card { background: var(--card); border-radius: 20px; padding: 16px; border-left: 4px solid var(--accent); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-.status-pill { font-size: 10px; padding: 4px 8px; border-radius: 20px; font-weight: 700; }
-.bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(11,18,36,0.8); backdrop-filter: blur(30px); border: 1px solid rgba(0,212,255,0.2); border-radius: 30px; padding: 8px; }
-.shimmer { background: linear-gradient(90deg, #0B1224 25%, #121A2F 50%, #0B1224 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+:root { --bg: #020617; --card: #0F172A; --accent: #00D4FF; --green: #00FF88; --danger: #FF0055; }
+body { background: var(--bg); font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+#particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
+.god-card { background: linear-gradient(135deg, rgba(15,23,42,0.8) 0%, rgba(2,6,23,0.8) 100%); border: 1px solid rgba(0,212,255,0.2); border-radius: 24px; backdrop-filter: blur(30px); transition: all 0.4s; }
+.god-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 0 60px rgba(0,212,255,0.2); }
+.gradient-btn { background: linear-gradient(90deg, var(--accent), var(--green)); color: #000; font-weight: 900; border-radius: 16px; }
+.ai-avatar { width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle, #00D4FF, #00FF88); animation: pulse-glow 2s infinite; }
+@keyframes pulse-glow { 0%,100% { box-shadow: 0 0 20px rgba(0,212,255,0.5); } 50% { box-shadow: 0 0 60px rgba(0,212,255,1); } }
+.alarm { animation: alarm-flash 1s infinite; }
+@keyframes alarm-flash { 0%,100% { background: var(--danger); } 50% { background: #000; } }
+.command-palette { background: rgba(15,23,42,0.95); backdrop-filter: blur(40px); border: 1px solid var(--accent); }
 </style>
 </head>
-<body class="text-white pb-24">
+<body class="text-white">
+
+<!-- LEVEL 5: PARTICLE BACKGROUND -->
+<div id="particles-js"></div>
+
+<!-- LEVEL 5: AI AVATAR - BOTTOM RIGHT -->
+<div class="fixed bottom-24 right-6 z-50 flex items-center gap-3">
+  <div id="aiSpeech" class="god-card p-3 max-w-xs hidden">
+    <p class="text-sm">Boss: CAT-773 downtime will cost R12,450/min</p>
+  </div>
+  <div onclick="talkToAI()" class="ai-avatar flex items-center justify-center cursor-pointer">
+    <svg class="w-8 h-8 text-black" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.19 0 2.34-.21 3.41-.6L22 22l-2.41-2.41C20.9 18.35 22 15.28 22 12c0-5.52-4.48-10-10-10z"/></svg>
+  </div>
+</div>
 
 <!-- HEADER -->
-<header class="sticky top-0 z-50 bg-[#040A18]/80 backdrop-blur-2xl border-b border-[rgba(0,212,255,0.1)]">
-  <div class="max-w-[1600px] mx-auto p-4 flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <div class="w-11 h-11 bg-gradient-to-br from-cyan-400 to-green-400 rounded-2xl flex items-center justify-center font-black text-black text-xl">P</div>
+<header class="sticky top-0 z-40 bg-[#020617]/80 backdrop-blur-2xl border-b border-[rgba(0,212,255,0.1)]">
+  <div class="max-w-[1800px] mx-auto p-4 flex justify-between">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-green-400 rounded-2xl flex items-center justify-center font-black text-black text-2xl">P</div>
       <div>
-        <h1 class="text-xl font-black">PSM OS</h1>
-        <p class="text-xs text-green-400">● 500 Pillars Online</p>
+        <h1 class="text-2xl font-black">PSM OS</h1>
+        <p class="text-xs text-green-400">● GOD TIER v500 ● 500 PILLARS</p>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <div class="text-right">
-        <p id="liveClock" class="text-sm font-semibold"></p>
-        <p class="text-xs text-gray-400">Pretoria</p>
-      </div>
-      <img src="https://ui-avatars.com/api/?name=PSM&background=00D4FF&color=000" class="w-10 h-10 rounded-full">
+    <div class="flex items-center gap-4">
+      <button onclick="openCommand()" class="bg-[#0F172A] px-4 py-2 rounded-xl text-sm">⌘K Command</button>
+      <span id="liveClock"></span>
     </div>
   </div>
 </header>
 
-<!-- KPI GRID -->
-<div class="max-w-[1600px] mx-auto p-6">
-  <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-    <div class="card p-5">
-      <p class="text-gray-400 text-sm">Revenue MTD</p>
-      <p id="kpiRev" class="text-3xl font-black mt-1">R0</p>
-      <p class="text-green-400 text-xs mt-1">↑ 24.5%</p>
+<!-- LEVEL 4: ANIMATED KPI GRID -->
+<div class="max-w-[1800px] mx-auto p-8">
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
+    <div class="god-card p-6">
+      <p class="text-gray-400">Revenue MTD</p>
+      <p id="kpiRev" class="text-4xl font-black mt-2">R0</p>
+      <p class="text-green-400 text-sm mt-1">↑ 32.1%</p>
     </div>
-    <div class="card p-5">
-      <p class="text-gray-400 text-sm">Gross Profit</p>
-      <p id="kpiGP" class="text-3xl font-black mt-1 text-green-400">0%</p>
+    <div class="god-card p-6">
+      <p class="text-gray-400">Gross Profit</p>
+      <p id="kpiGP" class="text-4xl font-black mt-2 text-green-400">0%</p>
     </div>
-    <div class="card p-5">
-      <p class="text-gray-400 text-sm">Valuation</p>
-      <p id="kpiVal" class="text-3xl font-black mt-1 text-cyan-400">R0</p>
+    <div class="god-card p-6">
+      <p class="text-gray-400">Valuation 10x</p>
+      <p id="kpiVal" class="text-4xl font-black mt-2 text-cyan-400">R0</p>
     </div>
-    <div class="card p-5">
-      <p class="text-gray-400 text-sm">Active Jobs</p>
-      <p class="text-3xl font-black mt-1">12</p>
+    <div class="god-card p-6 alarm">
+      <p class="text-white">Downtime Cost</p>
+      <p id="kpiDowntime" class="text-4xl font-black mt-2">R0/min</p>
     </div>
-    <div class="card p-5">
-      <p class="text-gray-400 text-sm">AI Accuracy</p>
-      <p class="text-3xl font-black mt-1">96.1%</p>
+    <div class="god-card p-6">
+      <p class="text-gray-400">AI Predictions</p>
+      <p class="text-4xl font-black mt-2">98.7%</p>
     </div>
   </div>
 
-  <!-- JOB BOARD -->
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-2xl font-bold">Job Board</h2>
-    <button onclick="newJobModal()" class="btn px-6 py-3">+ New Job</button>
+  <!-- LEVEL 4: 3D CHART -->
+  <div class="god-card p-6 mb-8">
+    <h3 class="text-xl font-bold mb-4">Revenue Forecast - AI Driven</h3>
+    <canvas id="revenueChart" height="100"></canvas>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-    <div>
-      <h3 class="font-semibold mb-3">Quoted <span class="status-pill bg-yellow-500/20 text-yellow-400">3</span></h3>
-      <div id="col-quote" class="space-y-3 min-h-"></div>
-    </div>
-    <div>
-      <h3 class="font-semibold mb-3">Approved <span class="status-pill bg-blue-500/20 text-blue-400">2</span></h3>
-      <div id="col-approved" class="space-y-3 min-h-"></div>
-    </div>
-    <div>
-      <h3 class="font-semibold mb-3">In Progress <span class="status-pill bg-cyan-500/20 text-cyan-400">4</span></h3>
-      <div id="col-progress" class="space-y-3 min-h-"></div>
-    </div>
-    <div>
-      <h3 class="font-semibold mb-3">QC <span class="status-pill bg-purple-500/20 text-purple-400">1</span></h3>
-      <div id="col-qc" class="space-y-3 min-h-"></div>
-    </div>
-    <div>
-      <h3 class="font-semibold mb-3">Invoiced <span class="status-pill bg-green-500/20 text-green-400">8</span></h3>
-      <div id="col-invoiced" class="space-y-3 min-h-"></div>
-    </div>
+  <!-- LEVEL 4: PREMIUM KANBAN -->
+  <div class="flex justify-between mb-4">
+    <h2 class="text-2xl font-bold">Live Job Board</h2>
+    <button onclick="newJobModal()" class="gradient-btn px-6 py-3">+ NEW JOB</button>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+    <div><h3 class="font-semibold mb-3">QUOTED</h3><div id="col-quote" class="space-y-4 min-h-"></div></div>
+    <div><h3 class="font-semibold mb-3">APPROVED</h3><div id="col-approved" class="space-y-4 min-h-"></div></div>
+    <div><h3 class="font-semibold mb-3">IN PROGRESS</h3><div id="col-progress" class="space-y-4 min-h-"></div></div>
+    <div><h3 class="font-semibold mb-3">QC</h3><div id="col-qc" class="space-y-4 min-h-"></div></div>
+    <div><h3 class="font-semibold mb-3">INVOICED</h3><div id="col-invoiced" class="space-y-4 min-h-"></div></div>
   </div>
 </div>
 
-<!-- BOTTOM NAV - MOBILE APP -->
-<nav class="bottom-nav flex gap-6 px-6 py-3">
-  <button class="flex flex-col items-center text-cyan-400"><svg class="w-6 h-6" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span class="text-xs">Jobs</span></button>
-  <button class="flex flex-col items-center text-gray-400"><svg class="w-6 h-6" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg><span class="text-xs">Finance</span></button>
-  <button class="flex flex-col items-center text-gray-400"><svg class="w-6 h-6" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.19 0 2.34-.21 3.41-.6L4.1 5.59C3.7 7.27 3.5 9.1 3.5 11c0 4.97 4.03 9 9 9s9-4.03 9-9-4.03-9-9-9z"/></svg><span class="text-xs">AI</span></button>
-</nav>
-
-<!-- JOB MODAL -->
-<div id="jobModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div class="card w-full max-w-[900px] p-8">
-    <h2 class="text-2xl font-bold mb-6">Create Job Card</h2>
-    <div class="grid grid-cols-2 gap-4">
-      <input id="jcReg" placeholder="Registration / VIN" class="bg-[#0F1529] p-4 rounded-2xl border-[rgba(0,212,255,0.2)]">
-      <input id="jcClient" placeholder="Client Name" class="bg-[#0F1529] p-4 rounded-2xl border border-[rgba(0,212,255,0.2)]">
-    </div>
-    <textarea id="jcConcern" onkeyup="runAI(this.value)" placeholder="Describe the issue... AI will suggest parts" class="w-full bg-[#0F1529] p-4 rounded-2xl border border-[rgba(0,212,255,0.2)] mt-4 h-32"></textarea>
-    <div id="aiSuggest" class="text-cyan-400 mt-3 text-sm"></div>
-    <button onclick="saveJob()" class="btn w-full py-4 mt-6">Save & Send Quote</button>
+<!-- LEVEL 5: COMMAND PALETTE -->
+<div id="command" class="hidden fixed inset-0 bg-black/80 z-50 flex items-start justify-center pt-20">
+  <div class="command-palette w-[600px] rounded-2xl p-4">
+    <input id="cmdInput" placeholder="Type command... e.g. 'new job CAT 773'" class="w-full bg-transparent outline-none text-lg">
+    <div class="mt-4 text-sm text-gray-400">Try: "new job", "show finance", "call Anglo"</div>
   </div>
 </div>
 
 <script>
-let jobs = [
-  {id:'JC001',reg:'CAT-773',client:'Anglo Platinum',total:84000,cost:48000,status:'progress',phone:'2782'}
-];
+let jobs = [{id:'JC001',reg:'CAT-773',client:'Anglo Platinum',total:84000,cost:48000,status:'progress'}];
 
-setInterval(()=>liveClock.innerText=new Date().toLocaleTimeString('en-ZA'),1000);
+// LEVEL 5: PARTICLES
+particlesJS("particles-js",{particles:{number:{value:60},color:{value:"#00D4FF"},opacity:{value:0.15},size:{value:3},line_linked:{enable:true,color:"#00D4FF"}}});
 
+// LEVEL 4: ANIMATED COUNTERS
+function animateValue(id, end) {
+  let obj = document.getElementById(id);
+  let start = 0;
+  let range = end;
+  let duration = 2000;
+  let startTime = performance.now();
+  function update(t) {
+    let p = Math.min((t - startTime)/duration, 1);
+    obj.innerText = "R" + Math.floor(start + range * p).toLocaleString();
+    if(p < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// LEVEL 4: CHART.JS WITH GLOW
+new Chart(revenueChart,{type:'line',data:{labels:['Jan','Feb','Mar','Apr'],datasets:[{label:'Revenue',data:[200000,400000,600000,840000],borderColor:'#00D4FF',tension:0.4,fill:true,backgroundColor:'rgba(0,212,255,0.1)'}]},options:{plugins:{legend:{display:false}}}});
+
+// LEVEL 5: VOICE AI
+function talkToAI(){
+  aiSpeech.classList.remove('hidden');
+  let msg = new SpeechSynthesisUtterance("Warning: CAT 773 predicted failure in 142 hours. Downtime cost 12 thousand 4 hundred 50 Rand per minute.");
+  speechSynthesis.speak(msg);
+  setTimeout(()=>aiSpeech.classList.add('hidden'),5000);
+}
+
+// LEVEL 5: COMMAND PALETTE
+function openCommand(){command.classList.remove('hidden'); cmdInput.focus();}
+document.addEventListener('keydown', e => { if(e.metaKey && e.key === 'k') openCommand(); });
+cmdInput.addEventListener('keyup', e => { if(e.key === 'Enter' && cmdInput.value.includes('new job')) { newJobModal(); command.classList.add('hidden'); }});
+
+// LOAD EVERYTHING
 function loadKanban(){
   ['quote','approved','progress','qc','invoiced'].forEach(c=>document.getElementById('col-'+c).innerHTML='');
   jobs.forEach(j=>{
     let gp = ((j.total-j.cost)/j.total*100).toFixed(1);
     document.getElementById('col-'+j.status).innerHTML += `
-    <div class="job-card" data-id="${j.id}">
-      <div class="flex justify-between">
-        <p class="font-bold">${j.reg}</p>
-        <p class="text-green-400 font-bold">R${j.total.toLocaleString()}</p>
-      </div>
+    <div class="god-card p-4" data-id="${j.id}">
+      <div class="flex justify-between"><p class="font-bold text-lg">${j.reg}</p><p class="text-green-400 font-bold">R${j.total.toLocaleString()}</p></div>
       <p class="text-sm text-gray-400">${j.client}</p>
-      <div class="flex justify-between items-center mt-3">
-        <span class="status-pill bg-green-500/20 text-green-400">GP: ${gp}%</span>
-        <button onclick="whatsapp('${j.phone}')" class="text-xs text-cyan-400">WhatsApp</button>
-      </div>
+      <div class="mt-3 flex justify-between"><span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">GP: ${gp}%</span></div>
     </div>`;
   });
-  ['quote','approved','progress','qc','invoiced'].forEach(s=>{
-    new Sortable(document.getElementById('col-'+s),{group:'jobs',animation:200});
-  });
 }
-
-function runAI(txt){
-  if(txt.length > 5) aiSuggest.innerHTML = "🤖 AI: Detected 'brake'. Suggest: Pads R1200, Skim R800. Total R2000. Confidence 94%";
-}
-
-function whatsapp(n){window.open(`https://wa.me/${n}`)}
-function saveJob(){jobs.push({id:'JC'+Date.now(),reg:jcReg.value,client:jcClient.value,total:5000,cost:3000,status:'quote'}); jobModal.classList.add('hidden'); loadKanban();}
-function newJobModal(){jobModal.classList.remove('hidden')}
-
+animateValue("kpiRev", 840000);
+animateValue("kpiVal", 8400000);
+animateValue("kpiDowntime", 12450);
 loadKanban();
+
+setInterval(()=>liveClock.innerText=new Date().toLocaleTimeString('en-ZA'),1000);
 </script>
 </body>
 </html>
