@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM OS v500 - QUANTUM | 300/300 PILLARS</title>
+<title>PSM OS v500 - QUANTUM DEMO | 300/300 PILLARS</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
@@ -11,121 +11,180 @@
 html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; overflow: hidden; margin: 0; }
 .quantum-bg { background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.15) 0%, #000 70%)!important; }
 
-/* FIX 1: REMOVED backdrop-filter. Use solid glass instead */
+/* DEMO MODE GLASS - NO BLUR LAG */
 .q-card {
-  background: rgba(10,20,40,0.7);
+  background: rgba(10,20,40,0.75);
   border: 1px solid rgba(0,212,255,0.3);
   border-radius: 24px;
   box-shadow: 0 0 30px rgba(0,212,255,0.15);
   transition: transform 0.2s;
 }
-.q-card:hover { transform: translateY(-4px); }
+.q-card:hover { transform: translateY(-4px) scale(1.01); }
 
 .quantum-text { text-shadow: 0 0 8px #00D4FF; font-family: 'Orbitron', sans-serif; font-weight: 900; }
 
-/* FIX 2: 100 PILLARS ONLY + NO BOX-SHADOW ANIMATION */
-.pillar-grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; position: fixed; bottom: 20px; right: 20px; opacity: 0.6; }
-.pillar-dot { width: 4px; height: 4px; background: #00FF88; border-radius: 1px; animation: quantum-pulse 5s infinite; }
-@keyframes quantum-pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 0.9; } /* REMOVED SCALE + SHADOW */
+/* 150 PILLARS FOR DEMO - LIGHT */
+.pillar-grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; position: fixed; bottom: 20px; right: 20px; opacity: 0.7; }
+.pillar-dot { width: 4px; height: 4px; background: linear-gradient(45deg, #00D4FF, #00FF88); border-radius: 1px; animation: quantum-pulse 4s infinite; }
+@keyframes quantum-pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+.demo-badge { position: fixed; top: 20px; right: 20px; background: #00FF88; color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 900; }
 </style>
 </head>
 <body class="text-white quantum-bg">
 
+<div class="demo-badge">DEMO MODE</div>
 <canvas id="bg3d" class="fixed inset-0 -z-10"></canvas>
 
-<!-- 100 PILLARS VISUAL - WAS 300 -->
+<!-- 150 PILLARS VISUAL -->
 <div class="pillar-grid" id="pillarGrid"></div>
 <div class="fixed bottom-6 right-6 text-xs z-20 q-card p-3">
-  <p class="text-green-400 font-black quantum-text">100/300 PILLARS: ACTIVE</p>
-  <p id="pillarStatus" class="text-cyan-400">Neural Net: Online</p>
+  <p class="text-green-400 font-black quantum-text">150/300 PILLARS: DEMO</p>
+  <p id="pillarStatus" class="text-cyan-400">Neural Net: Simulated</p>
 </div>
 
+<!-- HEADER -->
 <header class="absolute top-0 w-full p-6 flex justify-between z-20">
   <div>
     <h1 class="text-5xl font-black quantum-text">PSM OS // QUANTUM</h1>
-    <p class="text-cyan-400">VALUATION: <span id="valuation">R84,000,000</span></p>
+    <p class="text-cyan-400 text-lg">VALUATION ENGINE: <span id="valuation">R84,000,000</span></p>
   </div>
-  <button onclick="quantumMode()" class="q-card px-8 py-4 font-black text-xl quantum-text">Ω QUANTUM</button>
+  <button onclick="quantumMode()" class="q-card px-8 py-4 font-black text-xl quantum-text">Ω RUN DIAGNOSTIC</button>
 </header>
 
+<!-- DASHBOARD -->
 <div class="absolute inset-0 pt-32 p-8 grid-cols-3 gap-6">
 
+  <!-- FINANCE -->
   <div class="q-card p-6 col-span-2">
     <h3 class="text-xl font-black quantum-text">QUANTUM FINANCE</h3>
     <p class="text-5xl font-black quantum-text mt-3" id="revenue">R0</p>
-    <p class="text-green-400 mt-2">↑ 42.7% MoM</p>
+    <p class="text-green-400 mt-2">↑ 42.7% MoM | GP: 68.3% | 10x Valuation Active</p>
   </div>
 
+  <!-- AI -->
   <div class="q-card p-6">
     <h3 class="text-xl font-black quantum-text">NEURAL AI</h3>
-    <p id="aiPred" class="text-cyan-400 mt-4">Scanning...</p>
+    <p id="aiPred" class="text-cyan-400 mt-4">Initializing Quantum Brain...</p>
+    <div class="w-full h-2 bg-cyan-400/20 rounded-full mt-4 overflow-hidden">
+      <div id="aiBar" class="h-full bg-gradient-to-r from-cyan-400 to-green-400 w-0 transition-all duration-500"></div>
+    </div>
   </div>
 
+  <!-- OPERATIONS -->
   <div class="q-card p-6 col-span-3">
-    <h3 class="text-xl font-black quantum-text">OPERATIONS</h3>
-    <div class="grid grid-cols-3 gap-4 mt-3">
-      <div><p class="text-gray-400">LIVE JOBS</p><div id="liveJobs" class="mt-2"></div></div>
-      <div><p class="text-gray-400">INVENTORY</p><p id="inventory" class="text-xl font-black text-green-400">R2.3M</p></div>
-      <div><p class="text-gray-400">VOICE</p><button onclick="startVoice()" class="w-full q-card py-3 mt-1">🎤 TALK</button></div>
+    <h3 class="text-xl font-black quantum-text">QUANTUM OPERATIONS</h3>
+    <div class="grid grid-cols-3 gap-6 mt-4">
+      <div>
+        <p class="text-gray-400">LIVE JOBS - DEMO DATA</p>
+        <div id="liveJobs" class="mt-2 space-y-2"></div>
+      </div>
+      <div>
+        <p class="text-gray-400">INVENTORY VALUE</p>
+        <p id="inventory" class="text-3xl font-black text-green-400 mt-2">R2,340,000</p>
+      </div>
+      <div>
+        <p class="text-gray-400">VOICE COMMAND</p>
+        <button onclick="startVoice()" class="w-full q-card py-4 mt-2 quantum-text hover:bg-cyan-400/10">🎤 TALK TO OMEGA</button>
+      </div>
     </div>
   </div>
 
 </div>
 
 <script>
-// FIX 3: WRAP FIREBASE IN TRY/CATCH SO IT DOESN'T CRASH
-try {
-  const firebaseConfig = { apiKey: "YOUR_KEY", projectId: "psm-os" };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  db.collection("jobs").limit(5).onSnapshot(snap=>{
-    liveJobs.innerHTML = '';
-    snap.forEach(doc=>{ let j = doc.data(); liveJobs.innerHTML += `<p class="text-sm">${j.reg}</p>`; });
-  });
-} catch(e){
-  console.log("Firebase offline - Demo mode");
-  liveJobs.innerHTML = '<p class="text-sm">CAT-773</p><p class="text-sm">ANG-001</p>';
-}
+// DEMO DATA - NO FIREBASE
+const demoJobs = [
+  {reg: "CAT-773", client: "Anglo Platinum", total: 84000, status: "IN PROGRESS"},
+  {reg: "HINO-300", client: "Sibanye Gold", total: 42000, status: "QUOTED"},
+  {reg: "VOLVO-FH", client: "Barloworld", total: 156000, status: "QC"},
+  {reg: "TOY-LC79", client: "Exxaro", total: 28000, status: "INVOICED"},
+  {reg: "BELL-25D", client: "AECI", total: 67000, status: "APPROVED"}
+];
 
-// 100 PILLARS ONLY
+// 150 PILLARS VISUAL
 let dots = '';
-for(let i=0; i<100; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.01}s"></div>` }
+for(let i=0; i<150; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.008}s"></div>` }
 pillarGrid.innerHTML = dots;
 
 // FAST COUNTER
 function quantumCount(id, end){
-  let s=0; let step = end/20;
-  let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},10);
+  let s=0; let step = end/40;
+  let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},8);
 }
 quantumCount("revenue", 8400000);
 
-// AI LOOP
+// LOAD DEMO JOBS
+function loadDemoJobs(){
+  liveJobs.innerHTML = '';
+  demoJobs.forEach(j=>{
+    liveJobs.innerHTML += `
+    <div class="q-card p-2 flex justify-between">
+      <span>${j.reg}</span>
+      <span class="text-green-400">R${j.total.toLocaleString()}</span>
+    </div>`;
+  });
+}
+loadDemoJobs();
+
+// AI SIMULATION
 let aiProgress = 0;
 setInterval(()=>{
-  const preds = ["CAT-773: Failure 142h", "Anglo: R1.2M Ready", "Inventory: Low Stock"];
-  aiPred.innerText = "AI: " + preds[aiProgress++ % 3];
-}, 2000);
+  aiProgress = (aiProgress + 3) % 100;
+  aiBar.style.width = aiProgress + '%';
+  const preds = [
+    "CAT-773: Bearing failure predicted in 142h",
+    "Anglo Platinum: R1.2M Quote ready to send",
+    "Inventory Alert: Brake pads below threshold",
+    "Revenue Forecast: R9.4M next month"
+  ];
+  aiPred.innerText = "AI: " + preds[Math.floor(aiProgress/25)];
+}, 1200);
 
-// VOICE
+// VOICE DEMO
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-function startVoice(){ recognition.start(); }
-recognition.onresult = (e) => { pillarStatus.innerText = "Omega: " + e.results[0][0].transcript; }
+function startVoice(){
+  recognition.start();
+  pillarStatus.innerText = "Listening...";
+}
+recognition.onresult = (e) => {
+  let cmd = e.results[0][0].transcript;
+  pillarStatus.innerText = "Omega: " + cmd;
+  speechSynthesis.speak(new SpeechSynthesisUtterance("Demo command received: " + cmd));
+}
 
-function quantumMode(){ pillarStatus.innerText = "QUANTUM: Scan complete"; }
+function quantumMode(){
+  pillarStatus.innerText = "QUANTUM: Running full system diagnostic...";
+  quantumCount("revenue", 8400000);
+  setTimeout(()=>pillarStatus.innerText = "Diagnostic Complete: All systems optimal", 2000);
+}
 
-// LIGHT 3D - NO ROTATION ON MOBILE
+// LIGHT 3D PARTICLES
 let scene = new THREE.Scene(); scene.background = new THREE.Color(0x000);
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:false}); // NO ANTIALIAS
+let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:false});
 renderer.setSize(window.innerWidth, window.innerHeight);
+
 let particles = new THREE.BufferGeometry();
-let positions = new Float32Array(100 * 3); // 100 particles only
-for(let i=0; i<100*3; i++){ positions[i] = (Math.random()-0.5)*80; }
+let positions = new Float32Array(150 * 3);
+for(let i=0; i<150*3; i++){ positions[i] = (Math.random()-0.5)*100; }
 particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-let pSystem = new THREE.Points(particles, new THREE.PointsMaterial({color:0x00D4FF, size:0.15}));
+let pSystem = new THREE.Points(particles, new THREE.PointsMaterial({color:0x00D4FF, size:0.12}));
 scene.add(pSystem); camera.position.z = 50;
-function animate(){ requestAnimationFrame(animate); pSystem.rotation.y += 0.0005; renderer.render(scene,camera); }
+
+function animate(){
+  requestAnimationFrame(animate);
+  pSystem.rotation.y += 0.0008;
+  renderer.render(scene,camera);
+}
 animate();
+
+// RESIZE
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+})
 </script>
 </body>
-    </html>
+</html>
