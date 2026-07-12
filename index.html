@@ -3,198 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM EVOLVE ERP v5.0 - ALL 30 PILLARS</title>
-<!-- P8 SEO -->
-<meta name="description" content="PSM Evolve: Workshop ERP for Mining, Fleet, Automotive. POPIA, ISO 45001, SARS Compliant.">
-<meta name="keywords" content="CAT repair Limpopo, Mining truck service, Evolve ERP Alternative">
-<!-- P5 SPEED -->
-<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<title>PSM EVOLVE ERP v6.0 - 10X EVOLVE</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
 <style>
-.glass { backdrop-filter: blur(12px); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
-.neon { box-shadow: 0 0 30px rgba(0, 102, 204, 0.4); }
-  body { background: #0a0f1e; }
-.pillar-tag { font-size: 9px; background: #00d4ff; color: #000; padding: 2px 4px; border-radius: 4px; }
+body { background: #0a0f1e; }
+.glass { backdrop-filter: blur(12px); background: rgba(255,255,255,0.05); }
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+.status-quote { background: #f59e0b; }
+.status-approved { background: #10b981; }
+.status-progress { background: #3b82f6; }
+.status-done { background: #8b5cf6; }
 </style>
 </head>
-<body class="text-white font-sans">
+<body class="text-white">
 
-<!-- P1 LOOK: ANIMATIONS -->
-<div id="particles"></div>
-
-<!-- P12 BRAND + P2 TRUST -->
-<header class="glass p-4 sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto flex justify-between items-center">
-    <div>
-      <h1 class="text-xl font-bold text-cyan-400">PSM EVOLVE ERP <span class="pillar-tag">P12 BRAND</span></h1>
-      <p class="text-xs">Reg: 2021/492989/07 | BEE L1 | ISO 45001 <span class="pillar-tag">P2 TRUST</span></p>
-    </div>
-    <div id="userRoleBadge"></div>
-  </div>
+<header class="glass p-4 sticky top-0">
+  <h1 class="text-2xl font-bold text-cyan-400">PSM EVOLVE ERP v6.0</h1>
+  <p id="liveClock" class="text-xs"></p>
 </header>
 
-<!-- P6 UX: NAV -->
-<nav id="navTabs" class="max-w-7xl mx-auto p-4 flex gap-4 flex-wrap border-b border-gray-700"></nav>
+<nav class="p-4 flex gap-4 border-b border-gray-700">
+  <button onclick="showTab('dashboard')" class="font-bold">Dashboard</button>
+  <button onclick="showTab('jobs')">Live Job Board</button>
+  <button onclick="showTab('newjob')">New Job Card</button>
+</nav>
 
-<!-- P11 SCALE: CEO -->
-<div id="ceoTab" class="tabContent hidden max-w-7xl mx-auto p-6">
-  <h2 class="text-2xl font-bold">CEO DASHBOARD <span class="pillar-tag">P11 SCALE</span></h2>
-  <div id="ceoStats" class="grid grid-cols-5 gap-4 mt-4"></div> <!-- P15 ANALYTICS + P29 EXIT -->
-  <div class="glass p-4 mt-4"><h3>Audit Log <span class="pillar-tag">P16 COMPLIANCE</span></h3><div id="auditLog"></div></div>
+<!-- LIVE DASHBOARD -->
+<div id="dashboardTab" class="p-6">
+  <h2 class="text-xl font-bold mb-4">LIVE WORKSHOP OVERVIEW</h2>
+  <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="glass p-4 rounded"><p class="text-sm">Revenue MTD</p><p id="revMTD" class="text-2xl font-bold">R0</p></div>
+    <div class="glass p-4 rounded"><p class="text-sm">Open Jobs</p><p id="openJobs" class="text-2xl font-bold">0</p></div>
+    <div class="glass p-4 rounded"><p class="text-sm">Techs Clocked In</p><p id="techsIn" class="text-2xl font-bold">0</p></div>
+    <div class="glass p-4 rounded"><p class="text-sm">Avg Turnaround</p><p id="avgTime" class="text-2xl font-bold">0h</p></div>
+  </div>
+  <h3 class="font-bold mb-2">Live Activity Feed</h3>
+  <div id="activityFeed" class="glass p-4 rounded h-64 overflow-y-auto"></div>
 </div>
 
-<!-- P11 SCALE: MANAGEMENT -->
-<div id="managementTab" class="tabContent hidden max-w-7xl mx-auto p-6">
-  <h2 class="text-2xl font-bold">MANAGEMENT <span class="pillar-tag">P11 SCALE</span></h2>
-  <div id="pendingApprovals"></div> <!-- P17 CONVERSION -->
+<!-- LIVE JOB BOARD - KANBAN LIKE EVOLVE -->
+<div id="jobsTab" class="p-6 hidden">
+  <div class="grid grid-cols-4 gap-4">
+    <div><h3 class="font-bold">QUOTED</h3><div id="col-quote" class="min-h-96"></div></div>
+    <div><h3 class="font-bold">APPROVED</h3><div id="col-approved" class="min-h-96"></div></div>
+    <div><h3 class="font-bold">IN PROGRESS</h3><div id="col-progress" class="min-h-96"></div></div>
+    <div><h3 class="font-bold">COMPLETED</h3><div id="col-done" class="min-h-96"></div></div>
+  </div>
 </div>
 
-<!-- P11 SCALE: SALES -->
-<div id="salesTab" class="tabContent hidden max-w-7xl mx-auto p-6">
-  <h2 class="text-2xl font-bold">SALES <span class="pillar-tag">P11 SCALE</span></h2>
-  <button onclick="createQuote()" class="bg-green-600 px-4 py-2 rounded">New Quote <span class="pillar-tag">P17 CONVERSION</span></button>
-  <div class="mt-4">Referral Link: <span class="pillar-tag">P24 COMMUNITY</span></div>
-</div>
-
-<!-- P11 SCALE: RECEPTION -->
-<div id="receptionTab" class="tabContent hidden max-w-7xl mx-auto p-6">
-  <h2 class="text-2xl font-bold">RECEPTION <span class="pillar-tag">P11 SCALE</span></h2>
-  <input placeholder="Search Client <span class=pillar-tag>P3 SYSTEM</span>" class="p-2 bg-gray-800 rounded w-full">
-  <button class="mt-2 bg-cyan-600 px-4 py-2 rounded">P10 SUPPORT CHAT</button>
-</div>
-
-<!-- P3 SYSTEM: WORKSHOP/EVOLVE JOBCARD -->
-<div id="adminTab" class="tabContent max-w-7xl mx-auto p-6">
-  <div class="glass p-6 rounded-xl neon">
-    <h2 class="text-xl font-bold">JOB CARD <span class="pillar-tag">P3 SYSTEM</span></h2>
-    <div class="grid grid-cols-4 gap-4 mt-4">
-      <input id="regNo" placeholder="Reg/VIN" class="p-2 bg-gray-800 rounded">
-      <input id="clientName" placeholder="Client Name" class="p-2 bg-gray-800 rounded">
+<!-- NEW JOB CARD WITH PHOTO UPLOAD -->
+<div id="newjobTab" class="p-6 hidden">
+  <div class="glass p-6 rounded max-w-4xl">
+    <h2 class="text-xl font-bold">New Job Card</h2>
+    <div class="grid grid-cols-3 gap-4 mt-4">
+      <input id="regNo" placeholder="Reg / VIN" class="p-2 bg-gray-800 rounded">
+      <input id="clientName" placeholder="Client" class="p-2 bg-gray-800 rounded">
       <input id="clientPhone" placeholder="27..." class="p-2 bg-gray-800 rounded">
-      <select id="vehicleType" class="p-2 bg-gray-800 rounded"><option>CAT 773D</option><option>Bell B25D</option></select>
     </div>
-    <textarea id="customerConcern" placeholder="Customer Concern" class="w-full p-2 bg-gray-800 rounded mt-4"></textarea>
-    <input type="file" id="jobPhotos" multiple class="mt-2"> <!-- P3 + P10 -->
-    <div id="lineItems" class="mt-4"></div> <!-- P20 MONETIZATION -->
-    <button onclick="addLineItem()" class="bg-cyan-600 px-4 py-2 rounded mt-2">+ Part/Labour</button>
-    <button onclick="clockIn()" class="bg-yellow-600 px-4 py-2 rounded mt-2">Clock In Tech <span class="pillar-tag">P11</span></button>
-    <button onclick="generateInvoice()" class="bg-green-600 px-6 py-3 rounded mt-4 w-full">P13 AUTO: SEND FOR APPROVAL</button>
-  </div>
-  <div class="glass p-6 rounded-xl mt-6">
-    <h2 class="text-xl font-bold">ANALYTICS <span class="pillar-tag">P15 ANALYTICS</span></h2>
-    <div id="stats"></div>
-  </div>
-</div>
+    <textarea id="concern" placeholder="Customer Concern" class="w-full p-2 bg-gray-800 rounded mt-4"></textarea>
+    
+    <h3 class="font-bold mt-4">Before Photos</h3>
+    <input type="file" id="beforePhotos" multiple accept="image/*" class="mt-2">
+    <div id="photoPreview" class="flex gap-2 mt-2"></div>
 
-<!-- P3 SYSTEM: CLIENT PORTAL -->
-<div id="clientTab" class="tabContent hidden max-w-3xl mx-auto p-6">
-  <div id="invoiceView" class="glass p-8 rounded-xl"></div>
-  <button onclick="approveJob()" class="bg-yellow-600 px-6 py-3 rounded mt-4 w-full">APPROVE <span class="pillar-tag">P17</span></button>
-  <button onclick="downloadPDF()" class="bg-cyan-600 px-6 py-3 rounded mt-2 w-full">DOWNLOAD PDF <span class="pillar-tag">P10</span></button>
-  <button onclick="payNow()" class="bg-green-600 px-6 py-3 rounded mt-2 w-full">PAY NOW <span class="pillar-tag">P20</span></button>
-  <div class="glass p-4 mt-4"><h3>Leave Review <span class="pillar-tag">P24</span></h3><textarea class="w-full bg-gray-800 p-2"></textarea></div>
-</div>
-
-<!-- P19 AI -->
-<div id="aiTab" class="tabContent hidden max-w-3xl mx-auto p-6">
-  <div class="glass p-6 rounded-xl">
-    <h2 class="text-xl font-bold">AI ASSISTANT <span class="pillar-tag">P19 AI</span></h2>
-    <div id="chatBox" class="h-64 overflow-y-auto bg-black p-4 rounded mt-4"></div>
-    <input id="chatInput" placeholder="Predict parts for CAT 773" class="w-full p-2 bg-gray-800 rounded mt-2">
+    <div id="partsList" class="mt-4"></div>
+    <button onclick="addPart()" class="bg-cyan-600 px-4 py-2 rounded mt-2">+ Add Part/Labour</button>
+    
+    <button onclick="saveJobCard()" class="bg-green-600 px-6 py-3 rounded mt-4 w-full font-bold">CREATE JOB CARD + SEND QUOTE</button>
   </div>
 </div>
-
-<!-- P4 PROOF -->
-<section class="max-w-7xl mx-auto p-6">
-  <h2 class="text-2xl font-bold text-center">0 LTI | 300+ Jobs | 4.9★ <span class="pillar-tag">P4 PROOF</span></h2>
-</section>
-
-<!-- P9 P16 P21 P22 FOOTER -->
-<footer class="glass p-6 mt-12 text-xs">
-  <p>P9 SECURITY: 256-bit <span class="pillar-tag">P9</span> | P16: POPIA, MHS Act <span class="pillar-tag">P16</span></p>
-  <p>P21: 99.9% Uptime, Daily Backups <span class="pillar-tag">P21</span> | P22: ZAR, EN, SEPEDI <span class="pillar-tag">P22</span></p>
-</footer>
 
 <script>
-// ========== P3 SYSTEM + P9 SECURITY ==========
-const firebaseConfig = {apiKey:"YOUR_KEY",authDomain:"psm-auto.firebaseapp.com",projectId:"psm-auto",storageBucket:"psm-auto.appspot.com",appId:"APP_ID"};
+const firebaseConfig = {apiKey:"YOUR_KEY",authDomain:"psm-auto.firebaseapp.com",projectId:"psm-auto",storageBucket:"psm-auto.appspot.com"};
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(); const auth = firebase.auth(); const storage = firebase.storage(); const analytics = firebase.analytics();
+const db = firebase.firestore(); const storage = firebase.storage();
 
-// ========== P1 LOOK ==========
-for(let i=0;i<50;i++){let p=document.createElement('div');p.style=`position:fixed;width:2px;height:2px;background:#00d4ff;left:${Math.random()*100}vw;animation:float 10s infinite;animation-delay:${Math.random()*10}s`;document.body.appendChild(p)}
+// LIVE CLOCK
+setInterval(()=>liveClock.innerText = new Date().toLocaleString(),1000);
 
-// ========== P11 SCALE: RBAC ==========
-let currentUserRole = 'CEO';
-const ROLES = {CEO:['ceo','management','sales','reception','admin','ai','client'],Management:['management','admin'],Sales:['sales','client'],Reception:['reception','client'],Mechanic:['admin'],Client:['client']}
-const NAV = {ceo:'CEO',management:'Management',sales:'Sales',reception:'Reception',admin:'Workshop',ai:'AI',client:'Client'}
+// REAL-TIME LISTENERS - THIS IS WHAT MAKES IT FEEL ALIVE
+db.collection("jobcards").onSnapshot(snap=>{
+  let rev=0, open=0;
+  ['quote','approved','progress','done'].forEach(s=>document.getElementById('col-'+s).innerHTML='')
+  snap.forEach(doc=>{
+    const j = doc.data();
+    rev += j.total || 0;
+    if(j.status != 'done') open++;
+    const card = `<div class="glass p-3 rounded mb-2">
+      <p class="font-bold">${j.reg}</p><p class="text-sm">${j.client}</p>
+      <p class="text-sm">R${j.total}</p>
+      <button onclick="updateStatus('${doc.id}','progress')" class="text-xs bg-blue-600 px-2 py-1 rounded mt-1">Move</button>
+    </div>`;
+    document.getElementById('col-'+j.status).innerHTML += card;
+  });
+  revMTD.innerText = 'R'+rev; openJobs.innerText = open;
+});
 
-// ========== P6 UX ==========
-function renderNav(){
-  userRoleBadge.innerHTML = `Role: <span class="bg-red-600 px-2 rounded">${currentUserRole}</span>`;
-  navTabs.innerHTML = ROLES[currentUserRole].map(r=>`<button onclick="showTab('${r}')" class="pb-2">${NAV[r]}</button>`).join('');
-  showTab(ROLES[currentUserRole][0]);
+db.collection("clock").where("status","==","Active").onSnapshot(s=>techsIn.innerText = s.size);
+
+// ACTIVITY FEED
+db.collection("audit").orderBy("time","desc").limit(10).onSnapshot(s=>{
+  activityFeed.innerHTML = s.docs.map(d=>`<p class="text-sm">${d.data().action} - ${new Date(d.data().time.seconds*1000).toLocaleTimeString()}</p>`).join('')
+});
+
+let parts = [{desc:"",qty:1,cost:0,price:0}];
+function addPart(){parts.push({desc:"",qty:1,cost:0,price:0});renderParts();}
+function renderParts(){
+  partsList.innerHTML = parts.map((p,i)=>`<div class="flex gap-2 mb-2">
+    <input placeholder="Part/Labour" onchange="parts[${i}].desc=this.value" class="flex-1 p-2 bg-gray-800 rounded">
+    <input type="number" value="1" onchange="parts[${i}].qty=this.value" class="w-20 p-2 bg-gray-800 rounded">
+    <input type="number" placeholder="Price" onchange="parts[${i}].price=this.value" class="w-32 p-2 bg-gray-800 rounded">
+  </div>`).join('')
 }
 
-// ========== P3 SYSTEM: LINE ITEMS + P20 MONETIZATION ==========
-let lineItems = [{qty:1,desc:"",cost:0,price:0,markup:30}];
-function addLineItem(){lineItems.push({qty:1,desc:"",cost:0,price:0,markup:30});renderLineItems();}
-function renderLineItems(){
-  lineItemsDiv.innerHTML=lineItems.map((i,idx)=>`<div class="flex gap-2 mb-2"><input type=number value=${i.qty} onchange="lineItems[${idx}].qty=this.value" class="w-16 p-2 bg-gray-800 rounded"><input placeholder="Desc" onchange="lineItems[${idx}].desc=this.value" class="flex-1 p-2 bg-gray-800 rounded"><input type=number placeholder="Cost" onchange="lineItems[${idx}].cost=this.value;calcPrice(${idx})" class="w-24 p-2 bg-gray-800 rounded"><input type=number value=${i.markup} onchange="lineItems[${idx}].markup=this.value;calcPrice(${idx})" class="w-20 p-2 bg-gray-800 rounded">%<input type=number value=${i.price} readonly class="w-24 p-2 bg-gray-800 rounded"></div>`).join('')
-}
-function calcPrice(idx){lineItems[idx].price = lineItems[idx].cost * (1 + lineItems[idx].markup/100)}
-
-// ========== P11 SCALE: CLOCK IN ==========
-function clockIn(){db.collection("clock").add({tech:currentUserRole,time:new Date()});alert("Clocked In")}
-
-// ========== P3+P13+P14+P16 ==========
-async function generateInvoice(){
-  const invNum = `JC-${Date.now().toString().slice(-6)}`;
-  const total = lineItems.reduce((s,i)=>s+i.qty*i.price,0);
-  await db.collection("audit").add({action:`JC ${invNum}`,user:currentUserRole,time:new Date()}); // P16
-  const inv = {number:invNum,client:{name:clientName.value,phone:clientPhone.value},items:lineItems,total,token:btoa(invNum)};
-  await db.collection("jobcards").doc(invNum).set(inv);
-  const link = `${location.origin}${location.pathname}#inv=${inv.token}`;
-  window.open(`https://wa.me/${inv.client.phone}?text=Quote ${invNum}: ${link}`); // P14
-  setTimeout(()=>window.open(`https://wa.me/${inv.client.phone}?text=Reminder ${invNum}`),7*24*60*60*1000); // P18 RETENTION
-  loadCEOStats();
+async function saveJobCard(){
+  const total = parts.reduce((s,p)=>s+p.qty*p.price,0);
+  const job = {
+    reg: regNo.value, client: clientName.value, phone: clientPhone.value, 
+    concern: concern.value, parts: parts, total: total, 
+    status: 'quote', created: new Date()
+  };
+  const ref = await db.collection("jobcards").add(job);
+  await db.collection("audit").add({action:`Job ${ref.id} Created`,time:new Date()});
+  
+  // AUTO WHATSAPP QUOTE
+  const link = location.origin + '#job=' + ref.id;
+  window.open(`https://wa.me/${job.phone}?text=PSM Quote for ${job.reg}: R${total}. Approve: ${link}`);
+  alert('Job Created. Quote sent to client.');
 }
 
-// ========== P15 ANALYTICS + P29 EXIT ==========
-function loadCEOStats(){
-  db.collection("jobcards").get().then(s=>{
-    const rev = s.docs.reduce((a,d)=>a+d.data().total,0);
-    ceoStats.innerHTML=`<div class="glass p-4">Revenue: R${rev} <span class=pillar-tag>P15</span></div><div class="glass p-4">Jobs: ${s.size}</div><div class="glass p-4">Valuation: R${rev*3} <span class=pillar-tag>P29</span></div><div class="glass p-4">Uptime 99.9% <span class=pillar-tag>P21</span></div><div class="glass p-4">NPS 4.9 <span class=pillar-tag>P4</span></div>`
-  })
+function updateStatus(id,status){
+  db.collection("jobcards").doc(id).update({status});
+  db.collection("audit").add({action:`Job ${id} moved to ${status}`,time:new Date()});
 }
 
-// ========== P19 AI ==========
-chatInput.onkeypress=e=>{if(e.key==='Enter'){chatBox.innerHTML+=`<p>AI: Suggested: Oil Filter, Brake Pads. Est R3200</p>`;e.target.value=''}} // P19
+function showTab(t){
+  ['dashboard','jobs','newjob'].forEach(x=>document.getElementById(x+'Tab').classList.add('hidden'));
+  document.getElementById(t+'Tab').classList.remove('hidden');
+}
 
-// ========== P3 CLIENT ROUTER + P17 ==========
-onhashchange=()=>{if(location.hash.startsWith('#inv=')){db.collection("jobcards").where("token","==",location.hash.split('=')[1]).get().then(s=>s.forEach(d=>{showTab('client');invoiceView.innerHTML=`<h1>JC ${d.data().number}</h1><p>R${d.data().total}</p>`}))}}
-function approveJob(){alert('Approved P17')}
-
-// ========== P10 P20 P26 P27 ==========
-function downloadPDF(){new window.jspdf.jsPDF().text("PSM INVOICE",20,20).save("inv.pdf")} // P10
-function payNow(){window.open('https://pay.yoco.com/psmauto')} // P20
-function showTab(t){document.querySelectorAll('.tabContent').forEach(x=>x.classList.add('hidden'));document.getElementById(t+'Tab').classList.remove('hidden')}
-console.log("P26 TESTING OK | P27 CI/CD OK"); // P26 P27
-
-renderNav(); loadCEOStats(); renderLineItems();
+renderParts();
 </script>
-
-<!-- P7 CONTENT: MINING COPY -->
-<!-- P23 MARKETING: FB PIXEL -->
-<!-- P25 PARTNERSHIPS: /api/v1 READY <span class=pillar-tag>P25</span> -->
-<!-- P28 DOCUMENTATION: IN-CODE <span class=pillar-tag>P28</span> -->
-<!-- P30 FUTURE-PROOF: MODULAR <span class=pillar-tag>P30</span> -->
-
 </body>
 </html>
