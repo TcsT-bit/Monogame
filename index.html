@@ -11,7 +11,6 @@
 html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; overflow: hidden; margin: 0; }
 .quantum-bg { background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.15) 0%, #000 70%)!important; }
 
-/* DEMO MODE GLASS - NO BLUR LAG */
 .q-card {
   background: rgba(10,20,40,0.75);
   border: 1px solid rgba(0,212,255,0.3);
@@ -23,12 +22,14 @@ html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; ov
 
 .quantum-text { text-shadow: 0 0 8px #00D4FF; font-family: 'Orbitron', sans-serif; font-weight: 900; }
 
-/* 150 PILLARS FOR DEMO - LIGHT */
 .pillar-grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; position: fixed; bottom: 20px; right: 20px; opacity: 0.7; }
 .pillar-dot { width: 4px; height: 4px; background: linear-gradient(45deg, #00D4FF, #00FF88); border-radius: 1px; animation: quantum-pulse 4s infinite; }
 @keyframes quantum-pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
 
-.demo-badge { position: fixed; top: 20px; right: 20px; background: #00FF88; color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 900; }
+.demo-badge { position: fixed; top: 20px; right: 20px; background: #00FF88; color: #000; padding: 8px 16px; border-radius: 20px; font-weight: 900; z-index: 50; }
+
+.voice-active { box-shadow: 0 0 40px #00FF88!important; animation: voice-pulse 0.6s infinite; }
+@keyframes voice-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 </style>
 </head>
 <body class="text-white quantum-bg">
@@ -36,14 +37,12 @@ html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; ov
 <div class="demo-badge">DEMO MODE</div>
 <canvas id="bg3d" class="fixed inset-0 -z-10"></canvas>
 
-<!-- 150 PILLARS VISUAL -->
 <div class="pillar-grid" id="pillarGrid"></div>
 <div class="fixed bottom-6 right-6 text-xs z-20 q-card p-3">
   <p class="text-green-400 font-black quantum-text">150/300 PILLARS: DEMO</p>
   <p id="pillarStatus" class="text-cyan-400">Neural Net: Simulated</p>
 </div>
 
-<!-- HEADER -->
 <header class="absolute top-0 w-full p-6 flex justify-between z-20">
   <div>
     <h1 class="text-5xl font-black quantum-text">PSM OS // QUANTUM</h1>
@@ -52,17 +51,15 @@ html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; ov
   <button onclick="quantumMode()" class="q-card px-8 py-4 font-black text-xl quantum-text">Ω RUN DIAGNOSTIC</button>
 </header>
 
-<!-- DASHBOARD -->
-<div class="absolute inset-0 pt-32 p-8 grid-cols-3 gap-6">
+<!-- FIX 1: ADDED 'grid' CLASS HERE -->
+<div class="absolute inset-0 pt-32 p-8 grid grid-cols-3 gap-6">
 
-  <!-- FINANCE -->
   <div class="q-card p-6 col-span-2">
     <h3 class="text-xl font-black quantum-text">QUANTUM FINANCE</h3>
     <p class="text-5xl font-black quantum-text mt-3" id="revenue">R0</p>
     <p class="text-green-400 mt-2">↑ 42.7% MoM | GP: 68.3% | 10x Valuation Active</p>
   </div>
 
-  <!-- AI -->
   <div class="q-card p-6">
     <h3 class="text-xl font-black quantum-text">NEURAL AI</h3>
     <p id="aiPred" class="text-cyan-400 mt-4">Initializing Quantum Brain...</p>
@@ -71,7 +68,6 @@ html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; ov
     </div>
   </div>
 
-  <!-- OPERATIONS -->
   <div class="q-card p-6 col-span-3">
     <h3 class="text-xl font-black quantum-text">QUANTUM OPERATIONS</h3>
     <div class="grid grid-cols-3 gap-6 mt-4">
@@ -85,7 +81,8 @@ html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; ov
       </div>
       <div>
         <p class="text-gray-400">VOICE COMMAND</p>
-        <button onclick="startVoice()" class="w-full q-card py-4 mt-2 quantum-text hover:bg-cyan-400/10">🎤 TALK TO OMEGA</button>
+        <button id="voiceBtn" onclick="startVoice()" class="w-full q-card py-4 mt-2 quantum-text">🎤 TALK TO OMEGA</button>
+        <p id="voiceText" class="text-xs text-cyan-400 mt-2">Click and speak</p>
       </div>
     </div>
   </div>
@@ -93,7 +90,7 @@ html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; ov
 </div>
 
 <script>
-// DEMO DATA - NO FIREBASE
+// DEMO DATA
 const demoJobs = [
   {reg: "CAT-773", client: "Anglo Platinum", total: 84000, status: "IN PROGRESS"},
   {reg: "HINO-300", client: "Sibanye Gold", total: 42000, status: "QUOTED"},
@@ -102,24 +99,24 @@ const demoJobs = [
   {reg: "BELL-25D", client: "AECI", total: 67000, status: "APPROVED"}
 ];
 
-// 150 PILLARS VISUAL
+// 150 PILLARS
 let dots = '';
 for(let i=0; i<150; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.008}s"></div>` }
 pillarGrid.innerHTML = dots;
 
-// FAST COUNTER
+// COUNTER
 function quantumCount(id, end){
   let s=0; let step = end/40;
   let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},8);
 }
 quantumCount("revenue", 8400000);
 
-// LOAD DEMO JOBS
+// LOAD JOBS
 function loadDemoJobs(){
   liveJobs.innerHTML = '';
   demoJobs.forEach(j=>{
     liveJobs.innerHTML += `
-    <div class="q-card p-2 flex justify-between">
+    <div class="q-card p-2 flex justify-between text-sm">
       <span>${j.reg}</span>
       <span class="text-green-400">R${j.total.toLocaleString()}</span>
     </div>`;
@@ -141,25 +138,65 @@ setInterval(()=>{
   aiPred.innerText = "AI: " + preds[Math.floor(aiProgress/25)];
 }, 1200);
 
-// VOICE DEMO
-let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-function startVoice(){
-  recognition.start();
-  pillarStatus.innerText = "Listening...";
+// FIX 2: VOICE WITH ERROR HANDLING
+let recognition;
+let synth = window.speechSynthesis;
+try {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'en-ZA';
+  recognition.continuous = false;
+
+  recognition.onstart = () => {
+    voiceBtn.classList.add('voice-active');
+    pillarStatus.innerText = "Listening... Speak now";
+    voiceText.innerText = "Recording...";
+  }
+
+  recognition.onresult = (e) => {
+    let cmd = e.results[0][0].transcript;
+    pillarStatus.innerText = "Omega: Executing " + cmd;
+    voiceText.innerText = `Last: "${cmd}"`;
+    speak("Demo command received: " + cmd);
+
+    if(cmd.toLowerCase().includes("revenue")) quantumCount("revenue", 8400000);
+    if(cmd.toLowerCase().includes("diagnostic")) quantumMode();
+  }
+
+  recognition.onerror = (e) => {
+    pillarStatus.innerText = "Mic Error: " + e.error;
+    voiceText.innerText = "Click to try again";
+    voiceBtn.classList.remove('voice-active');
+  }
+
+  recognition.onend = () => {
+    voiceBtn.classList.remove('voice-active');
+  }
+
+} catch(e){
+  pillarStatus.innerText = "Voice not supported in this browser";
+  voiceText.innerText = "Use Chrome/Edge";
 }
-recognition.onresult = (e) => {
-  let cmd = e.results[0][0].transcript;
-  pillarStatus.innerText = "Omega: " + cmd;
-  speechSynthesis.speak(new SpeechSynthesisUtterance("Demo command received: " + cmd));
+
+function startVoice(){
+  if(recognition) recognition.start();
+  else speak("Voice not available");
+}
+
+function speak(text){
+  let u = new SpeechSynthesisUtterance(text);
+  u.rate = 1.1;
+  synth.speak(u);
 }
 
 function quantumMode(){
   pillarStatus.innerText = "QUANTUM: Running full system diagnostic...";
   quantumCount("revenue", 8400000);
+  speak("Running diagnostic");
   setTimeout(()=>pillarStatus.innerText = "Diagnostic Complete: All systems optimal", 2000);
 }
 
-// LIGHT 3D PARTICLES
+// 3D PARTICLES
 let scene = new THREE.Scene(); scene.background = new THREE.Color(0x000);
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:false});
@@ -179,7 +216,6 @@ function animate(){
 }
 animate();
 
-// RESIZE
 window.addEventListener('resize', ()=>{
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
