@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM EVOLVE OS v3.5</title>
+<title>PSM EVOLVE OS v3.5 FINAL</title>
 <meta name="theme-color" content="#FF5A00">
 <link rel="manifest" href="manifest.json">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -36,7 +36,7 @@ input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.4);co
 <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
   <div class="glass p-10 max-w-2xl w-full neon-border">
     <h1 class="text-6xl text-center quantum-text mb-2">PSM EVOLVE OS</h1>
-    <p class="text-center text-cyan-400 mb-8">v3.5 | GOD TIER</p>
+    <p class="text-center text-cyan-400 mb-8">v3.5 FINAL | GOD TIER</p>
     <div class="grid grid-cols-3 gap-4">
       <div onclick="selectRole('CEO')" class="glass p-6 text-center cursor-pointer"><div class="text-5xl">👑</div><b class="text-orange-500">CEO</b></div>
       <div onclick="selectRole('Manager')" class="glass p-6 text-center cursor-pointer"><div class="text-5xl">📊</div><b class="text-green-500">MANAGER</b></div>
@@ -71,9 +71,10 @@ input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.4);co
       <div class="glass p-5"><p class="text-5xl text-red-400" id="statStock">0</p><p>Low Stock</p></div>
       <div class="glass p-5"><p class="text-5xl" id="statQuotes">0</p><p>Open Quotes</p></div>
     </div>
+    <div class="glass p-5 mt-4"><h3 class="font-bold text-xl mb-2">AUDIT LOG</h3><div id="auditLog"></div></div>
   </div>
 
-  <!-- JOBS WITH MANUAL CLIENT LINK -->
+  <!-- JOBS -->
   <div id="jobs" class="tab hidden">
     <button onclick="startScanner()" class="btn mb-3">📷 SCAN BARCODE</button>
     <div id="reader" class="hidden w-full max-w-sm mb-3"></div>
@@ -89,11 +90,11 @@ input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.4);co
     <div id="jobList"></div>
   </div>
 
-  <div id="quotes" class="tab hidden"><div class="glass p-5 mb-4"><input id="qClient" placeholder="Client"><textarea id="qItems"></textarea><button onclick="saveQuote()" class="btn w-full mt-2">GENERATE QUOTE PDF</button></div><div id="quoteList"></div></div>
-  <div id="stock" class="tab hidden"><div class="glass p-5 mb-4"><input id="sName" placeholder="Part Name"><input id="sQty" type="number"><input id="sMin" type="number"><button onclick="addStock()" class="btn w-full mt-2">ADD STOCK</button></div><div id="stockList"></div></div>
-  <div id="products" class="tab hidden"><div class="glass p-5 mb-4"><input id="pName" placeholder="Product Name"><input id="pCode" placeholder="Product Code"><textarea id="pDesc"></textarea><input id="pImg" placeholder="Image URL"><input id="pVideo" placeholder="Video URL"><input id="pPrice" type="number"><button onclick="saveProduct()" class="btn w-full mt-2">UPLOAD PRODUCT</button></div><div id="productList" class="grid grid-cols-3 gap-4"></div></div>
+  <div id="quotes" class="tab hidden"><div class="glass p-5 mb-4"><input id="qClient" placeholder="Client"><textarea id="qItems" placeholder="Item | Qty | Price"></textarea><button onclick="saveQuote()" class="btn w-full mt-2">GENERATE QUOTE PDF</button></div><div id="quoteList"></div></div>
+  <div id="stock" class="tab hidden"><div class="glass p-5 mb-4"><input id="sName" placeholder="Part Name"><input id="sQty" type="number" placeholder="Qty"><input id="sMin" type="number" placeholder="Min Alert"><input id="sCost" type="number" placeholder="Cost"><button onclick="addStock()" class="btn w-full mt-2">ADD STOCK</button></div><div id="stockList"></div></div>
+  <div id="products" class="tab hidden"><div class="glass p-5 mb-4"><input id="pName" placeholder="Product Name"><input id="pCode" placeholder="Product Code"><textarea id="pDesc" placeholder="Description"></textarea><input id="pImg" placeholder="Image URL"><input id="pVideo" placeholder="Video URL"><input id="pPrice" type="number" placeholder="Price R"><button onclick="saveProduct()" class="btn w-full mt-2">UPLOAD PRODUCT</button></div><div id="productList" class="grid grid-cols-3 gap-4"></div></div>
   <div id="clients" class="tab hidden"><div id="clientLinks"></div></div>
-  <div id="payroll" class="tab hidden"><div class="glass p-5"><input id="empName" placeholder="Employee Name"><input id="empSalary" type="number"><button onclick="addEmployee()" class="btn mt-2">ADD EMPLOYEE</button></div><div id="empList" class="mt-4"></div></div>
+  <div id="payroll" class="tab hidden"><div class="glass p-5"><input id="empName" placeholder="Employee Name"><input id="empSalary" type="number" placeholder="Salary R"><button onclick="addEmployee()" class="btn mt-2">ADD EMPLOYEE</button></div><div id="empList" class="mt-4"></div></div>
   <div id="reports" class="tab hidden"><button onclick="exportCSV()" class="btn">📊 EXPORT CSV</button><button onclick="exportPDF()" class="btn ml-2">📄 EXPORT PDF</button></div>
 </div>
 
@@ -102,20 +103,29 @@ input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.4);co
 
 <script>
 const { jsPDF } = window.jspdf;
-let DB = JSON.parse(localStorage.getItem('psm_db35')) || {jobs:[],products:[],clients:[],stock:[],quotes:[],employees:[],audit:[]};
+
+// FIX 1: USE ONE KEY FOREVER SO WE DON'T LOSE DATA
+let DB = JSON.parse(localStorage.getItem('psm_db_final')) || migrateData();
 let currentRole=''; let html5QrCode;
+
+// MIGRATE OLD DATA SO NOTHING IS LOST
+function migrateData(){
+  const old = localStorage.getItem('psm_db') || localStorage.getItem('psm_db2') || localStorage.getItem('psm_db3') || localStorage.getItem('psm_db35');
+  return old? JSON.parse(old) : {jobs:[],products:[],clients:[],stock:[],quotes:[],employees:[],audit:[]};
+}
+
+function saveDB(){localStorage.setItem('psm_db_final',JSON.stringify(DB));}
+function addAudit(action){DB.audit.unshift({time:new Date().toLocaleString(),user:currentRole,action});if(DB.audit.length>50)DB.audit.pop();saveDB()}
 
 // 3D BG
 const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer({canvas:bg3d,alpha:true});renderer.setSize(innerWidth,innerHeight);
 const torus=new THREE.Mesh(new THREE.TorusGeometry(10,3,16,100),new THREE.MeshBasicMaterial({color:0x00D4FF,wireframe:true}));scene.add(torus);camera.position.z=30;function animate(){requestAnimationFrame(animate);torus.rotation.x+=0.01;torus.rotation.y+=0.01;renderer.render(scene,camera)}animate();
 
-function saveDB(){localStorage.setItem('psm_db35',JSON.stringify(DB));}
-
 // LOGIN
 const passwords={CEO:"ceo2026",Manager:"mgr2026",Reception:"rec2026"};
 function selectRole(r){currentRole=r;passBox.classList.remove('hidden')}
-function login(){if(password.value===passwords[currentRole]){localStorage.setItem('psm_role35',currentRole);initApp()}else alert("Access Denied")}
-function logout(){localStorage.removeItem('psm_role35');location.reload()}
+function login(){if(password.value===passwords[currentRole]){localStorage.setItem('psm_role_final',currentRole);initApp()}else alert("Access Denied")}
+function logout(){localStorage.removeItem('psm_role_final');location.reload()}
 function initApp(){loginScreen.classList.add('hidden');app.classList.remove('hidden');roleTag.innerText=currentRole;
   if(currentRole==="Reception"){repTab.classList.add('hidden');payTab.classList.add('hidden');statRevBox.classList.add('hidden');}
   if(currentRole==="Manager"){payTab.classList.add('hidden');}
@@ -125,25 +135,22 @@ function initApp(){loginScreen.classList.add('hidden');app.classList.remove('hid
 function showTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');
 document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active')}
 
-// P301-P310: BARCODE
+// BARCODE
 function startScanner(){reader.classList.remove('hidden');html5QrCode=new Html5Qrcode("reader");html5QrCode.start({facingMode:"environment"},{fps:10},(code)=>{jBarcode.value=code;html5QrCode.stop();reader.classList.add('hidden')})}
 
-// P311-P330: JOBS WITH MANUAL LINK HIGHLIGHT
-function saveJob(){const job={id:Date.now(),client:jClient.value,phone:jPhone.value,reg:jReg.value,barcode:jBarcode.value,status:jStatus.value,amount:+jAmount.value||0,code:Math.random().toString(36).substr(2,8).toUpperCase()};DB.jobs.push(job);if(!DB.clients.find(c=>c.phone===jPhone.value))DB.clients.push({id:jPhone.value,name:jClient.value,phone:jPhone.value});saveDB();renderJobs()}
-function renderJobs(){jobList.innerHTML='';DB.jobs.slice(-10).reverse().forEach(j=>{
+// JOBS WITH MANUAL HIGHLIGHT LINK
+function saveJob(){const job={id:Date.now(),client:jClient.value,phone:jPhone.value,reg:jReg.value,barcode:jBarcode.value,status:jStatus.value,amount:+jAmount.value||0,code:Math.random().toString(36).substr(2,8).toUpperCase()};DB.jobs.push(job);if(!DB.clients.find(c=>c.phone===jPhone.value))DB.clients.push({id:jPhone.value,name:jClient.value,phone:jPhone.value});saveDB();renderJobs();addAudit(`Job Created: ${jReg.value}`)}
+function renderJobs(){jobList.innerHTML='';DB.jobs.slice(-20).reverse().forEach(j=>{
   const clientLink=`${location.origin}${location.pathname}?client=${j.phone}&token=${j.code}`;
   jobList.innerHTML+=`<div class="glass p-4 mb-3">
     <div class="flex justify-between"><b>${j.reg}</b> <span class="text-green-400">R${j.amount}</span></div>
     <p>${j.client} | Status: ${j.status} | Code: ${j.code}</p>
-
-    <!-- P320: MANUAL CLIENT LINK YOU CAN HIGHLIGHT -->
-    <label class="text-xs text-cyan-400 mt-2 block">CLIENT LINK - Highlight & Copy:</label>
+    <label class="text-xs text-cyan-400 mt-2 block">CLIENT LINK - Click to highlight:</label>
     <input id="link${j.id}" value="${clientLink}" readonly class="link-box mt-1" onclick="this.select()">
-
-    <div class="flex gap-2 mt-2">
+    <div class="flex gap-2 mt-2 flex-wrap">
       <button onclick="copyLink('${clientLink}',${j.id})" class="btn-sec text-xs">📋 COPY</button>
-      <button onclick="genPDF(${j.id})" class="btn-sec text-xs">PDF</button>
-      <button onclick="sendWA('${j.phone}','${j.reg}')" class="btn-sec text-xs">WHATSAPP</button>
+      <button onclick="genPDF(${j.id})" class="btn-sec text-xs">PDF INVOICE</button>
+      <button onclick="sendWA('${j.phone}','${j.reg}','${j.status}')" class="btn-sec text-xs">WHATSAPP</button>
       ${currentRole==='CEO'?`<button onclick="delJob(${j.id})" class="btn-sec text-xs text-red-400">DELETE</button>`:''}
     </div>
     <div id="qrcode${j.id}" class="mt-2"></div>
@@ -152,37 +159,44 @@ function renderJobs(){jobList.innerHTML='';DB.jobs.slice(-10).reverse().forEach(
 });statJobs.innerText=DB.jobs.filter(j=>j.status!=='INVOICED').length;statRev.innerText='R'+DB.jobs.reduce((a,b)=>a+b.amount,0).toLocaleString()}
 
 function copyLink(txt,id){navigator.clipboard.writeText(txt);document.getElementById(`link${id}`).classList.add('copied');setTimeout(()=>document.getElementById(`link${id}`).classList.remove('copied'),500)}
-function genPDF(id){const j=DB.jobs.find(x=>x.id===id);const doc=new jsPDF();doc.text("PSM INVOICE",20,20);doc.text(`Client:${j.client}`,20,30);doc.text(`TOTAL:R${j.amount}`,20,50);doc.save(`INVOICE_${j.reg}.pdf`)}
-function sendWA(phone,reg){window.open(`https://wa.me/${phone}?text=*PSM* ${reg} Update`,'_blank')}
+function genPDF(id){const j=DB.jobs.find(x=>x.id===id);const doc=new jsPDF();doc.text("PSM AUTO INVOICE",20,20);doc.text(`Client:${j.client}`,20,30);doc.text(`Machine:${j.reg}`,20,40);doc.text(`Product:${j.barcode}`,20,50);doc.text(`TOTAL:R${j.amount}`,20,70);doc.save(`INVOICE_${j.reg}.pdf`)}
+function sendWA(phone,reg,status){window.open(`https://wa.me/${phone}?text=*PSM UPDATE*%0A${reg}: ${status}%0ATrack: ${location.origin}${location.pathname}?client=${phone}`,'_blank')}
 
-// P331-P340: QUOTES
-function saveQuote(){DB.quotes.push({id:Date.now(),client:qClient.value,items:qItems.value});const doc=new jsPDF();doc.text(`QUOTE: ${qClient.value}`,20,20);doc.text(qItems.value,20,30);doc.save(`QUOTE.pdf`);saveDB();renderQuotes()}
+// QUOTES
+function saveQuote(){DB.quotes.push({id:Date.now(),client:qClient.value,items:qItems.value});const doc=new jsPDF();doc.text(`QUOTATION FOR: ${qClient.value}`,20,20);doc.text(qItems.value,20,30);doc.save(`QUOTE_${qClient.value}.pdf`);saveDB();renderQuotes();addAudit(`Quote for ${qClient.value}`)}
 function renderQuotes(){quoteList.innerHTML='';DB.quotes.forEach(q=>quoteList.innerHTML+=`<div class="glass p-3 mb-2">${q.client}</div>`);statQuotes.innerText=DB.quotes.length}
 
-// P341-P350: STOCK + PAYROLL
-function addStock(){DB.stock.push({id:Date.now(),name:sName.value,qty:+sQty.value,min:+sMin.value});saveDB();renderStock()}
-function renderStock(){stockList.innerHTML='';let low=0;DB.stock.forEach(s=>{if(s.qty<s.min)low++;stockList.innerHTML+=`<div class="glass p-3 mb-2">${s.name} - Qty:${s.qty} ${s.qty<s.min?'<span class="text-red-400">LOW</span>':''}</div>`});statStock.innerText=low}
-function saveProduct(){DB.products.push({id:Date.now(),name:pName.value,code:pCode.value,desc:pDesc.value,img:pImg.value,video:pVideo.value,price:+pPrice.value});saveDB();renderProducts()}
-function renderProducts(){productList.innerHTML='';DB.products.forEach(p=>{productList.innerHTML+=`<div class="glass p-3"><img src="${p.img}" class="w-full h-40 object-cover rounded mb-2"><b>${p.name}</b><br>${p.code}<br>R${p.price}<button onclick="alert('Code request: ${p.code}')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`})}
-function addEmployee(){DB.employees.push({id:Date.now(),name:empName.value,salary:+empSalary.value});saveDB();renderEmp()}
-function renderEmp(){empList.innerHTML='';DB.employees.forEach(e=>empList.innerHTML+=`<div class="glass p-3 mb-2">${e.name} - R${e.salary}</div>`)}
+// STOCK
+function addStock(){DB.stock.push({id:Date.now(),name:sName.value,qty:+sQty.value,min:+sMin.value,cost:+sCost.value});saveDB();renderStock();addAudit(`Stock Added: ${sName.value}`)}
+function renderStock(){stockList.innerHTML='';let low=0;DB.stock.forEach(s=>{if(s.qty<s.min)low++;stockList.innerHTML+=`<div class="glass p-3 mb-2">${s.name} - Qty:${s.qty} Cost:R${s.cost} ${s.qty<s.min?'<span class="text-red-400">LOW STOCK</span>':''}</div>`});statStock.innerText=low}
+
+// PRODUCTS
+function saveProduct(){DB.products.push({id:Date.now(),name:pName.value,code:pCode.value,desc:pDesc.value,img:pImg.value,video:pVideo.value,price:+pPrice.value});saveDB();renderProducts();addAudit(`Product: ${pName.value}`)}
+function renderProducts(){productList.innerHTML='';DB.products.forEach(p=>{productList.innerHTML+=`<div class="glass p-3"><img src="${p.img}" class="w-full h-40 object-cover rounded mb-2"><b>${p.name}</b><br><span class="text-cyan-400">${p.code}</span><br>R${p.price}<button onclick="alert('Code request sent for ${p.code}')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`})}
 
 // CLIENTS
-function renderClients(){clientLinks.innerHTML='';DB.clients.forEach(c=>{const link=`${location.origin}${location.pathname}?client=${c.phone}`;clientLinks.innerHTML+=`<div class="glass p-4 mb-3">${c.name}<input value="${link}" readonly onclick="this.select()" class="link-box mt-1"><button onclick="copyLink('${link}')" class="btn-sec mt-1">COPY</button></div>`})}
+function renderClients(){clientLinks.innerHTML='';DB.clients.forEach(c=>{const link=`${location.origin}${location.pathname}?client=${c.phone}`;clientLinks.innerHTML+=`<div class="glass p-4 mb-3">${c.name}<input value="${link}" readonly onclick="this.select()" class="link-box mt-1"><button onclick="copyLink('${link}')" class="btn-sec mt-1">COPY LINK</button></div>`})}
+
+// PAYROLL
+function addEmployee(){DB.employees.push({id:Date.now(),name:empName.value,salary:+empSalary.value});saveDB();renderEmp();addAudit(`Employee Added: ${empName.value}`)}
+function renderEmp(){empList.innerHTML='';DB.employees.forEach(e=>empList.innerHTML+=`<div class="glass p-3 mb-2">${e.name} - R${e.salary.toLocaleString()}</div>`)}
 
 // REPORTS
-function exportCSV(){let csv="Job,Client,Amount\n";DB.jobs.forEach(j=>csv+=`${j.reg},${j.client},${j.amount}\n`);const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv]));a.download="PSM.csv";a.click()}
-function exportPDF(){const doc=new jsPDF();doc.text("PSM REPORT",20,20);doc.text(`Jobs:${DB.jobs.length}`,20,30);doc.save("REPORT.pdf")}
+function exportCSV(){let csv="Job,Client,Amount,Status\n";DB.jobs.forEach(j=>csv+=`${j.reg},${j.client},${j.amount},${j.status}\n`);const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv]));a.download="PSM_Report.csv";a.click()}
+function exportPDF(){const doc=new jsPDF();doc.text("PSM MONTHLY REPORT",20,20);doc.text(`Total Jobs:${DB.jobs.length}`,20,30);doc.text(`Revenue:R${DB.jobs.reduce((a,b)=>a+b.amount,0)}`,20,40);doc.save("PSM_REPORT.pdf")}
+
+// AUDIT
+function renderAudit(){auditLog.innerHTML=DB.audit.slice(0,10).map(a=>`<p class="text-xs">${a.time} - ${a.user}: ${a.action}</p>`).join('')}
 
 // CLIENT VIEW
 function checkClientView(){const c=new URLSearchParams(window.location.search).get('client');if(c){loginScreen.classList.add('hidden');app.classList.add('hidden');clientView.classList.remove('hidden');
-clientJobs.innerHTML=DB.jobs.filter(j=>j.phone===c).map(j=>`<div class="glass p-3 mb-2">${j.reg} - ${j.status}</div>`).join('');
-clientProducts.innerHTML=DB.products.map(p=>`<div class="glass p-3"><b>${p.name}</b><br>R${p.price}</div>`).join('');}}
+clientJobs.innerHTML=DB.jobs.filter(j=>j.phone===c).map(j=>`<div class="glass p-3 mb-2">${j.reg} - ${j.status} - Code:${j.code}</div>`).join('');
+clientProducts.innerHTML=DB.products.map(p=>`<div class="glass p-3"><b>${p.name}</b><br>R${p.price}<button onclick="alert('Request sent')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`).join('');}}
 
 // INIT
-function renderAll(){renderJobs();renderProducts();renderStock();renderQuotes();renderClients();renderEmp()}
-window.onload=()=>{const r=localStorage.getItem('psm_role35');if(r){currentRole=r;initApp()}checkClientView()}
-function delJob(id){DB.jobs=DB.jobs.filter(j=>j.id!==id);saveDB();renderJobs()}
+function renderAll(){renderJobs();renderProducts();renderStock();renderQuotes();renderClients();renderEmp();renderAudit()}
+window.onload=()=>{const r=localStorage.getItem('psm_role_final');if(r){currentRole=r;initApp()}checkClientView()}
+function delJob(id){DB.jobs=DB.jobs.filter(j=>j.id!==id);saveDB();renderJobs();addAudit(`Job Deleted: ${id}`)}
 </script>
 </body>
 </html>
