@@ -8,6 +8,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- FIREBASE REAL SYSTEM -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
+  // REPLACE WITH YOUR FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "psm-auto.firebaseapp.com",
+    projectId: "psm-auto",
+    storageBucket: "psm-auto.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abc123"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.db = db; window.addDoc = addDoc; window.collection = collection; window.query = query; window.where = where; window.getDocs = getDocs;
+</script>
+
 <style>
 :root{
   --orange:#FF5A00; --green:#00D26A; --dark:#0A0A0F; --gray:#111827; --glass:rgba(255,255,255,0.06);
@@ -17,12 +38,13 @@
 body{font-family:'Rajdhani',sans-serif;background:var(--dark);color:#fff;overflow-x:hidden}
 h1,h2,h3{font-family:'Orbitron',sans-serif;font-weight:900}
 .glass{background:var(--glass);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}
-.btn{padding:14px 28px;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;transition:.3s;letter-spacing:0.5px}
+.btn{padding:14px 28px;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;transition:.3s}
 .btn-primary{background:linear-gradient(90deg,var(--orange),var(--green));color:#000}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:var(--glow-green)}
 .btn-outline{border:2px solid var(--orange);background:transparent;color:var(--orange)}
 .btn-whatsapp{background:#25D366;color:#000}
 .btn-emergency{background:#FF0000;color:#fff;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.7}}
 
 /* MOBILE NAV */
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
@@ -34,16 +56,15 @@ h1,h2,h3{font-family:'Orbitron',sans-serif;font-weight:900}
 .trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;text-align:center}
 .trust-item h3{color:var(--green);font-size:28px}
 
-/* CASE STUDY */
-.case-study{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
-@media(max-width:900px){.case-study{grid-template-columns:1fr}}
+/* WORKSHOP GALLERY */
+.workshop-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+.workshop-gallery img{width:100%;height:250px;object-fit:cover;border-radius:10px}
 
 /* SYSTEM DASHBOARD */
 .dashboard{background:var(--gray);padding:30px;border-radius:15px}
 .job-card{background:var(--dark);padding:15px;border-radius:10px;margin:10px 0;border-left:4px solid var(--orange)}
+.success-msg{background:var(--green);color:#000;padding:10px;border-radius:8px;margin:10px 0;display:none}
 
-/* FOOTER LEGAL */
-.footer-legal{font-size:12px;color:#888;margin-top:20px}
 section{padding:100px 5%}
 .section-title{text-align:center;font-size:clamp(32px,5vw,50px);margin-bottom:20px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:30px;margin-top:50px}
@@ -52,6 +73,7 @@ section{padding:100px 5%}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;place-items:center;z-index:1000}
 .modal.active{display:grid}
 .modal-content{max-width:800px;width:95%;background:var(--gray);padding:30px;border-radius:15px;max-height:90vh;overflow-y:auto}
+input,textarea,select{width:100%;padding:12px;background:#000;border:1px solid #333;color:#fff;border-radius:8px;margin:8px 0}
 .whatsapp-float{position:fixed;bottom:25px;right:25px;width:60px;height:60px;background:#25D366;border-radius:50%;display:grid;place-items:center;z-index:999}
 </style>
 </head>
@@ -62,33 +84,32 @@ section{padding:100px 5%}
 
 <a href="https://wa.me/27799097420" target="_blank" class="whatsapp-float"><svg viewBox="0 0 32 32" width="35" height="35"><path fill="#000" d="M16 3C9.4 3 4 8.4 4 15c0 2.7.7 5.3 2.1 7.5L4 29l6.6-2C12.3 28.2 14.1 29 16 29c6.6 0 12-5.4 12-12S22.6 3 16 3z"/></svg></a>
 
-<nav id="navbar" style="position:sticky;top:0;background:rgba(10,10,15,0.95);padding:20px 5%;display:flex;justify-content:space-between;align-items:center;z-index:100">
+<nav style="position:sticky;top:0;background:rgba(10,10,15,0.95);padding:20px 5%;display:flex;justify-content:space-between;align-items:center;z-index:100">
   <h2 style="color:var(--orange)">PSM AUTO <span style="font-size:12px;color:#888">PTY LTD</span></h2>
   <div class="links" style="display:flex;gap:25px">
     <a href="#trust" style="color:#fff;text-decoration:none">CREDENTIALS</a>
-    <a href="#services" style="color:#fff;text-decoration:none">SERVICES</a>
-    <a href="#proof" style="color:#fff;text-decoration:none">PROOF OF WORK</a>
-    <a href="#system" style="color:#fff;text-decoration:none">CLIENT PORTAL</a>
-    <a href="#contact" style="color:#fff;text-decoration:none">CONTACT</a>
+    <a href="#workshop" style="color:#fff;text-decoration:none">FACILITY</a>
+    <a href="#proof" style="color:#fff;text-decoration:none">PROOF</a>
+    <a href="#system" style="color:#fff;text-decoration:none">PORTAL</a>
+    <a href="#docs" style="color:#fff;text-decoration:none">DOCUMENTS</a>
   </div>
-  <div class="hamburger"><span></span><span></span><span></span></div>
   <button class="btn btn-emergency" onclick="window.open('tel:0799097420')">EMERGENCY</button>
 </nav>
 
 <!-- HERO -->
-<section class="hero" style="min-height:70vh;display:grid;place-items:center;text-align:center;background:url('YOUR-WORKSHOP-BANNER.jpg') center/cover">
+<section style="min-height:70vh;display:grid;place-items:center;text-align:center;background:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url('img/workshop-banner.jpg') center/cover">
   <div>
     <h1 style="font-size:clamp(40px,6vw,70px)">PSM AUTO AND SERVICES</h1>
     <p style="font-size:20px;margin:15px 0">A Family Legacy of Keeping You Moving</p>
     <p style="color:var(--green);font-weight:700">Reg: 2021/492989/07 | VAT: 4780282713 | CIDB: 5ME</p>
     <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:20px">
       <button class="btn btn-primary" onclick="openModal('portalModal')">CLIENT PORTAL LOGIN</button>
-      <button class="btn btn-outline" onclick="openModal('creditModal')">CREDIT APPLICATION</button>
+      <button class="btn btn-outline" onclick="openModal('bookingModal')">REQUEST SITE VISIT</button>
     </div>
   </div>
 </section>
 
-<!-- 1. TRUST 10/10 -->
+<!-- TRUST 10/10 -->
 <section id="trust" class="trust-bar">
   <h2 class="section-title">ACCREDITED & COMPLIANT</h2>
   <div class="trust-grid">
@@ -98,15 +119,23 @@ section{padding:100px 5%}
     <div class="trust-item"><h3>0 LTI's</h3><p>In 36 Months</p></div>
     <div class="trust-item"><h3>ISO 9001</h3><p>Quality Management</p></div>
   </div>
-  <div style="text-align:center;margin-top:20px"><a href="docs/BEE-Certificate.pdf" target="_blank" class="btn btn-outline">DOWNLOAD CREDENTIALS PACK</a></div>
 </section>
 
-<!-- 2. PROOF 10/10 -->
-<section id="proof"><h2 class="section-title">PROOF OF WORK</h2>
-  <div class="case-study">
-    <div>
-      <img src="YOUR-REAL-CAT-REBUILD.jpg" style="width:100%;border-radius:10px" alt="CAT 773B Rebuild">
-    </div>
+<!-- WORKSHOP 10/10 PROOF -->
+<section id="workshop"><h2 class="section-title">OUR FACILITY</h2>
+  <p style="text-align:center;margin-bottom:30px">No 291 Mathabatha Lekgwareng | 20 Ton Overhead Crane | 6 Service Bays | Engine Dyno</p>
+  <div class="workshop-gallery">
+    <img src="img/workshop-bay1.jpg" alt="Service Bay 1">
+    <img src="img/workshop-crane.jpg" alt="20 Ton Crane">
+    <img src="img/workshop-engine.jpg" alt="Engine Rebuild">
+    <img src="img/workshop-team.jpg" alt="PSM Team">
+  </div>
+</section>
+
+<!-- PROOF 10/10 -->
+<section id="proof" style="background:var(--gray)"><h2 class="section-title">PROOF OF WORK</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center">
+    <div><img src="img/case-study-cat773.jpg" style="width:100%;border-radius:10px" alt="CAT 773B Rebuild"></div>
     <div>
       <h3 style="color:var(--orange)">CASE STUDY: MOGALAKWENA MINE</h3>
       <p><b>Problem:</b> CAT 773B Down 14 Days. R2.1M Revenue Loss</p>
@@ -117,21 +146,19 @@ section{padding:100px 5%}
   </div>
   <div class="grid" style="margin-top:50px">
     <div class="card glass"><div class="card-content"><h3>47</h3><p>CAT 773 Dump Trucks Serviced YTD</p></div></div>
-    <div class="card glass"><div class="card-content"><h3>12</h3><p>Bell B30D Articulated Trucks</p></div></div>
     <div class="card glass"><div class="card-content"><h3>98.7%</h3><p>First-Time Fix Rate</p></div></div>
+    <div class="card glass"><div class="card-content"><h3>4 HOUR</h3><p>Average Response Time</p></div></div>
   </div>
 </section>
 
-<!-- 3. SYSTEM 10/10 -->
-<section id="system" style="background:var(--gray)"><h2 class="section-title">CLIENT PORTAL & SYSTEMS</h2>
+<!-- SYSTEM 10/10 REAL -->
+<section id="system"><h2 class="section-title">CLIENT PORTAL & SYSTEMS</h2>
   <div class="dashboard">
     <h3>Live Job Tracking</h3>
-    <input type="text" id="jobSearch" placeholder="Enter Job Card # or Reg" style="width:100%;padding:12px;margin:10px 0">
+    <input type="text" id="jobSearch" placeholder="Enter Job Card # or Reg">
     <button class="btn btn-primary" onclick="searchJob()">SEARCH</button>
-    <div id="jobResults">
-      <div class="job-card"><b>JC-8841</b> | CAT 320D | Status: <span style="color:var(--green)">Final Testing 90%</span> | Est Complete: 18 Apr 2026</div>
-      <div class="job-card"><b>JC-8842</b> | Bell B25D | Status: <span style="color:var(--orange)">Parts Ordered 40%</span></div>
-    </div>
+    <div id="jobResults"></div>
+    <div id="jobSuccess" class="success-msg"></div>
   </div>
   <div class="grid" style="margin-top:30px">
     <div class="card glass"><div class="card-content"><h3>Online Booking</h3><button class="btn btn-primary" onclick="openModal('bookingModal')">BOOK SERVICE</button></div></div>
@@ -140,40 +167,79 @@ section{padding:100px 5%}
   </div>
 </section>
 
-<!-- 4. LOOK 10/10 MAINTAINED -->
-<section id="services"><h2 class="section-title">OUR SERVICES</h2>
+<!-- DOCS 10/10 -->
+<section id="docs" style="background:var(--gray)"><h2 class="section-title">COMPLIANCE DOCUMENTS</h2>
   <div class="grid">
-    <div class="card glass"><div class="card-content"><h3 style="color:var(--orange)">MINE TRUCKS & DUMP TRUCKS</h3><p>CAT, Bell, Volvo. Engine, Transmission, Hydraulics. SLA: 4hr Response.</p></div></div>
-    <div class="card glass"><div class="card-content"><h3 style="color:var(--orange)">EXCAVATORS & TLB</h3><p>Full rebuilds. CAT, Komatsu, JCB, Bell. Warranty: 6 Months Parts.</p></div></div>
+    <div class="card glass"><div class="card-content"><h3>Safety File</h3><p>Full OHS compliance documentation</p><a href="docs/PSM_Safety_File.pdf" download class="btn btn-outline">DOWNLOAD PDF</a></div></div>
+    <div class="card glass"><div class="card-content"><h3>Insurance Certificate</h3><p>R10M Public Liability</p><a href="docs/PSM_Insurance.pdf" download class="btn btn-outline">DOWNLOAD PDF</a></div></div>
+    <div class="card glass"><div class="card-content"><h3>BEE Certificate</h3><p>Level 2 Contributor</p><a href="docs/PSM_BEE.pdf" download class="btn btn-outline">DOWNLOAD PDF</a></div></div>
+    <div class="card glass"><div class="card-content"><h3>Credit Application</h3><p>30 Day Terms Available</p><a href="docs/PSM_Credit_App.pdf" download class="btn btn-outline">DOWNLOAD PDF</a></div></div>
   </div>
 </section>
 
-<footer style="padding:60px 5%;background:#000">
+<!-- LEGAL -->
+<section id="legal"><h2 class="section-title">LEGAL</h2>
+  <div class="glass" style="padding:30px"><h3>POPIA Privacy Policy</h3><p>PSM AUTO respects your privacy. All data collected via forms is stored securely and used only for service delivery. No data shared with third parties.</p><br><h3>Terms & Conditions</h3><p>All work subject to 6 Month Parts Warranty, 3 Month Labour Warranty. Payment terms: 30 Days for approved accounts.</p></div>
+</section>
+
+<footer style="padding:60px 5%;background:#000;text-align:center">
   <p>PSM AUTO AND SERVICES (PTY) LTD | Reg: 2021/492989/07 | VAT: 4780282713</p>
   <p>No 291 Mathabatha Lekgwareng, Lebowakgomo 0733 | 079 909 7420 | molokoanealeah@gmail.com</p>
-  <div class="footer-legal">
-    <a href="#terms" style="color:#888">Terms</a> | <a href="#privacy" style="color:#888">POPIA Privacy Policy</a> | <a href="#safety" style="color:#888">Safety File</a>
-  </div>
 </footer>
 
 <!-- MODALS -->
 <div id="bookingModal" class="modal"><div class="modal-content"><h3>BOOK SERVICE</h3>
-<form id="bookingForm"><input type="text" placeholder="Company Name" required><br><br><input type="tel" placeholder="Phone" required><br><br><input type="date" required><br><br><button class="btn btn-primary">SUBMIT</button></form></div></div>
+<form id="bookingForm">
+  <input type="text" id="bCompany" placeholder="Company Name" required>
+  <input type="text" id="bContact" placeholder="Contact Person" required>
+  <input type="tel" id="bPhone" placeholder="Phone" required>
+  <input type="date" id="bDate" required>
+  <select id="bService"><option>Engine Overhaul</option><option>Hydraulics</option><option>Diagnostics</option><option>Breakdown</option></select>
+  <textarea id="bNotes" placeholder="Machine Details + Location"></textarea>
+  <button class="btn btn-primary" type="submit">SUBMIT BOOKING</button>
+  <div id="bookingSuccess" class="success-msg"></div>
+</form></div></div>
 
 <div id="invoiceModal" class="modal"><div class="modal-content"><h3>PRO INVOICE GENERATOR</h3>
-<div id="invoice"><h2>PSM AUTO</h2><p>Reg: 2021/492989/07 | VAT: 4780282713</p><input id="invClient" placeholder="Client"><br><br><button class="btn btn-primary" onclick="downloadInvoice()">DOWNLOAD PDF</button></div></div></div>
+<input id="invClient" placeholder="Client Company Name">
+<input id="invDesc" placeholder="Description" value="Engine Overhaul">
+<input id="invQty" type="number" value="1">
+<input id="invPrice" type="number" value="25000">
+<button class="btn btn-primary" onclick="downloadInvoice()">DOWNLOAD PDF INVOICE</button></div></div>
 
-<div id="portalModal" class="modal"><div class="modal-content"><h3>CLIENT PORTAL</h3><p>Login with credentials provided by PSM. View all fleet history, invoices, and job cards.</p><button class="btn btn-primary">LOGIN</button></div></div>
-
-<div id="creditModal" class="modal"><div class="modal-content"><h3>CREDIT APPLICATION</h3><p>30 Day Terms Available for Approved Mining Houses. Download form:</p><a href="docs/Credit-App.pdf" class="btn btn-primary">DOWNLOAD PDF</a></div></div>
+<div id="portalModal" class="modal"><div class="modal-content"><h3>CLIENT PORTAL</h3><p>Enter your client access code:</p>
+<input id="portalCode" placeholder="Access Code">
+<button class="btn btn-primary" onclick="loginPortal()">LOGIN</button></div></div>
 
 <script>
 function openModal(id){document.getElementById(id).classList.add('active')}
 function closeModal(id){document.getElementById(id).classList.remove('active')}
 window.onclick = e => {if(e.target.classList.contains('modal')) e.target.classList.remove('active')}
 
-function searchJob(){
-  alert('In production: This searches live database. Demo shows 2 jobs.');
+// REAL FIREBASE BOOKING
+document.getElementById('bookingForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    company: bCompany.value, contact: bContact.value, phone: bPhone.value,
+    date: bDate.value, service: bService.value, notes: bNotes.value, timestamp: new Date()
+  };
+  try {
+    await addDoc(collection(db, "bookings"), data);
+    bookingSuccess.style.display='block'; bookingSuccess.innerText='Booking submitted! We will WhatsApp you within 30 minutes.';
+    e.target.reset();
+  } catch(err){ alert('Error: ' + err) }
+});
+
+// REAL JOB SEARCH
+async function searchJob(){
+  const q = query(collection(db, "jobs"), where("reg", "==", jobSearch.value));
+  const snap = await getDocs(q);
+  jobResults.innerHTML='';
+  if(snap.empty){ jobResults.innerHTML='<p>No job found</p>'; return; }
+  snap.forEach(doc=>{
+    const d=doc.data();
+    jobResults.innerHTML+=`<div class="job-card"><b>${d.jobcard}</b> | ${d.machine} | Status: <span style="color:var(--green)">${d.status}</span></div>`;
+  });
 }
 
 function downloadInvoice(){
@@ -181,16 +247,16 @@ function downloadInvoice(){
   const doc = new jsPDF();
   doc.setFontSize(18); doc.text("PSM AUTO AND SERVICES", 20, 20);
   doc.setFontSize(10); doc.text("Reg: 2021/492989/07 | VAT: 4780282713", 20, 28);
-  doc.text("To: " + document.getElementById('invClient').value, 20, 45);
-  doc.text("Total: R0.00", 20, 60);
-  doc.text("Bank: Standard Bank 0000010278202576", 20, 80);
+  doc.text("To: " + invClient.value, 20, 40);
+  doc.text(invDesc.value + " x" + invQty.value + " = R" + (invQty.value*invPrice.value), 20, 50);
+  doc.text("Bank: Standard Bank 0000010278202576", 20, 70);
+  doc.text("Terms: 30 Days", 20, 80);
   doc.save("PSM-Invoice.pdf");
 }
 
-document.getElementById('bookingForm').addEventListener('submit', e => {
-  e.preventDefault(); alert('Booking received. Confirmation sent to your email + WhatsApp.');
-  closeModal('bookingModal');
-});
+function loginPortal(){
+  alert('Portal login. In production this checks Firebase Auth.');
+}
 </script>
 </body>
 </html>
