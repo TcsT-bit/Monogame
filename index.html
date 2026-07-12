@@ -3,143 +3,169 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM OS v500 - OMEGA | 500/500 PILLARS</title>
+<title>PSM OS v500 - QUANTUM | 300/300 PILLARS</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-html, body { background: #000!important; font-family: 'Orbitron', sans-serif; overflow: hidden; margin: 0; }
-.holo-bg { background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.15) 0%, #000 50%)!important; }
-.holo-card { background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,255,136,0.05)); border: 1px solid rgba(0,212,255,0.4); backdrop-filter: blur(30px); border-radius: 20px; will-change: transform; } /* GPU ACCEL */
-.neon-text { text-shadow: 0 0 10px #00D4FF; } /* REDUCED GLOW FOR FPS */
-.pillar-grid { display: grid; grid-template-columns: repeat(25, 1fr); gap: 1px; position: fixed; bottom: 10px; left: 10px; transform: scale(0.5); } /* 25x20 = 500 dots, smaller */
-.pillar-dot { width: 4px; height: 4px; background: #00FF88; border-radius: 50%; animation: pillar-pulse 3s infinite; will-change: opacity; } /* SLOWER ANIMATION = LESS CPU */
-@keyframes pillar-pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 0.8; } }
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@600;700&display=swap');
+html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; overflow: hidden; margin: 0; }
+.quantum-bg { background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.25) 0%, rgba(0,255,136,0.1) 40%, #000 70%)!important; }
+
+/* LEVEL 15: QUANTUM GLASS CARDS */
+.q-card {
+  background: rgba(0,212,255,0.05);
+  border: 1px solid rgba(0,212,255,0.3);
+  backdrop-filter: blur(60px) saturate(180%);
+  border-radius: 28px;
+  box-shadow: 0 0 40px rgba(0,212,255,0.1);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.q-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 80px rgba(0,212,255,0.4); }
+
+.quantum-text { text-shadow: 0 0 5px #00D4FF, 0 0 15px #00D4FF; font-family: 'Orbitron', sans-serif; font-weight: 900; }
+
+/* LEVEL 15: 300 PILLARS - TRIANGLE GRID */
+.pillar-grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; position: fixed; bottom: 20px; right: 20px; }
+.pillar-dot { width: 5px; height: 5px; background: linear-gradient(45deg, #00D4FF, #00FF88); border-radius: 2px; animation: quantum-pulse 4s infinite; }
+@keyframes quantum-pulse { 0%,100% { opacity: 0.1; transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 15px #00FF88; } }
+
+/* LEVEL 15: NEURAL LINK LINES */
+.neural-line { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, #00FF88, transparent); opacity: 0.3; }
 </style>
 </head>
-<body class="text-white holo-bg">
+<body class="text-white quantum-bg">
 
 <canvas id="bg3d" class="fixed inset-0 -z-10"></canvas>
 
-<!-- 500 PILLARS VISUAL -->
+<!-- 300 PILLARS VISUAL -->
 <div class="pillar-grid" id="pillarGrid"></div>
-<div class="fixed bottom-10 left-10 text-xs z-20">
-  <p class="text-green-400 font-black">500/500 PILLARS ACTIVE</p>
-  <p id="pillarStatus">Omega Core: Online</p>
+<div class="fixed bottom-6 right-6 text-xs z-20 q-card p-3">
+  <p class="text-green-400 font-black quantum-text">300/300 PILLARS: QUANTUM</p>
+  <p id="pillarStatus" class="text-cyan-400">Neural Net: Synced</p>
 </div>
 
-<header class="absolute top-0 w-full p-6 flex justify-between z-20">
+<!-- LEVEL 15: FLOATING HUD -->
+<header class="absolute top-0 w-full p-8 flex justify-between z-20">
   <div>
-    <h1 class="text-5xl font-black neon-text">PSM OS // OMEGA</h1>
-    <p class="text-cyan-400">VALUATION ENGINE: R84,000,000</p>
+    <h1 class="text-6xl font-black quantum-text">PSM OS // QUANTUM</h1>
+    <p class="text-cyan-400 text-xl">VALUATION: <span id="valuation">R84,000,000</span></p>
   </div>
-  <button onclick="omegaCommand()" class="bg-gradient-to-r from-cyan-400 to-green-400 text-black px-8 py-4 rounded-2xl font-black text-xl">Ω OMEGA MODE</button>
+  <button onclick="quantumMode()" class="q-card px-10 py-5 font-black text-2xl quantum-text">Ω QUANTUM CORE</button>
 </header>
 
-<div class="absolute inset-0 pt-32 p-8 grid grid-cols-4 grid-rows-3 gap-6">
+<!-- LEVEL 15: MAGNETIC GRID LAYOUT -->
+<div class="absolute inset-0 pt-40 p-10 grid grid-cols-3 gap-8">
 
-  <div class="holo-card p-6 col-span-2">
-    <h3 class="text-xl font-black">FINANCE CORE</h3>
-    <p class="text-4xl font-black neon-text mt-2" id="revenue">R0</p>
-    <canvas id="financeChart" height="60"></canvas> <!-- SMALLER CHART -->
+  <!-- PILLARS 1-100: QUANTUM FINANCE -->
+  <div class="q-card p-8 col-span-2" data-tilt>
+    <h3 class="text-2xl font-black quantum-text">QUANTUM FINANCE</h3>
+    <p class="text-6xl font-black quantum-text mt-4" id="revenue">R0</p>
+    <div class="neural-line w-full top-1/2"></div>
+    <p class="text-green-400 mt-2">↑ 42.7% MoM | GP: 68.3%</p>
   </div>
 
-  <div class="holo-card p-6">
-    <h3 class="text-xl font-black">AI PREDICTION</h3>
-    <p id="aiPred" class="text-cyan-400 mt-4">Scanning 500 assets...</p>
+  <!-- PILLARS 101-200: QUANTUM AI -->
+  <div class="q-card p-8" data-tilt>
+    <h3 class="text-2xl font-black quantum-text">NEURAL AI</h3>
+    <p id="aiPred" class="text-cyan-400 mt-6 text-lg">Initializing Quantum Brain...</p>
+    <div class="w-full h-2 bg-cyan-400/20 rounded-full mt-4 overflow-hidden">
+      <div id="aiBar" class="h-full bg-gradient-to-r from-cyan-400 to-green-400 w-0"></div>
+    </div>
   </div>
 
-  <div class="holo-card p-6 overflow-y-auto">
-    <h3 class="text-xl font-black">LIVE JOBS</h3>
-    <div id="liveJobs"></div>
-  </div>
-
-  <div class="holo-card p-6 col-span-2">
-    <h3 class="text-xl font-black">INVENTORY SWARM</h3>
-    <p id="inventory">R2,340,000 in parts</p>
-  </div>
-
-  <div class="holo-card p-6 col-span-2">
-    <h3 class="text-xl font-black">CRM + VOICE OS</h3>
-    <button onclick="startVoice()" class="w-full bg-green-400/20 border-green-400 py-4 rounded-xl mt-4">🎤 TALK TO OMEGA</button>
+  <!-- PILLARS 201-300: QUANTUM OPS -->
+  <div class="q-card p-8 col-span-3" data-tilt>
+    <h3 class="text-2xl font-black quantum-text">QUANTUM OPERATIONS</h3>
+    <div class="grid grid-cols-3 gap-6 mt-4">
+      <div>
+        <p class="text-gray-400">LIVE JOBS</p>
+        <div id="liveJobs" class="mt-2 space-y-2"></div>
+      </div>
+      <div>
+        <p class="text-gray-400">INVENTORY</p>
+        <p id="inventory" class="text-2xl font-black text-green-400 mt-2">R2.3M</p>
+      </div>
+      <div>
+        <p class="text-gray-400">VOICE COMMAND</p>
+        <button onclick="startVoice()" class="w-full q-card py-4 mt-2 quantum-text">🎤 TALK</button>
+      </div>
+    </div>
   </div>
 
 </div>
 
 <script>
-// 500 PILLARS: FIREBASE
+// 300 PILLARS: FIREBASE
 const firebaseConfig = { apiKey: "YOUR_KEY", projectId: "psm-os" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 500 PILLARS VISUAL - BATCH RENDER FOR SPEED
+// 300 PILLARS VISUAL - TRIANGLE PATTERN
 let dots = '';
-for(let i=0; i<500; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.005}s"></div>` }
+for(let i=0; i<300; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.008}s"></div>` }
 pillarGrid.innerHTML = dots;
 
-// PILLARS 1-100: FINANCE ANIMATED - 4X FASTER
-function countUp(id, end){
-  let s=0;
-  let step = end/50; // was 200, now 50 = 4x faster
-  let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},8); // was 10ms, now 8ms
+// LEVEL 15: QUANTUM COUNTER - INSTANT
+function quantumCount(id, end){
+  let s=0; let step = end/30;
+  let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},5); // 5ms = BLAZING
 }
-countUp("revenue", 8400000);
+quantumCount("revenue", 8400000);
 
-// PILLARS 101-200: AI PREDICTION LOOP - 2X FASTER
-const predictions = ["CAT-773: Bearing failure in 142h", "Anglo: Quote R1.2M ready", "Inventory: Brake pads low"];
-let pIdx = 0;
-setInterval(()=>{ aiPred.innerText = "AI: " + predictions[pIdx++ % predictions.length]; }, 1500); // was 3000ms
+// LEVEL 15: QUANTUM AI BAR
+let aiProgress = 0;
+setInterval(()=>{
+  aiProgress = (aiProgress + 2) % 100;
+  aiBar.style.width = aiProgress + '%';
+  const preds = ["CAT-773: Failure 142h", "Anglo: R1.2M Quote Ready", "Inventory: Reorder Brake Pads"];
+  aiPred.innerText = "AI: " + preds[Math.floor(aiProgress/33)];
+}, 800); // 2X FASTER
 
-// PILLARS 201-300: LIVE JOBS FROM FIREBASE
-db.collection("jobs").limit(20).onSnapshot(snap=>{ // LIMIT 20 TO PREVENT LAG
+// LIVE JOBS
+db.collection("jobs").limit(10).onSnapshot(snap=>{
   liveJobs.innerHTML = '';
-  snap.forEach(doc=>{ let j = doc.data(); liveJobs.innerHTML += `<p class="text-sm">${j.reg} - R${j.total?.toLocaleString()}</p>`; });
+  snap.forEach(doc=>{ let j = doc.data(); liveJobs.innerHTML += `<p class="text-sm q-card p-2">${j.reg}</p>`; });
 });
 
-// PILLARS 401-500: VOICE OMEGA
+// VOICE
 let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-function startVoice(){ recognition.start(); }
+function startVoice(){ recognition.start(); pillarStatus.innerText = "Listening..."; }
 recognition.onresult = (e) => {
-  let cmd = e.results[0][0].transcript;
-  pillarStatus.innerText = "Omega: Executing " + cmd;
-  speechSynthesis.speak(new SpeechSynthesisUtterance("Command received"));
+  pillarStatus.innerText = "Omega: " + e.results[0][0].transcript;
+  speechSynthesis.speak(new SpeechSynthesisUtterance("Quantum command received"));
 }
 
-function omegaCommand(){
-  pillarStatus.innerText = "OMEGA: Running full diagnostics...";
-  countUp("revenue", 8400000);
+function quantumMode(){
+  pillarStatus.innerText = "QUANTUM: Full system scan";
+  quantumCount("revenue", 8400000);
 }
 
-// 3D BACKGROUND - OPTIMIZED FOR 60FPS
+// LEVEL 15: LIGHTWEIGHT 3D - PARTICLES INSTEAD OF MESH
 let scene = new THREE.Scene(); scene.background = new THREE.Color(0x000);
 let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:false, powerPreference:"high-performance"}); // antialias OFF
+let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:true});
 renderer.setSize(window.innerWidth, window.innerHeight);
-let geo = new THREE.IcosahedronGeometry(12, 0); // LOWER POLY: was 15,1 now 12,0
-let mat = new THREE.MeshBasicMaterial({color:0x00D4FF, wireframe:true});
-let mesh = new THREE.Mesh(geo, mat); scene.add(mesh); camera.position.z = 40;
-let lastTime = 0;
-function animate(time){
-  if(time - lastTime > 16){ // CAP AT 60FPS
-    mesh.rotation.x += 0.004; // 2X FASTER ROTATION
-    mesh.rotation.y += 0.004;
-    renderer.render(scene,camera);
-    lastTime = time;
-  }
+
+// 300 PARTICLES INSTEAD OF HEAVY MESH
+let particles = new THREE.BufferGeometry();
+let positions = new Float32Array(300 * 3);
+for(let i=0; i<300*3; i++){ positions[i] = (Math.random()-0.5)*100; }
+particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+let pMat = new THREE.PointsMaterial({color:0x00D4FF, size:0.1});
+let pSystem = new THREE.Points(particles, pMat); scene.add(pSystem); camera.position.z = 50;
+
+function animate(){
   requestAnimationFrame(animate);
+  pSystem.rotation.y += 0.001; // SUPER LIGHT
+  renderer.render(scene,camera);
 }
 animate();
 
-// FINANCE CHART - OPTIMIZED
-new Chart(financeChart,{
-  type:'line',
-  data:{labels:['W1','W2','W3','W4'],datasets:[{data:[2,4,6,8.4],borderColor:'#00D4FF',borderWidth:2,fill:true,tension:0.4}]},
-  options:{animation:false, responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false},y:{display:false}}} // NO AXES = FASTER
-});
+// VANILLA TILT FOR LEVEL 15 FEEL
+VanillaTilt.init(document.querySelectorAll(".q-card"), {max: 10, speed: 300, glare: true, "max-glare": 0.3});
 </script>
 </body>
 </html>
