@@ -4,132 +4,83 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PSM AUTO AND SERVICES | QUANTUM OS v500</title>
-<meta name="description" content="PSM AUTO AND SERVICES - Family Legacy of Keeping You Moving. CAT, Bell, Volvo, JCB, Komatsu. Auto, Mine Trucks, TLB, Dump Trucks, Excavator Repairs in Lekgwara">
+<meta name="description" content="PSM AUTO AND SERVICES - Family Legacy of Keeping You Moving">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
-:root{ --orange:#FF5A00; --green:#00D26A; --cyan:#00D4FF; --dark:#0A0A0F; }
+:root{ --orange:#FF5A00; --green:#00D26A; --cyan:#00D4FF; --dark:#0A0A0F; --red:#FF0040; }
 
 html, body { background: #000!important; font-family: 'Rajdhani', sans-serif; overflow-x: hidden; margin: 0; scroll-behavior: smooth; }
 .quantum-bg { background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.15) 0%, #000 70%)!important; }
 
-.q-card {
-  background: rgba(10,20,40,0.8);
-  border: 1px solid rgba(0,212,255,0.3);
-  border-radius: 20px;
-  box-shadow: 0 0 30px rgba(0,212,255,0.1);
-  transition: transform 0.2s;
-}
-.q-card:hover { transform: translateY(-4px); }
-
+.q-card { background: rgba(10,20,40,0.8); border: 1px solid rgba(0,212,255,0.3); border-radius: 20px; box-shadow: 0 0 30px rgba(0,212,255,0.1); }
 .quantum-text { text-shadow: 0 0 8px var(--cyan); font-family: 'Orbitron', sans-serif; font-weight: 900; }
-.orange-text { color: var(--orange); }
-.green-text { color: var(--green); }
+.orange-text { color: var(--orange); }.green-text { color: var(--green); }.red-text { color: var(--red); }
 
 .pillar-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; position: fixed; bottom: 10px; right: 10px; opacity: 0.5; z-index: 5; }
 .pillar-dot { width: 3px; height: 3px; background: linear-gradient(45deg, var(--cyan), var(--green)); animation: quantum-pulse 4s infinite; }
 @keyframes quantum-pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
 
 .demo-badge { position: fixed; top: 10px; right: 10px; background: var(--green); color: #000; padding: 6px 12px; border-radius: 20px; font-weight: 900; z-index: 50; font-size: 11px; }
+.admin-badge { background: var(--red); color: #fff; }
 
-.whatsapp-float{position:fixed;bottom:20px;left:20px;width:55px;height:55px;background:#25D366;border-radius:50%;display:grid;place-items:center;box-shadow:0 0 25px rgba(37,211,102,0.8);z-index:999;animation:pulse 2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.7)}70%{box-shadow:0 0 0 20px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+.whatsapp-float{position:fixed;bottom:20px;left:20px;width:55px;height:55px;background:#25D366;border-radius:50%;display:grid;place-items:center;z-index:999}
 
 .btn-primary{background:linear-gradient(90deg,var(--orange),var(--green));color:#000;padding:12px 20px;border-radius:12px;font-weight:700;cursor:pointer;border:none}
+.btn-danger{background:var(--red);color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px}
 .btn-secondary{background:rgba(0,212,255,0.2);border:1px solid var(--cyan);color:var(--cyan);padding:10px;border-radius:10px;cursor:pointer}
 input,select,textarea{background:rgba(0,0,0,0.5);border:1px solid rgba(0,212,255,0.3);color:#fff;padding:12px;border-radius:10px;width:100%}
 .glass{background:rgba(255,255,255,0.06);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1)}
 .reveal{opacity:0;transform:translateY(30px);transition:0.8s}
 .reveal.active{opacity:1;transform:translateY(0)}
+.hidden{display:none}
 
-/* MOBILE FIXES */
+/* MOBILE */
 @media (max-width: 768px){
- .grid-cols-3{grid-template-columns: repeat(1, minmax(0, 1fr))!important}
- .grid-cols-6{grid-template-columns: repeat(3, minmax(0, 1fr))!important}
- .text-5xl{font-size: 2.2rem!important}
- .text-6xl{font-size: 2.5rem!important}
-  nav.links{display:none}
- .pt-32{padding-top: 6rem!important}
-  canvas{display:none} /* TURN OFF 3D ON MOBILE FOR SPEED */
+.grid-cols-3{grid-template-columns: repeat(1, minmax(0, 1fr))!important}
+.grid-cols-6{grid-template-columns: repeat(3, minmax(0, 1fr))!important}
+.text-5xl{font-size: 2.2rem!important}
+ nav.links{display:none}
+ canvas{display:none}
 }
 </style>
 </head>
 <body class="text-white quantum-bg">
 
-<!-- FLOATING WHATSAPP -->
-<a href="https://wa.me/27799097420?text=Hello%20PSM%20AUTO%2C%20I%20need%20a%20quote" target="_blank" class="whatsapp-float">
-  <svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.7.7 5.3 2.1 7.5L4 29l6.6-2C12.3 28.2 14.1 29 16 29c6.6 0 12-5.4 12-12S22.6 3 16 3z" fill="#000"/></svg>
-</a>
+<a href="https://wa.me/27799097420" target="_blank" class="whatsapp-float"><svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.7.7 5.3 2.1 7.5L4 29l6.6-2C12.3 28.2 14.1 29 16 29c6.6 0 12-5.4 12-12S22.6 3 16 3z" fill="#000"/></svg></a>
 
-<div class="demo-badge">DEMO MODE</div>
+<div class="demo-badge" id="modeBadge">DEMO MODE</div>
 <canvas id="bg3d" class="fixed inset-0 -z-10"></canvas>
 <div class="pillar-grid" id="pillarGrid"></div>
 
-<!-- TOP OS HUD -->
-<div class="fixed bottom-4 right-4 text-xs z-20 q-card p-2">
-  <p class="text-green-400 font-black quantum-text text-[10px]">150/300 PILLARS</p>
-  <p id="pillarStatus" class="text-cyan-400 text-[10px]">Online</p>
-</div>
-
-<!-- NAV - YOURS -->
 <nav class="fixed top-0 w-full z-30 flex justify-between items-center p-4 glass">
   <img src="https://files.catbox.moe/lsd025.jpg" alt="PSM AUTO Logo" class="h-10">
   <div class="links flex gap-4 text-sm font-bold">
-    <a href="#os" class="hover:text-orange-500">DASHBOARD</a>
-    <a href="#services" class="hover:text-orange-500">SERVICES</a>
-    <a href="#brands" class="hover:text-orange-500">BRANDS</a>
-    <a href="#jobs" class="hover:text-orange-500">JOBS</a>
-    <a href="#about" class="hover:text-orange-500">ABOUT</a>
-    <a href="#contact" class="hover:text-orange-500">CONTACT</a>
+    <a href="#os">DASHBOARD</a><a href="#jobs">JOBS</a><a href="#admin">ADMIN</a><a href="#services">SERVICES</a><a href="#contact">CONTACT</a>
   </div>
 </nav>
 
-<!-- SECTION 1: QUANTUM OS DASHBOARD - YOURS -->
+<!-- SECTION 1: DASHBOARD -->
 <section id="os" class="min-h-screen pt-24 p-4 md:p-8">
   <header class="flex flex-col md:flex-row justify-between mb-6 gap-4">
     <div>
       <h1 class="text-4xl md:text-5xl font-black quantum-text">PSM OS // QUANTUM</h1>
-      <p class="text-cyan-400 text-base">VALUATION ENGINE: <span id="valuation">R84,000,000</span></p>
+      <p class="text-cyan-400 text-base">VALUATION: <span id="valuation">R84,000,000</span></p>
     </div>
     <button onclick="quantumMode()" class="q-card px-6 py-3 font-black text-lg quantum-text">Ω RUN DIAGNOSTIC</button>
   </header>
-
   <div class="grid grid-cols-3 gap-4">
-    <!-- FINANCE -->
-    <div class="q-card p-4 md:p-6 col-span-3 md:col-span-2">
-      <h3 class="text-lg font-black quantum-text">QUANTUM FINANCE</h3>
-      <p class="text-3xl md:text-5xl font-black quantum-text mt-2" id="revenue">R0</p>
-      <p class="green-text mt-2 text-sm">↑ 42.7% MoM | GP: 68.3% | 10x Valuation Active</p>
-    </div>
-    <!-- AI -->
-    <div class="q-card p-4 md:p-6 col-span-3 md:col-span-1">
-      <h3 class="text-lg font-black quantum-text">NEURAL AI</h3>
-      <p id="aiPred" class="text-cyan-400 mt-3 text-sm">Initializing Quantum Brain...</p>
-      <div class="w-full h-2 bg-cyan-400/20 rounded-full mt-3 overflow-hidden">
-        <div id="aiBar" class="h-full bg-gradient-to-r from-cyan-400 to-green-400 w-0 transition-all duration-500"></div>
-      </div>
-    </div>
-    <!-- OPERATIONS -->
-    <div class="q-card p-4 md:p-6 col-span-3">
-      <h3 class="text-lg font-black quantum-text">QUANTUM OPERATIONS</h3>
-      <div class="grid grid-cols-3 gap-4 mt-3">
-        <div><p class="text-gray-400 text-sm">LIVE JOBS</p><div id="liveJobs" class="mt-2 space-y-2"></div></div>
-        <div><p class="text-gray-400 text-sm">INVENTORY VALUE</p><p id="inventory" class="text-2xl font-black green-text mt-2">R2,340,000</p></div>
-        <div>
-          <p class="text-gray-400 text-sm">VOICE COMMAND</p>
-          <button id="voiceBtn" onclick="startVoice()" class="w-full q-card py-3 mt-1 quantum-text text-sm">🎤 TALK</button>
-          <p id="voiceText" class="text-xs text-cyan-400 mt-2">Tap & speak</p>
-        </div>
-      </div>
-    </div>
+    <div class="q-card p-4 md:p-6 col-span-3 md:col-span-2"><h3 class="text-lg font-black quantum-text">QUANTUM FINANCE</h3><p class="text-3xl md:text-5xl font-black quantum-text mt-2" id="revenue">R0</p></div>
+    <div class="q-card p-4 md:p-6"><h3 class="text-lg font-black quantum-text">NEURAL AI</h3><p id="aiPred" class="text-cyan-400 mt-3 text-sm">Scanning...</p></div>
+    <div class="q-card p-4 md:p-6 col-span-3"><h3 class="text-lg font-black quantum-text">OPERATIONS</h3><div id="liveJobs" class="mt-2 grid grid-cols-3 gap-2"></div></div>
   </div>
 </section>
 
-<!-- SECTION 2: NEW JOB + INVOICE SYSTEM -->
+<!-- SECTION 2: JOBS -->
 <section id="jobs" class="py-16 px-4 md:px-8 bg-gray-900/30">
-  <h2 class="text-3xl text-center font-black quantum-text">CREATE JOB + INVOICE</h2>
+  <h2 class="text-3xl text-center font-black quantum-text">CREATE JOB</h2>
   <div class="q-card p-5 max-w-3xl mx-auto mt-6">
     <div class="grid grid-cols-2 gap-3">
       <input id="clientName" placeholder="Client Name">
@@ -138,156 +89,183 @@ input,select,textarea{background:rgba(0,0,0,0.5);border:1px solid rgba(0,212,255
       <select id="category"><option>Auto</option><option>Mining</option><option>Engineering</option></select>
       <textarea id="description" rows="2" placeholder="Job Description" class="col-span-2"></textarea>
       <input id="amount" type="number" placeholder="Amount R">
-      <input id="invNumber" placeholder="Invoice # PSM-001">
     </div>
-    <div class="grid grid-cols-2 gap-3 mt-3">
-      <button onclick="saveJob()" class="btn-primary">💾 SAVE JOB</button>
-      <button onclick="generatePDF()" class="btn-secondary">📄 PDF INVOICE</button>
-    </div>
-    <button onclick="sendClientLink()" class="btn-secondary w-full mt-2">📲 SEND CLIENT LINK VIA WA</button>
+    <button onclick="saveJob()" class="btn-primary w-full mt-3">💾 SAVE JOB</button>
     <p id="jobStatus" class="text-center text-green-400 mt-3 text-sm"></p>
   </div>
   <div class="mt-6 max-w-3xl mx-auto"><div id="jobList" class="space-y-2"></div></div>
 </section>
 
-<!-- SECTION 3: YOUR SERVICES - RESTORED -->
+<!-- SECTION 3: ADMIN PANEL - NEW -->
+<section id="admin" class="py-16 px-4">
+  <h2 class="text-3xl text-center font-black quantum-text">ADMIN CONTROL PANEL</h2>
+
+  <!-- LOGIN -->
+  <div id="loginBox" class="q-card p-6 max-w-md mx-auto mt-6">
+    <h3 class="text-xl font-black text-center mb-4">ADMIN LOGIN</h3>
+    <input id="adminUser" placeholder="Username" value="admin" class="mb-3">
+    <input id="adminPass" type="password" placeholder="Password" value="psm2026" class="mb-3">
+    <button onclick="adminLogin()" class="btn-primary w-full">LOGIN</button>
+    <p class="text-xs text-center mt-2 text-gray-400">Demo: admin / psm2026</p>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="adminPanel" class="hidden max-w-6xl mx-auto mt-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-2xl font-black green-text">MANAGE ALL JOBS</h3>
+      <button onclick="adminLogout()" class="btn-danger">LOGOUT</button>
+    </div>
+
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="q-card p-4 text-center"><p class="text-3xl font-black" id="totalJobs">0</p><p>Total Jobs</p></div>
+      <div class="q-card p-4 text-center"><p class="text-3xl font-black green-text" id="totalRevenue">R0</p><p>Revenue</p></div>
+      <div class="q-card p-4 text-center"><p class="text-3xl font-black orange-text" id="pendingJobs">0</p><p>Pending</p></div>
+      <div class="q-card p-4 text-center"><button onclick="exportData()" class="btn-secondary w-full">📊 EXPORT CSV</button></div>
+    </div>
+
+    <div id="adminJobList" class="space-y-3"></div>
+  </div>
+</section>
+
+<!-- YOUR OTHER SECTIONS -->
 <section id="services" class="py-16 px-4">
   <h2 class="text-4xl text-center font-black quantum-text reveal">OUR SERVICES</h2>
-  <p class="text-center text-lg mt-2">A Family Legacy of Keeping You Moving</p>
   <div class="grid grid-cols-3 gap-6 mt-10 max-w-7xl mx-auto">
-    <div class="q-card p-0 overflow-hidden reveal">
-      <img src="https://files.catbox.moe/reqaiw.jpg" class="w-full h-52 object-cover">
-      <div class="p-5"><h3 class="text-xl font-black orange-text">AUTOMOTIVE REPAIRS</h3><p>Engine overhauls, diagnostics, brakes. 6 Month Parts Warranty.</p></div>
-    </div>
-    <div class="q-card p-0 overflow-hidden reveal">
-      <img src="https://files.catbox.moe/6vrsp4.jpg" class="w-full h-52 object-cover">
-      <div class="p-5"><h3 class="text-xl font-black orange-text">MINE TRUCKS & DUMP TRUCKS</h3><p>CAT, Bell, Volvo. 24/7 on-site support in Limpopo.</p></div>
-    </div>
-    <div class="q-card p-0 overflow-hidden reveal">
-      <img src="https://files.catbox.moe/4q7sto.jpg" class="w-full h-52 object-cover">
-      <div class="p-5"><h3 class="text-xl font-black orange-text">EXCAVATORS & TLB</h3><p>Hydraulics, engine rebuilds. CAT, JCB, Komatsu specialists.</p></div>
-    </div>
+    <div class="q-card p-0 overflow-hidden reveal"><img src="https://files.catbox.moe/reqaiw.jpg" class="w-full h-52 object-cover"><div class="p-5"><h3 class="text-xl font-black orange-text">AUTOMOTIVE REPAIRS</h3></div></div>
+    <div class="q-card p-0 overflow-hidden reveal"><img src="https://files.catbox.moe/6vrsp4.jpg" class="w-full h-52 object-cover"><div class="p-5"><h3 class="text-xl font-black orange-text">MINE TRUCKS</h3></div></div>
+    <div class="q-card p-0 overflow-hidden reveal"><img src="https://files.catbox.moe/4q7sto.jpg" class="w-full h-52 object-cover"><div class="p-5"><h3 class="text-xl font-black orange-text">EXCAVATORS & TLB</h3></div></div>
   </div>
 </section>
 
-<!-- SECTION 4: YOUR BRANDS - RESTORED -->
-<section id="brands" class="py-16 px-4 bg-gray-900/50">
-  <h2 class="text-4xl text-center font-black quantum-text reveal">BRANDS WE SERVICE</h2>
-  <div class="grid grid-cols-6 gap-4 mt-10 max-w-5xl mx-auto">
-    <img src="https://files.catbox.moe/uro8ln.jpg" class="bg-white p-3 rounded-xl reveal">
-    <img src="https://files.catbox.moe/741rvg.jpg" class="bg-white p-3 rounded-xl reveal">
-    <img src="https://files.catbox.moe/gb3txf.jpg" class="bg-white p-3 rounded-xl reveal">
-    <img src="https://files.catbox.moe/4t8igf.jpg" class="bg-white p-3 rounded-xl reveal">
-    <img src="https://files.catbox.moe/c04utp.jpg" class="bg-white p-3 rounded-xl reveal">
-    <img src="https://files.catbox.moe/k5oftm.jpg" class="bg-white p-3 rounded-xl reveal">
-  </div>
-</section>
-
-<!-- SECTION 5: YOUR ABOUT - RESTORED -->
-<section id="about" class="py-16 px-4">
-  <h2 class="text-4xl text-center font-black quantum-text reveal">ABOUT PSM AUTO</h2>
-  <div class="q-card p-6 max-w-4xl mx-auto text-center mt-6 reveal">
-    <p class="text-lg">PSM AUTO AND SERVICES (PTY) LTD - <b>A Family Legacy of Keeping You Moving</b></p>
-    <p class="mt-3">Based in Lekgwara, we specialize in automotive, mining trucks and heavy machinery repairs.</p>
-    <p class="mt-3"><b>Address:</b> No 291 Mathabatha Lekgwareng, Lebowakgomo 0733</p>
-    <p><b>Phone:</b> 079 909 7420 / 079 614 1463</p>
-    <p><b>Email:</b> molokoanealeah@gmail.com</p>
-  </div>
-</section>
-
-<!-- SECTION 6: YOUR CONTACT - RESTORED -->
 <section id="contact" class="py-16 px-4 bg-gray-900/50">
   <h2 class="text-4xl text-center font-black quantum-text reveal">REQUEST A QUOTE</h2>
   <form id="quoteForm" class="q-card p-6 max-w-2xl mx-auto mt-6 reveal">
     <input type="text" id="name" placeholder="Full Name" required class="mb-3">
     <input type="tel" id="phone" placeholder="Phone Number" required class="mb-3">
-    <input type="text" id="machine" placeholder="Machine - e.g. CAT Dump Truck" class="mb-3">
     <textarea id="message" rows="3" placeholder="Describe the issue" required class="mb-3"></textarea>
     <button class="btn-primary w-full" type="submit">SEND VIA WHATSAPP</button>
   </form>
 </section>
 
 <footer class="text-center py-8 border-t border-gray-800 text-sm">
-  <p>© 2026 PSM AUTO AND SERVICES (PTY) LTD | Reg: 2021/492989/07</p>
-  <p>Bank: Standard Bank | Account: 10278202576 | Branch: Burgersfort 051001</p>
-  <p>Parts Warranty: 6 Months | Labour Warranty: 3 Months</p>
+  <p>© 2026 PSM AUTO | Bank: Standard Bank 10278202576</p>
 </footer>
 
 <script>
-// ALL YOUR ORIGINAL JS + NEW MOBILE JS
-let jobs = JSON.parse(localStorage.getItem('psm_jobs')) || [
-  {id:1, reg: "CAT-773", client: "Anglo Platinum", phone: "27799097420", total: 84000, category: "Mining", desc: "Engine overhaul", status: "IN PROGRESS"}
-];
 const { jsPDF } = window.jspdf;
+let jobs = JSON.parse(localStorage.getItem('psm_jobs')) || [
+  {id:1, reg: "CAT-773", client: "Anglo Platinum", phone: "27799097420", total: 84000, category: "Mining", desc: "Engine overhaul", status: "IN PROGRESS", date: new Date().toLocaleDateString()}
+];
+let isAdmin = false;
 
-// 100 PILLARS FOR MOBILE SPEED
+// INIT
 let dots = ''; for(let i=0; i<100; i++){ dots += `<div class="pillar-dot" style="animation-delay:${i*0.01}s"></div>` }
 pillarGrid.innerHTML = dots;
+quantumCount("revenue", 8400000); loadJobs(); loadAdminJobs();
 
 function quantumCount(id, end){ let s=0; let step = end/30; let i=setInterval(()=>{s+=step; document.getElementById(id).innerText="R"+Math.floor(s).toLocaleString(); if(s>=end) clearInterval(i);},10); }
-quantumCount("revenue", 8400000);
+
+// JOB FUNCTIONS
+function saveJob(){
+  const job = {id: Date.now(), client: clientName.value, phone: clientPhone.value, reg: reg.value, category: category.value, desc: description.value, total: parseFloat(amount.value) || 0, status: "QUOTED", date: new Date().toLocaleDateString()};
+  jobs.push(job); localStorage.setItem('psm_jobs', JSON.stringify(jobs));
+  jobStatus.innerText = "Job Saved: " + job.reg; loadJobs(); loadAdminJobs();
+}
 
 function loadJobs(){
   jobList.innerHTML = ''; liveJobs.innerHTML = '';
-  jobs.slice(-5).forEach(j=>{
+  jobs.slice(-6).forEach(j=>{
     jobList.innerHTML += `<div class="q-card p-3 text-sm"><b>${j.reg}</b> - ${j.client} <span class="green-text">R${j.total.toLocaleString()}</span><br><span class="text-cyan-400">${j.category} | ${j.status}</span></div>`;
     liveJobs.innerHTML += `<div class="q-card p-2 text-xs">${j.reg}<br>R${j.total.toLocaleString()}</div>`;
   });
 }
-loadJobs();
 
-function saveJob(){
-  const job = {id: Date.now(), client: clientName.value, phone: clientPhone.value, reg: reg.value, category: category.value, desc: description.value, total: parseFloat(amount.value) || 0, status: "QUOTED"};
-  jobs.push(job); localStorage.setItem('psm_jobs', JSON.stringify(jobs));
-  jobStatus.innerText = "Job Saved: " + job.reg; loadJobs(); speak("Job saved");
+// ADMIN FUNCTIONS
+function adminLogin(){
+  if(adminUser.value === "admin" && adminPass.value === "psm2026"){
+    isAdmin = true;
+    loginBox.classList.add('hidden');
+    adminPanel.classList.remove('hidden');
+    modeBadge.innerText = "ADMIN MODE"; modeBadge.classList.add('admin-badge');
+    loadAdminJobs();
+  } else { alert("Wrong credentials") }
 }
 
-function sendClientLink(){
-  const job = jobs[jobs.length-1];
-  const msg = `*PSM AUTO JOB UPDATE*%0AHi ${job.client}%0AYour ${job.reg} Status: *${job.status}*%0A- PSM OS Quantum`;
+function adminLogout(){
+  isAdmin = false;
+  loginBox.classList.remove('hidden');
+  adminPanel.classList.add('hidden');
+  modeBadge.innerText = "DEMO MODE"; modeBadge.classList.remove('admin-badge');
+}
+
+function loadAdminJobs(){
+  adminJobList.innerHTML = '';
+  let total = 0; let pending = 0;
+  jobs.forEach(j=>{
+    total += j.total; if(j.status!== "INVOICED") pending++;
+    adminJobList.innerHTML += `
+    <div class="q-card p-4 flex justify-between items-center">
+      <div>
+        <p class="font-black">${j.reg} - ${j.client}</p>
+        <p class="text-sm">R${j.total.toLocaleString()} | ${j.category} | ${j.date}</p>
+        <select onchange="updateStatus(${j.id}, this.value)" class="mt-2 text-sm bg-gray-800">
+          <option ${j.status==="QUOTED"?"selected":""}>QUOTED</option>
+          <option ${j.status==="IN PROGRESS"?"selected":""}>IN PROGRESS</option>
+          <option ${j.status==="QC"?"selected":""}>QC</option>
+          <option ${j.status==="INVOICED"?"selected":""}>INVOICED</option>
+        </select>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="sendClientLink(${j.id})" class="btn-secondary text-xs">📲 WA</button>
+        <button onclick="deleteJob(${j.id})" class="btn-danger">DELETE</button>
+      </div>
+    </div>`;
+  });
+  totalJobs.innerText = jobs.length;
+  totalRevenue.innerText = "R" + total.toLocaleString();
+  pendingJobs.innerText = pending;
+}
+
+function updateStatus(id, status){
+  jobs = jobs.map(j => j.id === id? {...j, status} : j);
+  localStorage.setItem('psm_jobs', JSON.stringify(jobs));
+  loadAdminJobs(); loadJobs();
+}
+
+function deleteJob(id){
+  if(confirm("Delete this job?")){
+    jobs = jobs.filter(j => j.id!== id);
+    localStorage.setItem('psm_jobs', JSON.stringify(jobs));
+    loadAdminJobs(); loadJobs();
+  }
+}
+
+function sendClientLink(id){
+  const job = jobs.find(j=>j.id===id);
+  const msg = `*PSM AUTO UPDATE*%0AHi ${job.client}%0AYour ${job.reg} Status: *${job.status}*`;
   window.open(`https://wa.me/${job.phone}?text=${msg}`, '_blank');
 }
 
-function generatePDF(){
-  const job = jobs[jobs.length-1];
-  const doc = new jsPDF();
-  doc.setFontSize(18); doc.text("PSM AUTO AND SERVICES", 20, 20);
-  doc.setFontSize(10); doc.text("Reg: 2021/492989/07 | 079 909 7420", 20, 27);
-  doc.text(`INVOICE: ${invNumber.value}`, 140, 20);
-  doc.text(`Bill To: ${job.client}`, 20, 50); doc.text(`Machine: ${job.reg}`, 20, 57);
-  doc.setFontSize(16); doc.text(`TOTAL: R${job.total.toLocaleString()}`, 140, 90);
-  doc.save(`PSM_Invoice_${job.reg}.pdf`);
+function exportData(){
+  let csv = "ID,Reg,Client,Amount,Category,Status,Date\n";
+  jobs.forEach(j=>{ csv += `${j.id},${j.reg},${j.client},${j.total},${j.category},${j.status},${j.date}\n` });
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'PSM_Jobs.csv'; a.click();
 }
 
-// VOICE
-let recognition; let synth = window.speechSynthesis;
-try { recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)(); recognition.lang = 'en-ZA';
-recognition.onstart = () => { voiceBtn.classList.add('voice-active'); pillarStatus.innerText = "Listening..."; }
-recognition.onresult = (e) => { let cmd = e.results[0][0].transcript; pillarStatus.innerText = "Omega: " + cmd; voiceText.innerText = `Last: "${cmd}"`; }
-recognition.onend = () => { voiceBtn.classList.remove('voice-active'); }
-} catch(e){ pillarStatus.innerText = "Voice: Chrome Only"; }
-function startVoice(){ if(recognition) recognition.start(); }
-function speak(text){ synth.speak(new SpeechSynthesisUtterance(text)); }
-function quantumMode(){ pillarStatus.innerText = "QUANTUM: Diagnostic..."; quantumCount("revenue", 8400000); setTimeout(()=>pillarStatus.innerText = "All systems optimal", 2000); }
+// OTHER JS
+let aiProgress = 0; setInterval(()=>{ aiProgress = (aiProgress + 4) % 100; aiBar.style.width = aiProgress + '%'; }, 1000);
+function quantumMode(){ pillarStatus.innerText = "Diagnostic..."; quantumCount("revenue", 8400000); setTimeout(()=>pillarStatus.innerText = "Optimal", 2000); }
 
-// SCROLL REVEAL
 const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active')})},{threshold:0.15})
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el))
 
-// QUOTE FORM
 document.getElementById('quoteForm').addEventListener('submit', function(e){
   e.preventDefault();
-  const whatsappMessage = `*NEW QUOTE REQUEST*%0A*Name:* ${name.value}%0A*Phone:* ${phone.value}%0A*Machine:* ${machine.value}%0A*Issue:* ${message.value}`;
+  const whatsappMessage = `*NEW QUOTE*%0A*Name:* ${name.value}%0A*Phone:* ${phone.value}%0A*Issue:* ${message.value}`;
   window.open(`https://wa.me/27799097420?text=${whatsappMessage}`, '_blank'); this.reset();
 });
-
-// 3D - DESKTOP ONLY
-if(window.innerWidth > 768){
-  let scene = new THREE.Scene(); let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-  let renderer = new THREE.WebGLRenderer({canvas:bg3d, antialias:false}); renderer.setSize(window.innerWidth, window.innerHeight);
-  let pSystem = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(100*3).map(()=>Math.random()*100-50),3)), new THREE.PointsMaterial({color:0x00D4FF, size:0.1}));
-  scene.add(pSystem); camera.position.z = 50; function animate(){ requestAnimationFrame(animate); pSystem.rotation.y += 0.001; renderer.render(scene,camera); } animate();
-}
 </script>
 </body>
 </html>
