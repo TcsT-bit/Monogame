@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSM EVOLVE OS v3.9</title>
+<title>PSM EVOLVE OS v3.9.1</title>
 <meta name="theme-color" content="#FF5A00">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -37,7 +37,7 @@ input,select,textarea{background:#0A0F1F;border:1px solid rgba(0,212,255,0.4);co
 <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
   <div class="glass p-10 max-w-2xl w-full neon-border">
     <h1 class="text-6xl text-center quantum-text mb-2">PSM EVOLVE OS</h1>
-    <p class="text-center text-cyan-400 mb-8">v3.9 GOD TIER</p>
+    <p class="text-center text-cyan-400 mb-8">v3.9.1 GOD TIER</p>
     <div class="grid grid-cols-3 gap-4">
       <div onclick="selectRole('CEO')" class="glass p-6 text-center cursor-pointer"><div class="text-5xl">👑</div><b class="text-orange-500">CEO</b></div>
       <div onclick="selectRole('Manager')" class="glass p-6 text-center cursor-pointer"><div class="text-5xl">📊</div><b class="text-green-500">MANAGER</b></div>
@@ -217,7 +217,7 @@ function exportPDF(){const doc=new jsPDF();doc.text("PSM MONTHLY REPORT",20,20);
 // AUDIT
 function renderAudit(){auditLog.innerHTML=DB.audit.slice(0,10).map(a=>`<p class="text-xs">${a.time} - ${a.user}: ${a.action}</p>`).join('')}
 
-// CLIENT VIEW - SMART ROUTING
+// CLIENT VIEW - SMART ROUTING - ENHANCED TO SHOW IMAGES
 function checkClientView(){
   const hash = window.location.hash;
   if(hash === '#client'){
@@ -225,7 +225,8 @@ function checkClientView(){
     app.classList.add('hidden');
     clientView.classList.remove('hidden');
     clientJobs.innerHTML=DB.jobs.map(j=>`<div class="glass p-3 mb-2">${j.reg} - ${j.status}</div>`).join('');
-    clientProducts.innerHTML=DB.products.map(p=>`<div class="glass p-3"><b>${p.name}</b><br>R${p.price}<button onclick="alert('Request sent')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`).join('');
+    // FIX: ADDED IMAGE TAG HERE
+    clientProducts.innerHTML=DB.products.map(p=>`<div class="glass p-3"><img src="${p.img}" class="w-full h-40 object-cover rounded mb-2"><b>${p.name}</b><br>R${p.price}<button onclick="alert('Request sent')" class="btn-sec w-full mt-1">REQUEST CODE</button></div>`).join('');
   }
 }
 
